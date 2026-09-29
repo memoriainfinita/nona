@@ -25,7 +25,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Diseño completo en `design.md`. Maquetas en el lienzo de Claude Design enlazado desde
   `design.md`: 28 pantallas por dispositivo (móvil, tablet, escritorio), tema claro,
   acentos y componentes
-- Plan de implementación en `plan.md`, fases 0–6. Ninguna empezada
+- Plan de implementación en `plan.md`, fases 0–6
+- Fase 0 en curso: esqueleto Vite 8 + React 19.3 + TS 7 con tests en Node y Firefox. Faltan repo, LICENSE y CI
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
