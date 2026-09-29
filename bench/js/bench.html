@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>nona wasm bench</title>
+<pre id="out"></pre>
+<script type="module">
+const CALL_TIMEOUT_MS = 180_000;
+const GLOBAL_TIMEOUT_MS = 30 * 60_000;
+const params = new URLSearchParams(location.search);
+const counts = { medium: 10, hard: 5, expert: 5, master: 3 };
+for (const k of Object.keys(counts)) if (params.has(k)) counts[k] = Number(params.get(k));
+
+const out = document.getElementById('out');
+const report = (row) => {
+  out.textContent += JSON.stringify(row) + '\n';
+  return fetch('/log', { method: 'POST', body: JSON.stringify(row) });
+};
+
+function runOne(level, seed, budgetMs) {
+  return new Promise((resolve) => {
+    const w = new Worker('./worker.js', { type: 'module' });
+    const limit = Math.min(CALL_TIMEOUT_MS, budgetMs);
+    const timer = setTimeout(() => { w.terminate(); resolve({ timeout: true, limitMs: limit }); }, limit);
+    w.onmessage = ({ data }) => { clearTimeout(timer); w.terminate(); resolve(data); };
+    w.onerror = (e) => { clearTimeout(timer); w.terminate(); resolve({ error: e.message }); };
+    w.postMessage({ level, seed });
+  });
+}
+
+const start = performance.now();
+await report({ ua: `${navigator.userAgent}, crossOriginIsolated=${self.crossOriginIsolated}` });
+outer: for (const [level, n] of Object.entries(counts)) {
+  for (let i = 0; i < n; i++) {
+    const budget = GLOBAL_TIMEOUT_MS - (performance.now() - start);
+    if (budget <= 0) break outer;
+    await report({ level, ...(await runOne(level, params.has('seeded') ? i + 1 : 0, budget)) });
+  }
+}
+await fetch('/done', { method: 'POST' });
+</script>
