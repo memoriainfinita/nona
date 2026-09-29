@@ -87,7 +87,11 @@ last_updated: 2026-09-29
 ## Web
 
 - Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
-- Icono de la app: [PENDIENTE: en diseño en el lienzo]
+- Icono de la app, concepto "La novena": cuadrícula 3×3 en una baldosa redondeada; ocho
+  casillas apagadas y la novena (abajo a la derecha) en el acento. Oscuro: baldosa
+  `#1B1E1D`, casillas `#353A38`, novena `#E6A63B`. Claro: baldosa blanca con borde
+  `#DAD6CC`, casillas `#D5D0C4`, novena `#8A5A00`. Página "Logo" del lienzo
+- Descartados: cuadrícula entera, IX, n sobre rejilla, dígito 9
 
 ## Niveles
 
