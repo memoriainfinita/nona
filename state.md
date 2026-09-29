@@ -105,4 +105,6 @@ en los tres entornos. Una pasada por entorno.
 ## TODO
 
 - [ ] Plan de implementación a partir de `design.md`
+- [ ] Lienzo: las maquetas siguen en ámbar; pasar el acento por defecto a índigo (el
+      icono ya tiene índigo en la página "Logo")
 - [ ] Medir `get_hint` a mitad de partida en WASM

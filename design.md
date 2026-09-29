@@ -89,13 +89,13 @@ last_updated: 2026-09-29
 - Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
 - Icono de la app, "novena llena con 9": cuadrícula 3×3 en una baldosa redondeada; ocho
   casillas apagadas y la novena (abajo a la derecha) rellena del acento con un 9 trazado
-  del color de la baldosa. 9 en forma "diagonal" (círculo y cola recta en diagonal),
+  del color de la baldosa, siempre en índigo (marca; no sigue el acento del jugador). 9 en forma "diagonal" (círculo y cola recta en diagonal),
   tamaño 0,3, grosor 1,15 (parámetros de `Logo.dc.html` en la página "Logo" del lienzo).
-  Oscuro: baldosa `#1B1E1D`, casillas `#353A38`, novena `#E6A63B`. Claro: baldosa blanca
-  con borde `#DAD6CC`, casillas `#D5D0C4`, novena `#8A5A00`
-- [PENDIENTE] Si el icono sigue el acento del jugador o queda fijo en ámbar
+  Oscuro: baldosa `#1B1E1D`, casillas `#353A38`, novena `#8C95F6`. Claro: baldosa blanca
+  con borde `#DAD6CC`, casillas `#D5D0C4`, novena `#4B55C4`
 - Descartados: cuadrícula entera, novena lisa, 9 sin relleno, IX, n sobre rejilla,
-  dígito 9 suelto; formas del 9 round, straight, hook, angular
+  dígito 9 suelto; formas del 9 round, straight, hook, angular; resto de la familia del
+  violeta (periwinkle, violet, iris, lavender, purple, orchid, magenta)
 
 ## Niveles
 
@@ -139,10 +139,12 @@ last_updated: 2026-09-29
 | Botón de autocompletar notas | sí / no | sí |
 | Pausa automática al cambiar de pestaña o bloquear el móvil | sí / no | sí |
 | Tema | claro / oscuro / sistema | sistema |
-| Acento | ámbar / rosa / violeta / azul / turquesa / verde | ámbar |
+| Acento | índigo / ámbar / rosa / violeta / azul / turquesa / verde | índigo |
 | Tamaño de números y notas | S / M / L | M |
 | Vibración en móvil al colocar o al cometer un error | sí / no | sí |
 
+- Índigo: color de marca y acento por defecto. Oscuro `#8C95F6`, claro `#4B55C4`; ≥6:1 en los dos
+- Ámbar deja de ser el color de marca porque ya lo usa sadhana; queda como acento elegible
 - Coral descartado como acento: se confunde con el rojo de los errores
 
 ## Interfaz
@@ -170,7 +172,7 @@ last_updated: 2026-09-29
 
 - Fondo crema claro, tablero blanco
 - Acentos oscurecidos, todos ≥5:1 sobre blanco y con texto blanco encima: ámbar `#8A5A00`,
-  rosa `#AD3A6C`, violeta `#6450C0`, azul `#23609F`, turquesa `#17766A`, verde `#3B7327`
+  índigo `#4B55C4`, rosa `#AD3A6C`, violeta `#6450C0`, azul `#23609F`, turquesa `#17766A`, verde `#3B7327`
 - Casillas coloreadas en tonos pastel: números dados ≥12:1, notas ≥4,5:1
 - Rosa, en claro y en oscuro, con luminosidad parecida al rojo de los errores; los
   distingue el subrayado del error

@@ -4,6 +4,11 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-09-29 — Marca y acento por defecto: índigo en vez de ámbar
+
+**Qué cambió:** el acento por defecto y el color del icono pasan de ámbar (`#E6A63B`) a índigo (`#8C95F6` oscuro, `#4B55C4` claro). El ámbar queda como acento elegible.
+**Por qué:** el ámbar ya es el color de sadhana. Índigo elegido entre ocho tonos de la familia del violeta; los del lado azul se separan más en tono del rojo de los errores.
+
 ### 2026-09-29 — Pista: técnica antes que celdas
 
 **Qué cambió:** el orden de la pista pasa de celdas → técnica → conclusión a técnica → celdas → conclusión.
