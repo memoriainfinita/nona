@@ -25,6 +25,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Diseño completo en `design.md`. Maquetas en el lienzo de Claude Design enlazado desde
   `design.md`: 28 pantallas por dispositivo (móvil, tablet, escritorio), tema claro,
   acentos y componentes
+- Plan de implementación en `plan.md`, fases 0–6. Ninguna empezada
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -141,7 +142,8 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [ ] Plan de implementación a partir de `design.md`
+- [x] Plan de implementación a partir de `design.md`: `plan.md`
+- [ ] Fase 0 de `plan.md`: base
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM
