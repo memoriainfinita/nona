@@ -87,11 +87,15 @@ last_updated: 2026-09-29
 ## Web
 
 - Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
-- Icono de la app, concepto "La novena": cuadrícula 3×3 en una baldosa redondeada; ocho
-  casillas apagadas y la novena (abajo a la derecha) en el acento. Oscuro: baldosa
-  `#1B1E1D`, casillas `#353A38`, novena `#E6A63B`. Claro: baldosa blanca con borde
-  `#DAD6CC`, casillas `#D5D0C4`, novena `#8A5A00`. Página "Logo" del lienzo
-- Descartados: cuadrícula entera, IX, n sobre rejilla, dígito 9
+- Icono de la app, "novena llena con 9": cuadrícula 3×3 en una baldosa redondeada; ocho
+  casillas apagadas y la novena (abajo a la derecha) rellena del acento con un 9 trazado
+  del color de la baldosa. 9 en forma "diagonal" (círculo y cola recta en diagonal),
+  tamaño 0,3, grosor 1,15 (parámetros de `Logo.dc.html` en la página "Logo" del lienzo).
+  Oscuro: baldosa `#1B1E1D`, casillas `#353A38`, novena `#E6A63B`. Claro: baldosa blanca
+  con borde `#DAD6CC`, casillas `#D5D0C4`, novena `#8A5A00`
+- [PENDIENTE] Si el icono sigue el acento del jugador o queda fijo en ámbar
+- Descartados: cuadrícula entera, novena lisa, 9 sin relleno, IX, n sobre rejilla,
+  dígito 9 suelto; formas del 9 round, straight, hook, angular
 
 ## Niveles
 
