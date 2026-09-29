@@ -81,6 +81,8 @@ en los tres entornos. Una pasada por entorno.
   previas y puede devolver la misma eliminación en bucle. `get_next_placement` encadena
   eliminaciones hasta una colocación y descarta en silencio, contra la solución por
   backtracking, los pasos que la contradigan
+- `analyze` es determinista: 23 puzzles de las semillas, 10 procesos nativos y 3 en Node,
+  mismo nivel y SE en todos (2026-09-30). El no determinismo es del camino de pistas
 - Arnés de prueba en el scratchpad de la sesión: copia del motor con un `raw_step`
   público añadido; no se conserva
 

@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-09-29
+last_updated: 2026-09-30
 ---
 
 # nona — design
@@ -34,8 +34,8 @@ last_updated: 2026-09-29
 - Contador de cuántos quedan de cada dígito en la botonera
 - Deshacer y rehacer
 - Herramientas: Undo, Redo, Notes, Color, Erase, Fill notes, Hint
-- Teclado: flechas, 1-9, M notas, Espacio, Retroceso/Supr, Ctrl+Z / Ctrl+Y, H pista,
-  C modo color
+- Teclado: flechas, 1-9, M notas, E goma, Espacio pausa y reanuda, Retroceso/Supr,
+  Ctrl+Z / Ctrl+Y, H pista, C modo color
 
 ## Colorear casillas
 
@@ -50,14 +50,17 @@ last_updated: 2026-09-29
 
 - Errores marcados según el ajuste de errores
 - Bloquear un dígito que ya tiene sus 9: siempre activo
-- Escribir en una celda el número que ya tiene la vacía
+- Escribir en una celda el número que ya tiene la deja vacía. En "número primero", tocar
+  una celda que ya tiene el número fijado la vacía
 
 ## Partidas
 
 - Varias en curso, guardado automático, se reanudan desde el menú y desde estadísticas
 - Pantalla de victoria: tiempo, nivel, aviso de mejor tiempo si lo es, jugar otro del
   mismo nivel o volver al menú
-- Cronómetro
+- Cronómetro: el tiempo se guarda con la partida y sobrevive a recargar. Corre solo con la
+  pantalla de juego visible y sin pausa; al salir al menú se detiene y al reanudar sigue.
+  Sin pausa automática, sigue corriendo al cambiar de pestaña
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
 - Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis, visible
@@ -67,6 +70,8 @@ last_updated: 2026-09-29
 
 - Partida resuelta con pistas: cuenta como completada y suma XP, no marca mejor tiempo; la
   victoria indica "solved with hints"
+- Una pista cuenta como usada cuando la tarjeta muestra el paso 1: ya revela la técnica
+- "Errores contra la solución" y autocompletar notas no afectan al mejor tiempo
 - Apply de una eliminación: quita esos candidatos de las notas del jugador si los tiene; sin
   notas en la celda, no cambia nada visible y la pista queda aplicada
 - Autocompletar notas: solo celdas vacías sin notas; las anotadas no se tocan; se deshace
@@ -79,10 +84,14 @@ last_updated: 2026-09-29
 ## Datos locales
 
 - IndexedDB: partidas en curso (con deshacer, colores y candidatos del motor), historial
-  completo, mejores tiempos y ajustes. La pantalla muestra los 10 últimos completados
-- Exportación: JSON con versión de formato; incluye partidas, historial, mejores tiempos y
-  ajustes; nombre `nona-backup-AAAA-MM-DD.json`. La versión permite rechazar archivos de una
-  versión más nueva
+  completo y ajustes. La pantalla muestra los 10 últimos completados
+- Mejores tiempos: se calculan del historial (mínimo sin pistas, por nivel); no se guardan aparte
+- Cada partida y cada entrada del historial llevan un id único (UUID) desde que se crean
+- Exportación: JSON con versión de formato; incluye partidas, historial y ajustes; nombre
+  `nona-backup-AAAA-MM-DD.json`. Versión más nueva: se rechaza. Versión anterior: se migra
+  al importar, con una función por versión
+- Merge: partidas en curso unidas por id, y con el mismo id gana la modificada más
+  recientemente; historial unido por id; ajustes del dispositivo. Replace: ajustes del archivo
 
 ## Web
 
@@ -113,15 +122,21 @@ last_updated: 2026-09-29
 - La tarjeta ocupa el sitio de la fila de herramientas; la botonera sigue visible
 - Se cierra con Close o Esc, con Apply, con cualquier jugada en el tablero o con Ctrl+Z.
   Abierta, no hay herramientas en pantalla
-- Teclado: H abre, Enter siguiente paso, Esc cierra
+- Teclado: H abre, Enter siguiente paso (en el paso 3, Apply), Esc cierra
+- Sin técnica (el motor recurre a backtracking): paso 1 "No logical step found", paso 2 la
+  celda, paso 3 el valor con Apply y sin explicación. Cuenta como pista
+- Si el motor no carga: la tarjeta muestra "Couldn't load the hint engine" con Retry y
+  Close; la partida sigue normal y la pista no cuenta
 
 ## Estadísticas
 
 - Completados en total y XP (100 por sudoku)
+- Partidas en curso: nivel, tiempo, celdas que faltan y Continue; vacío, "No games in progress."
 - Actividad de los últimos 7 días
 - Mejor tiempo por nivel
 - Historial de los 10 últimos completados
 - Borrar historial
+- Actividad e historial en fecha local del dispositivo; solo el sudoku del día usa UTC
 
 ## Ajustes
 
@@ -188,7 +203,8 @@ last_updated: 2026-09-29
 - Zod para validar los datos importados
 - Tests: Vitest, fast-check (propiedades), modo navegador de Vitest sobre Firefox
   (`@vitest/browser-playwright`)
-- size-limit: tope de tamaño de JS y WASM
+- size-limit: dos topes, JS inicial y WASM, en gzip. Se fijan en la primera compilación
+  completa (con `wasm-opt`) con un 10% de margen sobre lo medido
 - Repo `memoriainfinita/nona`, público, GPL-3.0
 - GitHub Pages por GitHub Actions: compila el WASM (Rust, wasm-bindgen-cli, wasm-opt),
   pasa todos los tests y size-limit, construye y publica. Si algo falla, no publica
@@ -201,12 +217,19 @@ last_updated: 2026-09-29
 - En un Web Worker
 - En la app solo se usa para pistas. El WASM se carga al pedir la primera
 - Errores, conflictos y autocompletar notas se calculan en JS
+- El puente devuelve con cada pista el nombre legible de la técnica (`Display` de Rust)
 
 ## Banco
 
 - 200 puzzles base por nivel, con su solución
 - Entra un puzzle solo si `analyze` da el nivel de su grupo
 - Generado en local, con las semillas registradas, y subido al repo como datos
+- Generación: se pide a varios niveles y cada puzzle va al nivel que da `analyze`, hasta 200
+  por nivel. Tope de tiempo por llamada, varios hilos, semilla por puzzle, reanudable
+- Antes de la generación completa, tanda piloto que mide puzzles por hora en cada nivel
 - Cada partida aplica una transformación aleatoria: rotación, bandas, pilas, filas,
   columnas, permutación de dígitos
-- Sudoku del día: la fecha elige nivel, puzzle y transformación
+- Sudoku del día: la fecha elige nivel, puzzle y transformación, con un PRNG determinista en
+  JS sembrado con la fecha UTC (`AAAA-MM-DD`)
+- El banco publicado es inmutable. Si se regenera o amplía, es un banco nuevo para partidas
+  normales; el sudoku del día sale siempre del primero
