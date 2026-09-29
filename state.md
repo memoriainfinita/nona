@@ -46,6 +46,23 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Los "expert" de sudoku-gen salen Intermediate o Hard
 - Sin medir en WASM
 
+### Validación del motor (2026-09-29)
+
+- **Escala SE:** no es la de Sudoku Explainer. Contra 1858 puzzles calificados por el SE
+  real (corpus de TSudoku, SE 1.0–4.4): 30,7% exacta, 47,6% a ±0,3. Las técnicas
+  directas del SE (1.0–2.5) no existen en kcirtap: 0 aciertos. Usar sus niveles propios;
+  no presentar su valor como SE
+- **Corrección de las pistas:** 1881 puzzles (corpus + 20 expert + 3 master generados),
+  117.660 deducciones contrastadas con la solución, 0 incorrectas. Todos resueltos solo
+  con técnicas. Probadas 21 de 45 técnicas; sin ejercitar las avanzadas (ALS, cadenas,
+  forcing chains, 3D Medusa, Death Blossom...)
+- `get_hint` recalcula candidatos desde cero en cada llamada: ignora las eliminaciones
+  previas y puede devolver la misma eliminación en bucle. `get_next_placement` encadena
+  eliminaciones hasta una colocación y descarta en silencio, contra la solución por
+  backtracking, los pasos que la contradigan
+- Arnés de prueba en el scratchpad de la sesión: copia del motor con un `raw_step`
+  público añadido; no se conserva
+
 ## Patterns
 
 - [pnpm] `esbuild: false` en `allowBuilds` de `pnpm-workspace.yaml`: el binario llega
