@@ -14,24 +14,46 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 
 ## Status
 
-- Import de AI Studio tal cual en el primer commit (`5f3fa40`): React 19 + Vite 6 +
-  TypeScript, recharts para las gráficas de Stats
-- Arranca con `pnpm dev` en el puerto 3000. Probada por mykl en el navegador: funciona
-- Sin decidir: aprovechar el código de AI Studio o empezar de cero
-- Restos de AI Studio sin limpiar:
-  - `index.html` lleva un `importmap` a esm.sh (react, recharts, `@google/genai`, vite)
-    que duplica lo que resuelve Vite
-  - `services/geminiService.ts` vacío: la dependencia de Gemini se quitó en AI Studio
-  - `components/Navigation.tsx` vacío
-  - `README.md` es la plantilla genérica de AI Studio y pide una `GEMINI_API_KEY` que
-    la app ya no usa
-  - Tailwind, Font Awesome e Inter se cargan por CDN
+- Se empieza de cero. El código de AI Studio queda como boceto de la interacción en el
+  primer commit (`5f3fa40`): React 19 + Vite 6 + TypeScript. Motivo en `state-history.md`
+- Del boceto se aprovechan ideas, no código:
+  - Clic en celda con número: seleccionar → resaltar ese número en el tablero → borrar
+  - Al colocar un número, se quita de las notas de su fila, columna y caja
+  - Contador de cuántos quedan por colocar de cada número
+  - Deshacer y rehacer; teclado: flechas, 1-9, M para notas, Espacio
+  - Estadísticas diarias y mejores tiempos en localStorage
+- Motor elegido: [kcirtapfromspace/sudoku-core](https://github.com/kcirtapfromspace/sudoku-core)
+  (Rust, MIT), commit probado `84696be`. 45 técnicas humanas, pista con explicación y
+  celdas implicadas, calificación por técnica y en escala SE, generador con solución única
+- La versión WASM del repo hermano `kcirtapfromspace/sudoku` es un juego completo en
+  canvas, no una librería: hay que escribir un puente wasm-bindgen propio
+- Sin diseño de app todavía
+
+### Pruebas del motor (2026-09-29, nativo, release)
+
+| Nivel pedido | Generación | Nivel que da `analyze` |
+|---|---|---|
+| medium | 10–14 ms | Medium, Easy |
+| hard | 0,5–1,4 s | Hard, Intermediate |
+| expert | 0,9–3,2 s | Expert, Expert |
+| master | 13–43 s | Master, Expert |
+
+- 13 puzzles × 20 transformaciones (rotación, bandas, pilas, filas, columnas,
+  permutación de dígitos): 260/260 con el mismo nivel, el mismo SE, pista, solución y
+  solución única
+- `analyze` + `get_hint`: menos de 11 ms, salvo un master a 1,6 s
+- `generate` no siempre entrega el nivel pedido
+- Los "expert" de sudoku-gen salen Intermediate o Hard
+- Sin medir en WASM
 
 ## Patterns
 
 - [pnpm] `esbuild: false` en `allowBuilds` de `pnpm-workspace.yaml`: el binario llega
   como paquete aparte y Vite funciona sin el script de instalación. Mismo criterio que
   sadhana. Confirmed 2026-09.
+- [bench] Toda prueba de generación lleva tope de tiempo por llamada (worker o hilo con
+  timeout) y tope global: sin él, sudoku-core (npm) en master corrió más de 1 h 40 min
+  sin terminar. Confirmed 2026-09.
 
 ## Preferences
 
@@ -39,4 +61,6 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 
 ## TODO
 
-- [ ] Decidir si se aprovecha el código de AI Studio o se empieza de cero
+- [ ] Diseñar la app: puente WASM, motor en Web Worker, banco pregenerado al menos para
+      master, qué ideas del boceto entran
+- [ ] Medir generación, `analyze` y `get_hint` en WASM
