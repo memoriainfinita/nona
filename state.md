@@ -44,7 +44,31 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - `analyze` + `get_hint`: menos de 11 ms, salvo un master a 1,6 s
 - `generate` no siempre entrega el nivel pedido
 - Los "expert" de sudoku-gen salen Intermediate o Hard
-- Sin medir en WASM
+
+### Pruebas en WASM (2026-09-29)
+
+Puente provisional wasm-bindgen 0.2.129, sin wasm-opt: 492 KiB. Un Web Worker por
+puzzle. Semillas 1..n por nivel (`Generator::with_seed`): los 23 puzzles salen idénticos
+en los tres entornos. Una pasada por entorno.
+
+| Nivel | n | Generación nativa | Node 24 | Firefox 156 |
+|---|---|---|---|---|
+| medium | 10 | 7–20 ms | 12–21 ms | 8–19 ms |
+| hard | 5 | 30–451 ms | 34–326 ms | 23–659 ms |
+| expert | 5 | 55 ms–6,8 s | 93 ms–2,5 s | 57 ms–2,8 s |
+| master | 3 | 3,2–29,6 s | 1,5–13,5 s | 2,3–19,8 s |
+
+- WASM no es más lento que el nativo en esta máquina; en los casos largos, más rápido.
+  Causa sin averiguar
+- `analyze`: menos de 27 ms salvo master. Peor caso, el mismo master en los tres:
+  1280 ms nativo, 714 ms Node, 631 ms Firefox
+- `get_hint` medido solo sobre el puzzle inicial (siempre un single): menos de 12 ms.
+  Sin medir a mitad de partida
+- Carga e instanciación del módulo en cada worker: 6–82 ms
+- Con estas semillas, los hard pedidos salen Intermediate (5/5); expert y master, su nivel
+- Arnés en `bench/`: puente, `js/bench.mjs` (Node), `js/serve.mjs` + página (Firefox
+  headless con perfil temporal), `examples/native.rs`. Motor por git fijado a `84696be`.
+  Compilar y ejecutar: cabecera de `bench/Cargo.toml`
 
 ### Validación del motor (2026-09-29)
 
@@ -71,6 +95,11 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - [bench] Toda prueba de generación lleva tope de tiempo por llamada (worker o hilo con
   timeout) y tope global: sin él, sudoku-core (npm) en master corrió más de 1 h 40 min
   sin terminar. Confirmed 2026-09.
+- [bench] Comparar entornos con `Generator::with_seed`: la misma semilla da el mismo
+  puzzle en nativo y WASM. Sin semilla, el tiempo de generación varía demasiado entre
+  puzzles para comparar tandas. Confirmed 2026-09.
+- [bench] Medir en Firefox con COOP/COEP (`crossOriginIsolated`): sin ellas
+  `performance.now()` pierde resolución y un `get_hint` marcó 0,0 ms. Confirmed 2026-09.
 
 ## Preferences
 
@@ -80,4 +109,4 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 
 - [ ] Diseñar la app: puente WASM, motor en Web Worker, banco pregenerado al menos para
       master, qué ideas del boceto entran
-- [ ] Medir generación, `analyze` y `get_hint` en WASM
+- [ ] Medir `get_hint` a mitad de partida en WASM
