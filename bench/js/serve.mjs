@@ -1,27 +1,36 @@
 // Serves bench/ over HTTP, runs bench.html in headless Firefox and prints its results.
-// Usage: node serve.mjs [query string, e.g. "medium=1&hard=0&expert=0&master=0"]
+// Usage: node serve.mjs [query string, e.g. "medium=1&hard=0&expert=0&master=0"] [page, default bench.html]
+// Mid-game hint bench: node serve.mjs "" play.html
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, normalize, extname } from 'node:path';
+import { summarize } from './play-core.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FIREFOX = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe';
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.wasm': 'application/wasm' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.wasm': 'application/wasm' };
+const page = process.argv[3] ?? 'bench.html';
 const rows = [];
 let firefox, profile;
 
 function fmt(r) {
   if (r.ua) return r.ua;
   if (r.timeout || r.error) return `${r.level}: ${r.timeout ? `timeout ${r.limitMs} ms` : r.error}`;
+  if (r.times) {
+    const s = summarize(r.times);
+    return `${r.level}: ${r.steps} hints (${r.eliminations} elim), median ${s.median.toFixed(2)} ms, ` +
+      `max ${s.max.toFixed(1)} ms at step ${s.maxStep}, total ${s.total.toFixed(0)} ms`;
+  }
   return `${r.level}: load ${r.load.toFixed(0)} ms, gen ${r.gen.toFixed(0)} ms, analyze ${r.analyze.toFixed(1)} ms -> ` +
     `${r.analysis.level} ${r.analysis.se}, hint ${r.hint.toFixed(1)} ms (${r.technique})`;
 }
 
 async function finish() {
-  const outFile = (process.argv[2] ?? '').includes('seeded') ? 'results-firefox-seeded.json' : 'results-firefox.json';
+  const outFile = page === 'play.html' ? 'results-play-firefox.json'
+    : (process.argv[2] ?? '').includes('seeded') ? 'results-firefox-seeded.json' : 'results-firefox.json';
   await writeFile(join(root, 'js', outFile), JSON.stringify(rows, null, 2));
   firefox.kill();
   server.close();
@@ -51,7 +60,7 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(0, '127.0.0.1', async () => {
-  const url = `http://127.0.0.1:${server.address().port}/js/bench.html?${process.argv[2] ?? ''}`;
+  const url = `http://127.0.0.1:${server.address().port}/js/${page}?${process.argv[2] ?? ''}`;
   profile = await mkdtemp(join(tmpdir(), 'nona-ff-'));
   firefox = spawn(FIREFOX, ['--headless', '--no-remote', '--profile', profile, url], { stdio: 'ignore' });
   console.log(`firefox headless -> ${url}`);

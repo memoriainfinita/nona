@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>nona mid-game hint bench</title>
+<pre id="out"></pre>
+<script type="module">
+const PUZZLE_TIMEOUT_MS = 180_000;
+const GLOBAL_TIMEOUT_MS = 30 * 60_000;
+const out = document.getElementById('out');
+const report = (row) => {
+  out.textContent += JSON.stringify(row) + '\n';
+  return fetch('/log', { method: 'POST', body: JSON.stringify(row) });
+};
+
+function runOne(puzzle, budgetMs) {
+  return new Promise((resolve) => {
+    const w = new Worker('./play-worker.js', { type: 'module' });
+    const limit = Math.min(PUZZLE_TIMEOUT_MS, budgetMs);
+    const timer = setTimeout(() => { w.terminate(); resolve({ puzzle, timeout: true, limitMs: limit }); }, limit);
+    w.onmessage = ({ data }) => { clearTimeout(timer); w.terminate(); resolve(data); };
+    w.onerror = (e) => { clearTimeout(timer); w.terminate(); resolve({ puzzle, error: e.message }); };
+    w.postMessage({ puzzle });
+  });
+}
+
+const puzzles = (await (await fetch('./puzzles-seeded.json')).json()).filter((r) => r.puzzle);
+const start = performance.now();
+await report({ ua: `${navigator.userAgent}, crossOriginIsolated=${self.crossOriginIsolated}` });
+for (const { level, puzzle } of puzzles) {
+  const budget = GLOBAL_TIMEOUT_MS - (performance.now() - start);
+  if (budget <= 0) break;
+  await report({ level, ...(await runOne(puzzle, budget)) });
+}
+await fetch('/done', { method: 'POST' });
+</script>

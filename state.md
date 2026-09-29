@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-09-29
+last_updated: 2026-09-30
 ---
 
 # nona — state
@@ -97,6 +97,28 @@ en los tres entornos. Una pasada por entorno.
 - Tests del solver del fork: 16/16, 1418 s en release (generan puzzles Extreme)
 - La app guarda los candidatos del motor aparte de las notas del jugador
 
+### Pistas a mitad de partida en WASM (2026-09-30)
+
+Fork `f56364e`, puente con `hint_with_candidates(puzzle, masks)`: candidatos en JS,
+81 máscaras (bit v = dígito v). Los 23 puzzles de las semillas jugados solo con
+pistas, midiendo cada llamada desde JS.
+
+| Nivel | n | Mediana | Máx. nativo | Máx. Node 24 | Máx. Firefox 156 |
+|---|---|---|---|---|---|
+| medium | 10 | 0,08–0,13 ms | 2,6 ms | 5,1 ms | 2,7 ms |
+| hard | 5 | 0,07–0,10 ms | 3,4 ms | 4,1 ms | 0,8 ms |
+| expert | 5 | 0,08–0,11 ms | 1,6 ms | 5,0 ms | 0,5 ms |
+| master | 3 | 0,08–0,12 ms | 18–184 ms | 17,7–41,2 ms | 15,6–128,1 ms |
+
+- 23/23 completados en los tres entornos, 0 eliminaciones repetidas, 0 colocaciones
+  fuera de candidatos
+- Node: el máximo de medium a expert es la primera llamada del worker (3–5 ms)
+- El camino de pistas varía entre ejecuciones nativas (master 3: 102 o 103 pistas);
+  Node y Firefox coinciden entre sí (99). Causa probable, sin confirmar: HashMap/HashSet
+  de std en los motores AIC y ALS
+- Arnés: `examples/play.rs` (`gen` escribe `js/puzzles-seeded.json`), `js/play.mjs`,
+  `node js/serve.mjs "" play.html`
+
 ## Patterns
 
 - [pnpm] `esbuild: false` en `allowBuilds` de `pnpm-workspace.yaml`: el binario llega
@@ -120,5 +142,4 @@ en los tres entornos. Una pasada por entorno.
 - [ ] Plan de implementación a partir de `design.md`
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
-- [ ] Medir `get_hint_with_candidates` a mitad de partida en WASM. Antes, apuntar
-      `bench/Cargo.toml` al fork (sigue en `84696be` original)
+- [x] Medir `get_hint_with_candidates` a mitad de partida en WASM

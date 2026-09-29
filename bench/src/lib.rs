@@ -1,4 +1,4 @@
-use sudoku_core::{Difficulty, Generator, Grid, Solver};
+use sudoku_core::{BitSet, Difficulty, Generator, Grid, Position, Solver};
 use wasm_bindgen::prelude::*;
 
 fn parse_level(level: &str) -> Result<Difficulty, JsError> {
@@ -44,5 +44,25 @@ pub fn analyze(puzzle: &str) -> Result<String, JsError> {
 #[wasm_bindgen]
 pub fn hint(puzzle: &str) -> Result<String, JsError> {
     let hint = Solver::new().get_hint(&parse_grid(puzzle)?);
+    serde_json::to_string(&hint).map_err(|e| JsError::new(&e.to_string()))
+}
+
+/// Hint from the caller's candidates, without recalculating them (fork `f56364e`).
+/// `masks[i]` holds cell i's candidates, bit v set for digit v; ignored for filled cells.
+/// Returns the hint as JSON, or "null" when none is found.
+#[wasm_bindgen]
+pub fn hint_with_candidates(puzzle: &str, masks: &[u16]) -> Result<String, JsError> {
+    if masks.len() != 81 {
+        return Err(JsError::new("expected 81 masks"));
+    }
+    let mut grid = parse_grid(puzzle)?;
+    for (i, &mask) in masks.iter().enumerate() {
+        let pos = Position { row: i / 9, col: i % 9 };
+        if grid.get(pos).is_none() {
+            let digits: Vec<u8> = (1..=9).filter(|&v| mask & (1 << v) != 0).collect();
+            grid.cell_mut(pos).set_candidates(BitSet::from_slice(&digits));
+        }
+    }
+    let hint = Solver::new().get_hint_with_candidates(&grid);
     serde_json::to_string(&hint).map_err(|e| JsError::new(&e.to_string()))
 }
