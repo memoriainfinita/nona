@@ -86,12 +86,16 @@ en los tres entornos. Una pasada por entorno.
 
 ### Bucle de pistas (2026-09-29, nativo)
 
-- Confirmado: tras aplicar una eliminación, `get_hint` devuelve la misma (35/35).
-  Pistas que son eliminación: medium 0%, hard 2%, expert 3%, master 12% del camino
-  de solución; todo hard+ la encuentra
-- `find_first_technique` (respeta candidatos) es privada. Salidas: solo
-  `get_next_placement`, o fork con un `get_hint` público sin recalcular. Sin decidir
-- `get_hint` a mitad de partida en nativo: menos de 5 ms
+- Con `get_hint`, tras aplicar una eliminación vuelve la misma (35/35). Pistas que
+  son eliminación: medium 0%, hard 2%, expert 3%, master 12% del camino de solución
+- Resuelto con fork: [memoriainfinita/sudoku-core](https://github.com/memoriainfinita/sudoku-core),
+  rama `nona`, commit `f56364e` sobre `84696be`. Añade `Solver::get_hint_with_candidates`:
+  usa los candidatos de la rejilla sin recalcular
+- Probado jugando solo con pistas y aplicándolas todas: 23 puzzles (10 medium, 5 hard,
+  5 expert, 3 master), 1365 pistas, 159 eliminaciones, 0 repetidas, 0 incorrectas,
+  todos completados. Máximo 150 ms (master)
+- Tests del solver del fork: 16/16, 1418 s en release (generan puzzles Extreme)
+- La app guarda los candidatos del motor aparte de las notas del jugador
 
 ## Patterns
 
@@ -115,5 +119,5 @@ en los tres entornos. Una pasada por entorno.
 
 - [ ] Plan de implementación a partir de `design.md`
 - [x] Lienzo: pasar el acento por defecto a índigo
-- [ ] Decidir la salida al bucle de pistas
+- [x] Decidir la salida al bucle de pistas: fork
 - [ ] Medir `get_hint` a mitad de partida en WASM
