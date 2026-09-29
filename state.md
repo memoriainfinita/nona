@@ -22,8 +22,9 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   celdas implicadas, calificación por técnica y en escala SE, generador con solución única
 - La versión WASM del repo hermano `kcirtapfromspace/sudoku` es un juego completo en
   canvas, no una librería: hay que escribir un puente wasm-bindgen propio
-- Diseño en `design.md`, completo salvo el tema claro. Maquetas en el lienzo de Claude
-  Design enlazado desde `design.md`
+- Diseño completo en `design.md`. Maquetas en el lienzo de Claude Design enlazado desde
+  `design.md`: 25 pantallas por dispositivo (móvil, tablet, escritorio), tema claro,
+  acentos y componentes
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -103,5 +104,5 @@ en los tres entornos. Una pasada por entorno.
 
 ## TODO
 
-- [ ] Tema claro: colores, acentos y paleta de casillas. Ver `design.md`
+- [ ] Plan de implementación a partir de `design.md`
 - [ ] Medir `get_hint` a mitad de partida en WASM

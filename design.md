@@ -120,7 +120,26 @@ last_updated: 2026-09-29
 - Escritorio: barra lateral con Play, Stats, Settings
 - Menú: Continue (partidas en curso), sudoku del día, nuevo juego (6 niveles + Start)
 - Pausa en tablet y escritorio: pantalla completa sin tablero
-- [PENDIENTE] Tema claro: colores, los seis acentos en claro, paleta de casillas en claro
+- Móvil en horizontal: tablero a la izquierda; botonera 3×3 y herramientas a la derecha
+- Modo notas activo: los dígitos de la botonera se muestran pequeños y a un lado
+- Primera pista: la tarjeta muestra la carga del motor en su sitio, solo esa vez
+- Partidas en curso: botón para descartar cada una, sin confirmación, con aviso "Undo"
+- Sudoku del día resuelto: la tarjeta muestra el tiempo y "a new puzzle tomorrow"; no se
+  vuelve a jugar
+- Importar: resumen del archivo; Merge (por defecto, conserva todo), Replace (borra antes
+  lo del dispositivo) o Cancel. Archivo no válido: aviso, nada cambia
+- Borrar historial: borra partidas, historial y mejores tiempos; conserva los ajustes;
+  confirmación que recuerda exportar antes
+- Diálogos: hoja inferior en móvil, tarjeta centrada en tablet y escritorio
+
+## Tema claro
+
+- Fondo crema claro, tablero blanco
+- Acentos oscurecidos, todos ≥5:1 sobre blanco y con texto blanco encima: ámbar `#8A5A00`,
+  rosa `#AD3A6C`, violeta `#6450C0`, azul `#23609F`, turquesa `#17766A`, verde `#3B7327`
+- Casillas coloreadas en tonos pastel: números dados ≥12:1, notas ≥4,5:1
+- Rosa, en claro y en oscuro, con luminosidad parecida al rojo de los errores; los
+  distingue el subrayado del error
 
 ## Stack
 
