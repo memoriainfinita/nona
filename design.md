@@ -51,7 +51,8 @@ last_updated: 2026-09-30
 - Errores marcados según el ajuste de errores
 - Bloquear un dígito que ya tiene sus 9: siempre activo
 - Escribir en una celda el número que ya tiene la deja vacía. En "número primero", tocar
-  una celda que ya tiene el número fijado la vacía
+  una celda que ya tiene el número fijado la vacía, también con el dígito completo: el
+  bloqueo impide añadir, no quitar
 
 ## Partidas
 
@@ -70,7 +71,8 @@ last_updated: 2026-09-30
 
 - Partida resuelta con pistas: cuenta como completada y suma XP, no marca mejor tiempo; la
   victoria indica "solved with hints"
-- Una pista cuenta como usada cuando la tarjeta muestra el paso 1: ya revela la técnica
+- Una pista cuenta como usada cuando la tarjeta muestra el paso 1 (ya revela la técnica) o
+  el paso de números erróneos, salvo con "Errores contra la solución" activo
 - "Errores contra la solución" y autocompletar notas no afectan al mejor tiempo
 - Apply de una eliminación: quita esos candidatos de las notas del jugador si los tiene; sin
   notas en la celda, no cambia nada visible y la pista queda aplicada
@@ -78,6 +80,7 @@ last_updated: 2026-09-30
   como una sola jugada
 - Deshacer/rehacer: todo cambio del tablero (números, notas, colores, autocompletar, Apply).
   Pausa y abrir o cerrar la pista no entran
+- Deshacer un Apply de eliminación revierte las notas y los candidatos del motor
 - Sudoku del día: manda la fecha UTC. Sin terminar ese día, sigue como partida en curso
   normal; solo cuenta como "del día" si se resuelve dentro de su fecha
 
@@ -98,7 +101,8 @@ last_updated: 2026-09-30
 - Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
 - Icono de la app, "novena llena con 9": cuadrícula 3×3 en una baldosa redondeada; ocho
   casillas apagadas y la novena (abajo a la derecha) rellena del acento con un 9 trazado
-  del color de la baldosa, siempre en índigo (marca; no sigue el acento del jugador). 9 en forma "diagonal" (círculo y cola recta en diagonal),
+  del color de la baldosa, siempre en índigo (marca; no sigue el acento del jugador).
+  9 en forma "diagonal" (círculo y cola recta en diagonal),
   tamaño 0,3, grosor 1,15 (parámetros de `Logo.dc.html` en la página "Logo" del lienzo).
   Oscuro: baldosa `#1B1E1D`, casillas `#353A38`, novena `#8C95F6`. Claro: baldosa blanca
   con borde `#DAD6CC`, casillas `#D5D0C4`, novena `#4B55C4`
@@ -135,7 +139,6 @@ last_updated: 2026-09-30
 - Actividad de los últimos 7 días
 - Mejor tiempo por nivel
 - Historial de los 10 últimos completados
-- Borrar historial
 - Actividad e historial en fecha local del dispositivo; solo el sudoku del día usa UTC
 
 ## Ajustes
@@ -158,6 +161,7 @@ last_updated: 2026-09-30
 | Tamaño de números y notas | S / M / L | M |
 | Vibración en móvil al colocar o al cometer un error | sí / no | sí |
 
+- Sección Data al final de Ajustes: Export, Import y Clear history
 - Índigo: color de marca y acento por defecto. Oscuro `#8C95F6`, claro `#4B55C4`; ≥6:1 en los dos
 - Ámbar deja de ser el color de marca porque ya lo usa sadhana; queda como acento elegible
 - Coral descartado como acento: se confunde con el rojo de los errores
@@ -179,7 +183,7 @@ last_updated: 2026-09-30
   vuelve a jugar
 - Importar: resumen del archivo; Merge (por defecto, conserva todo), Replace (borra antes
   lo del dispositivo) o Cancel. Archivo no válido: aviso, nada cambia
-- Borrar historial: borra partidas, historial y mejores tiempos; conserva los ajustes;
+- Borrar historial: borra partidas e historial (y con él los mejores tiempos); conserva los ajustes;
   confirmación que recuerda exportar antes
 - Diálogos: hoja inferior en móvil, tarjeta centrada en tablet y escritorio
 
