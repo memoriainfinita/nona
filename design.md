@@ -48,20 +48,19 @@ last_updated: 2026-09-29
 - Cronómetro
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
-- Sudoku del día: el mismo para cualquiera ese día. Puzzle y nivel salen de la fecha como
-  semilla; nivel aleatorio entre los seis
+- Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis
+  (ver Banco)
 
 ## Niveles
 
 - Easy, Medium, Intermediate, Hard, Expert, Master
-- Si el puzzle generado no es del nivel pedido, se genera otro hasta acertar
+- Un puzzle entra en el banco de un nivel solo si `analyze` da ese nivel (ver Banco)
 
 ## Pistas
 
 - Progresivas: 1) celdas implicadas, 2) técnica, 3) conclusión y explicación
 - Siguiente deducción: colocar un número o quitar candidatos
-- [PENDIENTE: punto 4] El motor ignora las notas del jugador y puede repetir la misma
-  eliminación
+- Sobre los candidatos del motor, no sobre las notas del jugador (ver Motor)
 
 ## Estadísticas
 
@@ -92,8 +91,40 @@ last_updated: 2026-09-29
 
 - [PENDIENTE: punto 5] Valor por defecto de cada ajuste
 
+## Stack
+
+- React + TypeScript + Vite, versiones actuales al empezar
+- pnpm
+- CSS propio con tokens (variables CSS)
+- Iconos: lucide-react
+- Fuente del sistema
+- Gráfica de actividad: SVG propio
+- Zod para validar los datos importados
+- Tests: Vitest, fast-check (propiedades), modo navegador de Vitest sobre Firefox
+  (`@vitest/browser-playwright`)
+- size-limit: tope de tamaño de JS y WASM
+- Repo `memoriainfinita/nona`, público, GPL-3.0
+- GitHub Pages por GitHub Actions: compila el WASM (Rust, wasm-bindgen-cli, wasm-opt),
+  pasa todos los tests y size-limit, construye y publica. Si algo falla, no publica
+
+## Motor
+
+- Fork de sudoku-core en memoriainfinita, fijado a un commit, con una función pública más:
+  pista sobre los candidatos recibidos, sin recalcularlos
+- La app lleva los candidatos del motor: todos menos los eliminados por pistas ya dadas
+- En un Web Worker
+- En la app solo se usa para pistas. El WASM se carga al pedir la primera
+- Errores, conflictos y autocompletar notas se calculan en JS
+
+## Banco
+
+- 200 puzzles base por nivel, con su solución
+- Entra un puzzle solo si `analyze` da el nivel de su grupo
+- Generado en local, con las semillas registradas, y subido al repo como datos
+- Cada partida aplica una transformación aleatoria: rotación, bandas, pilas, filas,
+  columnas, permutación de dígitos
+- Sudoku del día: la fecha elige nivel, puzzle y transformación
+
 ## Pendiente
 
-- 3) Stack
-- 4) Motor: puente definitivo, Web Worker, banco pregenerado
 - 5) Interfaz
