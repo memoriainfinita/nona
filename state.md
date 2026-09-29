@@ -120,4 +120,5 @@ en los tres entornos. Una pasada por entorno.
 - [ ] Plan de implementación a partir de `design.md`
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
-- [ ] Medir `get_hint` a mitad de partida en WASM
+- [ ] Medir `get_hint_with_candidates` a mitad de partida en WASM. Antes, apuntar
+      `bench/Cargo.toml` al fork (sigue en `84696be` original)
