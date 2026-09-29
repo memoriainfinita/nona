@@ -4,6 +4,14 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-09-29 — Pista: técnica antes que celdas
+
+**Qué cambió:** el orden de la pista pasa de celdas → técnica → conclusión a técnica → celdas → conclusión.
+**Por qué:**
+- En un single, las celdas implicadas son la propia celda: el paso 1 daba la respuesta
+- En general, las celdas revelan más que el nombre de la técnica; lo que menos revela va primero
+- Usa solo datos estructurados del motor (técnica y celdas); la zona solo existe dentro del texto de la explicación
+
 ### 2026-09-29 — Fuera los toques progresivos del boceto
 
 **Qué cambió:** el ciclo de tres toques en celda con número (seleccionar → resaltar → borrar), listado como idea que entraba, queda fuera, y también el segundo toque en celda vacía para notas.

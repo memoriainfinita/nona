@@ -33,7 +33,18 @@ last_updated: 2026-09-29
   y caja
 - Contador de cuántos quedan de cada dígito en la botonera
 - Deshacer y rehacer
-- Teclado: flechas, 1-9, M notas, Espacio, Retroceso/Supr, Ctrl+Z / Ctrl+Y
+- Herramientas: Undo, Redo, Notes, Color, Erase, Fill notes, Hint
+- Teclado: flechas, 1-9, M notas, Espacio, Retroceso/Supr, Ctrl+Z / Ctrl+Y, H pista,
+  C modo color
+
+## Colorear casillas
+
+- Casillas enteras
+- Herramienta Color: mientras está activa, la botonera pasa a ser paleta de 8 colores y
+  "sin color"
+- Teclado en modo color: 1-8 elige color, 9 o 0 sin color
+- Entran en deshacer/rehacer y se guardan con la partida
+- Sobre casilla coloreada, las notas se aclaran para que se lean
 
 ## Reglas
 
@@ -43,13 +54,14 @@ last_updated: 2026-09-29
 
 ## Partidas
 
-- Varias en curso, guardado automático, se reanudan desde estadísticas
-- Pantalla de victoria: jugar otro del mismo nivel o volver al menú
+- Varias en curso, guardado automático, se reanudan desde el menú y desde estadísticas
+- Pantalla de victoria: tiempo, nivel, aviso de mejor tiempo si lo es, jugar otro del
+  mismo nivel o volver al menú
 - Cronómetro
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
-- Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis
-  (ver Banco)
+- Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis, visible
+  antes de empezar (ver Banco)
 
 ## Niveles
 
@@ -58,9 +70,16 @@ last_updated: 2026-09-29
 
 ## Pistas
 
-- Progresivas: 1) celdas implicadas, 2) técnica, 3) conclusión y explicación
+- Progresivas: 1) técnica, 2) celdas implicadas, 3) conclusión y explicación
+- Paso 3: botón Apply aplica la conclusión
 - Siguiente deducción: colocar un número o quitar candidatos
 - Sobre los candidatos del motor, no sobre las notas del jugador (ver Motor)
+- Si hay números que no coinciden con la solución, la pista los marca y ofrece quitarlos,
+  en un paso, antes de la siguiente deducción
+- La tarjeta ocupa el sitio de la fila de herramientas; la botonera sigue visible
+- Se cierra con Close o Esc, con Apply, con cualquier jugada en el tablero o con Ctrl+Z.
+  Abierta, no hay herramientas en pantalla
+- Teclado: H abre, Enter siguiente paso, Esc cierra
 
 ## Estadísticas
 
@@ -72,24 +91,36 @@ last_updated: 2026-09-29
 
 ## Ajustes
 
-| Ajuste | Valores |
-|---|---|
-| Errores | no marcar / conflictos (repetidos en fila, columna o caja) / contra la solución |
-| Notas autolimpiables | sí / no |
-| Contador por dígito | sí / no |
-| Dígitos completos en la botonera | atenuar / ocultar |
-| Modo de entrada | número primero / celda primero |
-| Sombreado de zona | sí / no |
-| Resaltado de dígito | sí / no |
-| Cronómetro visible | sí / no; mide igual oculto |
-| Botón de pista | sí / no |
-| Botón de autocompletar notas | sí / no |
-| Pausa automática al cambiar de pestaña o bloquear el móvil | sí / no |
-| Tema | claro / oscuro / sistema |
-| Tamaño de números y notas | [PENDIENTE: punto 5] |
-| Vibración en móvil al colocar o al cometer un error | sí / no |
+| Ajuste | Valores | Por defecto |
+|---|---|---|
+| Errores | no marcar / conflictos (repetidos en fila, columna o caja) / contra la solución | contra la solución |
+| Notas autolimpiables | sí / no | sí |
+| Contador por dígito | sí / no | sí |
+| Dígitos completos en la botonera | atenuar / ocultar | atenuar |
+| Modo de entrada | número primero / celda primero | número primero |
+| Sombreado de zona | sí / no | sí |
+| Resaltado de dígito | sí / no | sí |
+| Cronómetro visible | sí / no; mide igual oculto | sí |
+| Botón de pista | sí / no | sí |
+| Botón de autocompletar notas | sí / no | sí |
+| Pausa automática al cambiar de pestaña o bloquear el móvil | sí / no | sí |
+| Tema | claro / oscuro / sistema | sistema |
+| Acento | ámbar / rosa / violeta / azul / turquesa / verde | ámbar |
+| Tamaño de números y notas | S / M / L | M |
+| Vibración en móvil al colocar o al cometer un error | sí / no | sí |
 
-- [PENDIENTE: punto 5] Valor por defecto de cada ajuste
+- Coral descartado como acento: se confunde con el rojo de los errores
+
+## Interfaz
+
+- Maquetas: lienzo de Claude Design https://claude.ai/artifact/YE8Y6Qxn6K4PEQdsze4nGX
+- Estilo oscuro con acento
+- Móvil: botonera en fila de 9
+- Tablet: vertical y horizontal
+- Escritorio: barra lateral con Play, Stats, Settings
+- Menú: Continue (partidas en curso), sudoku del día, nuevo juego (6 niveles + Start)
+- Pausa en tablet y escritorio: pantalla completa sin tablero
+- [PENDIENTE] Tema claro: colores, los seis acentos en claro, paleta de casillas en claro
 
 ## Stack
 
@@ -124,7 +155,3 @@ last_updated: 2026-09-29
 - Cada partida aplica una transformación aleatoria: rotación, bandas, pilas, filas,
   columnas, permutación de dígitos
 - Sudoku del día: la fecha elige nivel, puzzle y transformación
-
-## Pendiente
-
-- 5) Interfaz
