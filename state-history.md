@@ -4,6 +4,14 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-09-29 — Fuera los toques progresivos del boceto
+
+**Qué cambió:** el ciclo de tres toques en celda con número (seleccionar → resaltar → borrar), listado como idea que entraba, queda fuera, y también el segundo toque en celda vacía para notas.
+**Por qué:**
+- Cada acción ya tiene otro camino: resaltado automático al seleccionar, número fijado en la botonera, goma, mismo número, Retroceso/Supr, botón Notas y M
+- En táctil, un toque de más borra o cambia de modo sin aviso
+- Choca con "número primero": con un número fijado, tocar una celda vacía lo escribe
+
 ### 2026-09-29 — Motor: descartados sudoku-core (npm), sudoku-gen y TSudoku
 
 **Qué cambió:** se eligió kcirtapfromspace/sudoku-core (Rust) tras probar y descartar las opciones JS.

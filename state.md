@@ -16,18 +16,14 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 
 - Se empieza de cero. El código de AI Studio queda como boceto de la interacción en el
   primer commit (`5f3fa40`): React 19 + Vite 6 + TypeScript. Motivo en `state-history.md`
-- Del boceto se aprovechan ideas, no código:
-  - Clic en celda con número: seleccionar → resaltar ese número en el tablero → borrar
-  - Al colocar un número, se quita de las notas de su fila, columna y caja
-  - Contador de cuántos quedan por colocar de cada número
-  - Deshacer y rehacer; teclado: flechas, 1-9, M para notas, Espacio
-  - Estadísticas diarias y mejores tiempos en localStorage
+- Del boceto se aprovechan ideas, no código. Las que entran están en `design.md`
 - Motor elegido: [kcirtapfromspace/sudoku-core](https://github.com/kcirtapfromspace/sudoku-core)
   (Rust, MIT), commit probado `84696be`. 45 técnicas humanas, pista con explicación y
   celdas implicadas, calificación por técnica y en escala SE, generador con solución única
 - La versión WASM del repo hermano `kcirtapfromspace/sudoku` es un juego completo en
   canvas, no una librería: hay que escribir un puente wasm-bindgen propio
-- Sin diseño de app todavía
+- Diseño en `design.md`: decididos plataforma, datos, idioma y funciones del juego.
+  Faltan stack, motor e interfaz
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -107,6 +103,6 @@ en los tres entornos. Una pasada por entorno.
 
 ## TODO
 
-- [ ] Diseñar la app: puente WASM, motor en Web Worker, banco pregenerado al menos para
-      master, qué ideas del boceto entran
+- [ ] Diseño, lo que falta: stack; motor (puente definitivo, Web Worker, banco
+      pregenerado al menos para master); interfaz. Ver `design.md`
 - [ ] Medir `get_hint` a mitad de partida en WASM
