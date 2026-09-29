@@ -1,0 +1,6 @@
+{
+  "name": "Zen Sudoku Master",
+  "description": "A minimalist, high-performance Sudoku application featuring infinite puzzles, daily progress tracking, and pencil-mark annotations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
