@@ -63,6 +63,32 @@ last_updated: 2026-09-29
 - Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis, visible
   antes de empezar (ver Banco)
 
+## Reglas de registro
+
+- Partida resuelta con pistas: cuenta como completada y suma XP, no marca mejor tiempo; la
+  victoria indica "solved with hints"
+- Apply de una eliminación: quita esos candidatos de las notas del jugador si los tiene; sin
+  notas en la celda, no cambia nada visible y la pista queda aplicada
+- Autocompletar notas: solo celdas vacías sin notas; las anotadas no se tocan; se deshace
+  como una sola jugada
+- Deshacer/rehacer: todo cambio del tablero (números, notas, colores, autocompletar, Apply).
+  Pausa y abrir o cerrar la pista no entran
+- Sudoku del día: manda la fecha UTC. Sin terminar ese día, sigue como partida en curso
+  normal; solo cuenta como "del día" si se resuelve dentro de su fecha
+
+## Datos locales
+
+- IndexedDB: partidas en curso (con deshacer, colores y candidatos del motor), historial
+  completo, mejores tiempos y ajustes. La pantalla muestra los 10 últimos completados
+- Exportación: JSON con versión de formato; incluye partidas, historial, mejores tiempos y
+  ajustes; nombre `nona-backup-AAAA-MM-DD.json`. La versión permite rechazar archivos de una
+  versión más nueva
+
+## Web
+
+- Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
+- Icono de la app: [PENDIENTE: en diseño en el lienzo]
+
 ## Niveles
 
 - Easy, Medium, Intermediate, Hard, Expert, Master
