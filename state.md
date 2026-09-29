@@ -84,6 +84,15 @@ en los tres entornos. Una pasada por entorno.
 - Arnés de prueba en el scratchpad de la sesión: copia del motor con un `raw_step`
   público añadido; no se conserva
 
+### Bucle de pistas (2026-09-29, nativo)
+
+- Confirmado: tras aplicar una eliminación, `get_hint` devuelve la misma (35/35).
+  Pistas que son eliminación: medium 0%, hard 2%, expert 3%, master 12% del camino
+  de solución; todo hard+ la encuentra
+- `find_first_technique` (respeta candidatos) es privada. Salidas: solo
+  `get_next_placement`, o fork con un `get_hint` público sin recalcular. Sin decidir
+- `get_hint` a mitad de partida en nativo: menos de 5 ms
+
 ## Patterns
 
 - [pnpm] `esbuild: false` en `allowBuilds` de `pnpm-workspace.yaml`: el binario llega
@@ -105,6 +114,6 @@ en los tres entornos. Una pasada por entorno.
 ## TODO
 
 - [ ] Plan de implementación a partir de `design.md`
-- [ ] Lienzo: las maquetas siguen en ámbar; pasar el acento por defecto a índigo (el
-      icono ya tiene índigo en la página "Logo")
+- [x] Lienzo: pasar el acento por defecto a índigo
+- [ ] Decidir la salida al bucle de pistas
 - [ ] Medir `get_hint` a mitad de partida en WASM
