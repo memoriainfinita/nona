@@ -61,7 +61,7 @@ last_updated: 2026-09-30
   mismo nivel o volver al menú
 - Cronómetro: el tiempo se guarda con la partida y sobrevive a recargar. Corre solo con la
   pantalla de juego visible y sin pausa; al salir al menú se detiene y al reanudar sigue.
-  Sin pausa automática, sigue corriendo al cambiar de pestaña
+  Con la pausa automática desactivada, sigue corriendo al cambiar de pestaña
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
 - Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis, visible
