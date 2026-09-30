@@ -22,7 +22,8 @@ last_updated: 2026-09-30
 
 - Modo de entrada configurable (ver Ajustes):
   - Número primero: tocar un número en la botonera lo deja fijado; cada celda vacía que
-    se toque lo recibe
+    se toque lo recibe. Tocar otra vez el número fijado activa las notas; una tercera vez lo
+    suelta y apaga las notas. Tocar otro número lo fija sin cambiar el modo de notas
   - Celda primero: seleccionar la celda y luego el número
 - Seleccionar una celda con número resalta sus iguales en el tablero y en las notas
 - Sombreado de fila, columna y caja de la celda seleccionada

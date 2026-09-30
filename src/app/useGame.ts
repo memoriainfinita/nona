@@ -256,9 +256,13 @@ export function useGame(initial: Game): [GameView, GameActions] {
     tapDigit: (digit) => {
       if (paused || victory) return
       if (inputFirst) {
-        // Number first: the key fixes the digit; every cell tapped then receives it.
-        setPinned(pinnedRef.current === digit ? null : digit)
+        // Number first: the key fixes the digit; every cell tapped then receives it. Tapping the
+        // fixed digit again turns notes on; a third tap unpins it and turns notes off.
         setEraseMode(false)
+        if (pinnedRef.current !== digit) return setPinned(digit)
+        if (!notesMode) return setNotesMode(true)
+        setPinned(null)
+        setNotesMode(false)
         return
       }
       if (selectedRef.current !== null) writeDigit(selectedRef.current, digit)

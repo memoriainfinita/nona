@@ -73,6 +73,23 @@ describe('number first (default)', () => {
     await waitFor(() => label(i).endsWith('empty'))
   })
 
+  test('tapping the pinned digit again turns notes on; a third tap unpins it and turns notes off', async () => {
+    await startGame()
+    const five = () => button(/^5, /)
+    const notesOn = () => button('Notes').getAttribute('aria-pressed') === 'true'
+    five().click()
+    await waitFor(() => five().getAttribute('aria-pressed') === 'true')
+    expect(notesOn()).toBe(false)
+    five().click()
+    await waitFor(() => notesOn())
+    expect(five().getAttribute('aria-pressed')).toBe('true')
+    const i = emptyIndex()
+    cells()[i].click()
+    await waitFor(() => cells()[i].querySelector('.notes')?.textContent === '5')
+    five().click()
+    await waitFor(() => five().getAttribute('aria-pressed') === 'false' && !notesOn())
+  })
+
   test('colour mode: the pinned colour paints a cell, and painting it again clears it', async () => {
     await startGame()
     button('Color').click()
