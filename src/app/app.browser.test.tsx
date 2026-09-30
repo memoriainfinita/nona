@@ -149,7 +149,7 @@ describe('keyboard', () => {
     await waitFor(() => label(target).includes(', 7'))
     key('Backspace')
     await waitFor(() => label(target).endsWith('empty'))
-    key('m')
+    key('n')
     await waitFor(() => button('Notes').getAttribute('aria-pressed') === 'true')
     key('4')
     await waitFor(() => cells()[target].querySelector('.notes')?.textContent === '4')

@@ -370,7 +370,7 @@ export function useGame(initial: Game): [GameView, GameActions] {
     }
     if (key === 'Backspace' || key === 'Delete') return e.preventDefault(), actions.eraseSelected()
     const k = key.toLowerCase()
-    if (k === 'm') return actions.toggleNotes()
+    if (k === 'n') return actions.toggleNotes()
     if (k === 'e') return actions.toggleErase()
     if (k === 'c') return actions.toggleColor()
     if (k === 'h' && settings.hintButton) return actions.openHint()
