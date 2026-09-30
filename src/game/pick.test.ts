@@ -2,8 +2,9 @@ import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
 import { loadDaily, loadLevel } from '../bank/bank'
 import { conflictCells } from './grid'
-import { dailyPuzzle, dayIndex, pickPuzzle } from './pick'
+import { dailyPuzzle, dayIndex, historyPuzzle, pickPuzzle } from './pick'
 import { seededRng } from './rng'
+import { randomTransform } from './transform'
 
 const daily = await loadDaily()
 const easy = await loadLevel('easy')
@@ -58,5 +59,20 @@ describe('normal games', () => {
   test('with every base played, it still picks one', () => {
     const played = new Set(easy.map((p) => p.seed))
     expect(easy).toContain(pickPuzzle(easy, played, seededRng(1)).entry)
+  })
+})
+
+describe('history puzzle', () => {
+  test('rebuilds the puzzle as it was played, searching the lists in order', () => {
+    const played = pickPuzzle(easy, new Set(), seededRng(3))
+    expect(historyPuzzle([easy], played.entry.seed, played.transform)).toEqual(played)
+    const today = dailyPuzzle(daily, '2026-11-20', '2026-10-01')
+    expect(historyPuzzle([easy, daily], today.entry.seed, today.transform)).toEqual(today)
+  })
+
+  test('without a transform, the base puzzle; an unknown seed gives null', () => {
+    const base = historyPuzzle([easy], easy[0].seed)!
+    expect(base.givens.join('')).toBe(easy[0].puzzle.replaceAll('.', '0'))
+    expect(historyPuzzle([easy], -1, randomTransform(seededRng(1)))).toBeNull()
   })
 })

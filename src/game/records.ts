@@ -1,5 +1,6 @@
 import type { Level } from '../bank/bank'
 import type { Game } from './game'
+import type { Transform } from './transform'
 
 export const XP_PER_SUDOKU = 100
 
@@ -13,6 +14,8 @@ export interface HistoryEntry {
   timeMs: number
   hintsUsed: number
   completedAt: number
+  /** Transformation the puzzle was played with. Missing in entries saved before it was kept. */
+  transform?: Transform
 }
 
 /** UTC date as YYYY-MM-DD. */
@@ -37,6 +40,7 @@ export function completeGame(game: Game, id: string, now: number): HistoryEntry 
     timeMs: game.elapsedMs,
     hintsUsed: game.hintsUsed,
     completedAt: now,
+    transform: game.transform,
   }
 }
 

@@ -1,6 +1,6 @@
 import type { BankPuzzle, DailyPuzzle } from '../bank/bank'
 import { type Rng, randomInt, stringRng } from './rng'
-import { applyTransform, randomTransform, type Transform } from './transform'
+import { applyTransform, IDENTITY, randomTransform, type Transform } from './transform'
 
 /**
  * First day of the daily list (UTC). Fixed at publication (plan.md, Fase 6); until then, a
@@ -53,4 +53,21 @@ export function pickPuzzle(list: readonly BankPuzzle[], played: ReadonlySet<numb
   const fresh = list.filter((p) => !played.has(p.seed))
   const pool = fresh.length ? fresh : list
   return transformed(pool[randomInt(rng, pool.length)], randomTransform(rng))
+}
+
+/**
+ * The puzzle of a history entry, as it was played. Seeds are unique across the whole bank, so the
+ * entry's level list is searched first and the daily list after (a daily solved late has no date).
+ * Entries without a transform show the base puzzle. null if the seed is not in the bank.
+ */
+export function historyPuzzle(
+  lists: readonly (readonly BankPuzzle[])[],
+  seed: number,
+  transform: Transform = IDENTITY,
+): Picked<BankPuzzle> | null {
+  for (const list of lists) {
+    const entry = list.find((p) => p.seed === seed)
+    if (entry) return transformed(entry, transform)
+  }
+  return null
 }

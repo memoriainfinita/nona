@@ -38,17 +38,19 @@ const moves = z.array(
   ),
 )
 
+const transformSchema = z.object({
+  rows: z.array(int(0, 8)).length(9),
+  cols: z.array(int(0, 8)).length(9),
+  rotation: int(0, 3),
+  digits: z.array(int(0, 9)).length(10),
+})
+
 const gameSchema = z.object({
   id: z.string().min(1),
   level,
   seed: int(0, Number.MAX_SAFE_INTEGER),
   daily: date.nullable(),
-  transform: z.object({
-    rows: z.array(int(0, 8)).length(9),
-    cols: z.array(int(0, 8)).length(9),
-    rotation: int(0, 3),
-    digits: z.array(int(0, 9)).length(10),
-  }),
+  transform: transformSchema,
   givens: cells(9),
   solution: cells(9),
   board: z.object({ values: cells(9), notes: cells(0x3fe), colors: cells(8), eliminated: cells(0x3fe) }),
@@ -68,6 +70,7 @@ const historySchema = z.object({
   timeMs: z.number().min(0),
   hintsUsed: int(0, Number.MAX_SAFE_INTEGER),
   completedAt: z.number(),
+  transform: transformSchema.optional(),
 }) satisfies z.ZodType<HistoryEntry>
 
 const settingsSchema = z

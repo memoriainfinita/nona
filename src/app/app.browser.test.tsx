@@ -184,6 +184,16 @@ describe('games', () => {
     window.location.hash = '/stats'
     await waitFor(() => $('.stats'))
     expect($('.tile-value')!.textContent).toBe('1')
+    $<HTMLButtonElement>('.history-row')!.click()
+    await waitFor(() => $$('.dialog .board.readonly .cell').length === 81)
+    const solved = $$('.dialog .board.readonly .value').map((v) => Number(v.textContent))
+    expect(solved.every((v) => v >= 1 && v <= 9)).toBe(true)
+    expect($('.dialog')!.textContent).not.toContain('Saved before')
+    button('Play again').click()
+    await waitFor(() => !$('.dialog') && $('.board[role="grid"] .cell'))
+    const givens = cells().flatMap((c, i) => (c.getAttribute('aria-label')!.includes('given') ? [i] : []))
+    expect(givens.length).toBeGreaterThan(0)
+    for (const i of givens) expect(label(i)).toContain(`, ${solved[i]}, given`)
   }, 60_000)
 
   test('a game in progress survives a reload; discard can be undone', async () => {

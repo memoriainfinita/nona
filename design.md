@@ -144,6 +144,10 @@ last_updated: 2026-09-30
 - Actividad de los últimos 7 días
 - Mejor tiempo por nivel
 - Historial de los 10 últimos completados
+- Tocar una entrada del historial abre el tablero resuelto en solo lectura (pistas iniciales como
+  en el juego, lo demás en el acento), con tiempo, pistas y fecha, y Play again: partida normal
+  nueva con el mismo puzzle y la misma transformación, también si era un sudoku del día
+- Las entradas guardan la transformación; las anteriores a eso muestran el puzzle base, con aviso
 - Actividad e historial en fecha local del dispositivo; solo el sudoku del día usa UTC
 
 ## Ajustes

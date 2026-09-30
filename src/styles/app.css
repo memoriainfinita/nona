@@ -815,6 +815,11 @@ p {
 }
 
 .list-row .time { width: 64px; text-align: right; }
+.history-row { width: 100%; padding: 0; background: none; border-width: 0 0 1px; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.history-row:hover .grow { color: var(--accent); }
+
+.board.readonly .cell { cursor: default; }
+.dialog .board.readonly { max-width: 360px; align-self: center; }
 
 /* ---------- Settings ---------- */
 

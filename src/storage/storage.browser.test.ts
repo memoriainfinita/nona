@@ -172,4 +172,15 @@ describe('export and import', () => {
     expect(parseBackup(JSON.stringify({ ...valid, version: BACKUP_VERSION + 1 }))).toEqual({ ok: false, error: 'newer' })
     expect(parseBackup(JSON.stringify(valid)).ok).toBe(true)
   })
+
+  test('history entries saved without a transform still import', () => {
+    const file = { app: 'nona', version: BACKUP_VERSION, exportedAt: 0, games: [], history: [entry('old')], settings: {} }
+    const parsed = parseBackup(JSON.stringify(file))
+    if (!parsed.ok) throw new Error(parsed.error)
+    expect(parsed.backup.history[0].transform).toBeUndefined()
+    const withTransform = { ...entry('new'), transform: game('x').transform }
+    const again = parseBackup(JSON.stringify({ ...file, history: [withTransform] }))
+    if (!again.ok) throw new Error(again.error)
+    expect(again.backup.history[0]).toEqual(withTransform)
+  })
 })

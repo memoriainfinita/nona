@@ -32,6 +32,7 @@ describe('completing a game', () => {
   test('records level, seed, time and hints', () => {
     const e = completeGame(game({ elapsedMs: 4321, hintsUsed: 2 }), 'h1', Date.parse('2026-10-05T10:00:00Z'))
     expect(e).toMatchObject({ id: 'h1', level: 'hard', seed: 7, timeMs: 4321, hintsUsed: 2, daily: null })
+    expect(e.transform).toEqual(game({}).transform)
   })
 
   test('a daily counts as daily only when solved within its UTC date', () => {
