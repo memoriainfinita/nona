@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-09-30
+last_updated: 2026-10-01
 ---
 
 # nona — state
@@ -78,6 +78,9 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   `DAILY_EPOCH` fijado en `2026-09-30`. size-limit en gzip: JS inicial 88,08 kB (tope 97), WASM
   151,17 kB (tope 167). Comprobada la web publicada en Playwright Firefox: inicio, partida, pista
   con worker y WASM, sudoku del día; sin errores de página ni peticiones fallidas
+- README con capturas en `docs/` (móvil oscuro con pista, escritorio oscuro, historial en claro),
+  sacadas de la web publicada. About del repo: descripción "Sudoku with hints that show you how to
+  solve it, not just the answer" (igual en README e `index.html`), homepage a Pages y 10 topics
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
 ### Pruebas del motor (2026-09-29, nativo, release)
