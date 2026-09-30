@@ -26,7 +26,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   `design.md`: 28 pantallas por dispositivo (móvil, tablet, escritorio), tema claro,
   acentos y componentes
 - Plan de implementación en `plan.md`, fases 0–6
-- Fase 0 en curso: esqueleto Vite 8 + React 19.3 + TS 7 con tests en Node y Firefox. Faltan repo, LICENSE y CI
+- Fase 0 terminada: esqueleto Vite 8 + React 19.3 + TS 7, tests en Node y Firefox. Repo público
+  https://github.com/memoriainfinita/nona con CI en verde (typecheck, tests, build)
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -144,7 +145,8 @@ pistas, midiendo cada llamada desde JS.
 ## TODO
 
 - [x] Plan de implementación a partir de `design.md`: `plan.md`
-- [ ] Fase 0 de `plan.md`: base
+- [x] Fase 0 de `plan.md`: base
+- [ ] Fase 1 de `plan.md`: motor
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM
