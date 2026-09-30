@@ -1,0 +1,23 @@
+{
+  "batches": [
+    {
+      "added": {
+        "daily": 732,
+        "easy": 500,
+        "expert": 500,
+        "hard": 500,
+        "intermediate": 500,
+        "master": 500,
+        "medium": 500
+      },
+      "engine": {
+        "repo": "https://github.com/memoriainfinita/sudoku-core",
+        "rev": "f56364e"
+      },
+      "generator": "gen-bank 0.1.0",
+      "timeoutSeconds": 180
+    }
+  ],
+  "format": 1,
+  "seeds": "requested level index * 1000000 + n; levels easy, medium, intermediate, hard, expert, master"
+}

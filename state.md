@@ -33,6 +33,12 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   descarta el worker y el siguiente intento arranca otro). WASM tras wasm-opt: 375 KiB.
   Tests en Firefox: los cuatro puzzles de semilla 1 resueltos solo con pistas (48, 55, 59 y 68,
   las mismas que el bench), EngineError y EngineLoadError. CI compila el WASM y queda en verde
+- Fase 2 terminada: banco en `bank/`, 500 puzzles por nivel y lista del día de 732 (122 por nivel).
+  `gen-bank verify` sobre los 3732: nivel de `analyze`, solución única y guardada, sin repetidos.
+  Generación: 3,3 h de CPU, unos 50 min con 3 procesos; 5086 intentos, 0 timeouts (tope 180 s)
+- Coste por puzzle aceptado (piloto y tanda completa): easy y medium ~0,01 s; intermediate
+  ~0,2 s (sale de los hard pedidos); hard ~2 s (1 de cada 4 hard pedidos); expert ~2,4 s;
+  master ~15 s (9 de cada 10 master pedidos). Los intermediate pedidos salen medium (197/210)
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita) y el worker con WASM
   en `vite build` (la app aún no lo importa; se comprueba en la Fase 5)
 
@@ -148,6 +154,9 @@ pistas, midiendo cada llamada desde JS.
 - [engine] `pnpm build:engine` antes de typecheck, test o dev: `src/engine` importa `engine/pkg`,
   que no se versiona. wasm-bindgen fijado a `=0.2.129` en `engine/Cargo.toml`; la CI instala el CLI
   de esa versión. wasm-opt sale del paquete npm `binaryen`, igual en local y en CI. Confirmed 2026-09.
+- [bank] Ampliar el banco: `gen-bank run --target N` (reanuda de `bank/work/log.jsonl`),
+  `assemble --normal A --daily B` (totales por nivel; solo añade por el final y registra la tanda
+  en `meta.json`), `verify`. `bank/work/` no se versiona. Confirmed 2026-09.
 
 ## Preferences
 
@@ -158,7 +167,8 @@ pistas, midiendo cada llamada desde JS.
 - [x] Plan de implementación a partir de `design.md`: `plan.md`
 - [x] Fase 0 de `plan.md`: base
 - [x] Fase 1 de `plan.md`: motor
-- [ ] Fase 2 de `plan.md`: banco
+- [x] Fase 2 de `plan.md`: banco
+- [ ] Fase 3 de `plan.md`: lógica de juego
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM

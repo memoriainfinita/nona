@@ -11,7 +11,7 @@ const out = `${engine}/pkg`
 const wasmOpt = `${root}node_modules/binaryen/bin/wasm-opt`
 const run = (cmd, args) => execFileSync(cmd, args, { cwd: engine, stdio: 'inherit' })
 
-run('cargo', ['build', '--release', '--target', 'wasm32-unknown-unknown'])
+run('cargo', ['build', '--release', '--lib', '--target', 'wasm32-unknown-unknown'])
 run('wasm-bindgen', [wasm, '--target', 'web', '--out-dir', out])
 run(process.execPath, [wasmOpt, '-O3', '--enable-bulk-memory', '--enable-nontrapping-float-to-int',
   '--enable-sign-ext', '--enable-reference-types', '--enable-multivalue',

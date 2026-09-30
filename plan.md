@@ -38,17 +38,20 @@ Implementación de `design.md`. Estado de cada fase en `state.md`.
 ## Fase 2: banco
 
 - Binario `gen-bank` en `engine/`
-- Pide a varios niveles; cada puzzle va al nivel que da `analyze`, hasta 200 por nivel
+- Pide a varios niveles; cada puzzle va al nivel que da `analyze`, hasta el objetivo por nivel (banco normal + lista del día)
 - Varios hilos, tope de tiempo por llamada, semilla por puzzle, reanudable
 - Tanda piloto: puzzles por hora en cada nivel. Con eso se estima la generación completa
   - Easy sin generar hasta ahora; medir también cuántos "easy" pedidos salen Beginner (fuera de los seis niveles)
-- Formato: `bank/v1/<nivel>.json`, lista de `{seed, puzzle, solution}` en cadenas de 81 caracteres, `.` en casillas vacías (formato `to_string_compact` del motor)
-- `bank/v1/meta.json`: commit del motor, versión del generador y nivel pedido por semilla
-- La app carga cada nivel con import dinámico al empezar partida
-- `bank/v1` es inmutable una vez publicado; el sudoku del día sale siempre de él
+- Banco normal: `bank/<nivel>.json`, lista de `{seed, puzzle, solution}` en cadenas de 81 caracteres, `.` en casillas vacías (formato `to_string_compact` del motor)
+- Lista del día: `bank/daily.json`, lista ordenada de `{seed, level, puzzle, solution}`; cada tanda con el mismo número por nivel, barajada al generarla
+- `bank/meta.json`: una entrada por tanda con commit del motor, versión del generador y cuántos añadió; el nivel pedido va en la semilla
+- `gen-bank assemble` solo añade por el final: conserva lo que ya hay en `bank/` y reparte lo nuevo sin repetir puzzles entre los dos conjuntos
+- `gen-bank verify`: recomprueba cada puzzle con el motor nativo (nivel de `analyze`, solución única y guardada)
+- La app carga cada nivel y la lista del día con import dinámico cuando hacen falta
+- Primera tanda: 500 por nivel en el banco normal y 122 por nivel en la lista del día (732 días): `run --target 622`, `assemble --normal 500 --daily 122`
 - La generación completa corre en segundo plano durante las fases 3 y 4
 
-**Terminado:** 200 puzzles por nivel en los seis niveles, cada uno con `analyze` igual a su nivel y solución única, subidos al repo con `meta.json`.
+**Terminado:** banco normal y lista del día con los tamaños de la primera tanda, `verify` sin fallos, tests del banco en verde, subidos al repo con `meta.json`.
 
 ## Fase 3: lógica de juego (TS, sin UI)
 
@@ -61,7 +64,8 @@ Implementación de `design.md`. Estado de cada fase en `state.md`.
 - Pista con números que no coinciden con la solución: los marca y ofrece quitarlos, en un paso, antes de la siguiente deducción
 - Pista usada: al mostrar el paso 1 o el de números erróneos, salvo con "Errores contra la solución" activo. Sin técnica también cuenta; con el motor sin cargar, no
 - Transformación aleatoria por partida, aplicada a puzzle y solución a la vez: rotación, bandas, pilas, filas, columnas, permutación de dígitos
-- Sudoku del día: PRNG determinista sembrado con la fecha UTC (`AAAA-MM-DD`) elige nivel, puzzle y transformación
+- Partida normal: elige primero bases del nivel que no estén en el historial; con todas jugadas, repite base con otra transformación
+- Sudoku del día: el día n desde la fecha de lanzamiento (UTC) juega la entrada n de la lista (vuelve al principio si se acaba); transformación con PRNG determinista sembrado con la fecha UTC (`AAAA-MM-DD`)
 - Reglas de registro: pistas usadas, mejor tiempo, "solved with hints", sudoku del día en su fecha UTC
 - Cronómetro como estado de la partida
 - Modelo de ajustes: los 15 de `design.md` con sus valores por defecto
@@ -71,7 +75,7 @@ Implementación de `design.md`. Estado de cada fase en `state.md`.
 
 ## Fase 4: persistencia
 
-- IndexedDB con `idb`: partidas en curso, historial completo, ajustes (con sus valores por defecto si no hay guardados); UUID en partidas e historial
+- IndexedDB con `idb`: partidas en curso, historial completo, ajustes (con sus valores por defecto si no hay guardados); UUID en partidas e historial; semilla del puzzle base en cada una
 - Mejores tiempos derivados del historial
 - Export JSON con versión de formato, `nona-backup-AAAA-MM-DD.json`
 - Import: validación con Zod, migración por versión, versión más nueva rechazada, Merge y Replace
@@ -100,6 +104,7 @@ Implementación de `design.md`. Estado de cada fase en `state.md`.
 
 ## Fase 6: publicación
 
+- Fijar la fecha de lanzamiento del sudoku del día
 - Primera compilación completa con `wasm-opt`: medir JS inicial y WASM en gzip, fijar los topes de size-limit con un 10% de margen
 - CI: compila el WASM, pasa todos los tests y size-limit, construye y publica en GitHub Pages. Si algo falla, no publica
 

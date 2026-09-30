@@ -64,8 +64,8 @@ last_updated: 2026-09-30
   Con la pausa automática desactivada, sigue corriendo al cambiar de pestaña
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
-- Sudoku del día: el mismo para cualquiera ese día; nivel aleatorio entre los seis, visible
-  antes de empezar (ver Banco)
+- Sudoku del día: el mismo para cualquiera ese día; su nivel lo da la lista del día y es
+  visible antes de empezar (ver Banco)
 
 ## Reglas de registro
 
@@ -90,6 +90,7 @@ last_updated: 2026-09-30
   completo y ajustes. La pantalla muestra los 10 últimos completados
 - Mejores tiempos: se calculan del historial (mínimo sin pistas, por nivel); no se guardan aparte
 - Cada partida y cada entrada del historial llevan un id único (UUID) desde que se crean
+- Cada partida y cada entrada del historial guardan la semilla de su puzzle base
 - Exportación: JSON con versión de formato; incluye partidas, historial y ajustes; nombre
   `nona-backup-AAAA-MM-DD.json`. Versión más nueva: se rechaza. Versión anterior: se migra
   al importar, con una función por versión
@@ -225,15 +226,23 @@ last_updated: 2026-09-30
 
 ## Banco
 
-- 200 puzzles base por nivel, con su solución
-- Entra un puzzle solo si `analyze` da el nivel de su grupo
+- Dos conjuntos sin puzzles en común: banco normal por nivel y lista del día
+- Cada puzzle con su solución; su semilla es su id
+- Entra un puzzle solo si `analyze` da su nivel
 - Generado en local, con las semillas registradas, y subido al repo como datos
-- Generación: se pide a varios niveles y cada puzzle va al nivel que da `analyze`, hasta 200
-  por nivel. Tope de tiempo por llamada, varios hilos, semilla por puzzle, reanudable
+- Generación: se pide a varios niveles y cada puzzle va al nivel que da `analyze`. Tope de
+  tiempo por llamada, varios hilos, semilla por puzzle, reanudable
 - Antes de la generación completa, tanda piloto que mide puzzles por hora en cada nivel
+- Los dos crecen solo por el final: lo publicado no cambia ni se reordena. Cada tanda nueva
+  se añade detrás
 - Cada partida aplica una transformación aleatoria: rotación, bandas, pilas, filas,
   columnas, permutación de dígitos
-- Sudoku del día: la fecha elige nivel, puzzle y transformación, con un PRNG determinista en
-  JS sembrado con la fecha UTC (`AAAA-MM-DD`)
-- El banco publicado es inmutable. Si se regenera o amplía, es un banco nuevo para partidas
-  normales; el sudoku del día sale siempre del primero
+- Banco normal: 500 puzzles por nivel en la primera tanda. La partida elige primero
+  bases que no estén en el historial del dispositivo para ese nivel; con todas jugadas,
+  repite base con otra transformación
+- Lista del día: una sola lista ordenada. El día n desde la fecha de lanzamiento (UTC) juega la
+  entrada n; la transformación sale de un PRNG determinista en JS sembrado con la fecha UTC
+  (`AAAA-MM-DD`). Cada tanda lleva el mismo número de puzzles de cada nivel, barajados al
+  generarla. Si la lista se acaba, vuelve a empezar por el principio (con otra transformación)
+- Lista del día: primera tanda de 732 (122 por nivel), dos años
+- Fecha de lanzamiento: [PENDIENTE: se fija al publicar]
