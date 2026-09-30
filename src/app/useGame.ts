@@ -62,6 +62,10 @@ export interface GameView {
 export interface GameActions {
   tapCell: (cell: number) => void
   tapDigit: (digit: number) => void
+  /** Right-click on a cell (number first): the pinned digit in the other notes mode. */
+  altCell: (cell: number) => void
+  /** Right-click on a digit (cell first): that digit into the selected cell, in the other notes mode. */
+  altDigit: (digit: number) => void
   tapColor: (color: number) => void
   toggleNotes: () => void
   toggleErase: () => void
@@ -225,10 +229,11 @@ export function useGame(initial: Game): [GameView, GameActions] {
     [victory, closeHint, settings.vibration, settings.errors, finishIfSolved],
   )
 
+  /** Writes a digit or a note, as the notes mode says; `invert` (right-click) does the other. */
   const writeDigit = useCallback(
-    (cell: number, digit: number) => {
+    (cell: number, digit: number, invert = false) => {
       const g = gameRef.current
-      play(notesMode ? toggleNoteMove(g, cell, digit) : placeMove(g, cell, digit, settings.autoCleanNotes), cell)
+      play(notesMode !== invert ? toggleNoteMove(g, cell, digit) : placeMove(g, cell, digit, settings.autoCleanNotes), cell)
     },
     [play, notesMode, settings.autoCleanNotes],
   )
@@ -257,6 +262,15 @@ export function useGame(initial: Game): [GameView, GameActions] {
         return
       }
       if (selectedRef.current !== null) writeDigit(selectedRef.current, digit)
+    },
+    altCell: (cell) => {
+      if (paused || victory || colorMode || eraseMode || !inputFirst || !pinnedRef.current) return
+      setSelected(cell)
+      writeDigit(cell, pinnedRef.current, true)
+    },
+    altDigit: (digit) => {
+      if (paused || victory || colorMode || inputFirst || selectedRef.current === null) return
+      writeDigit(selectedRef.current, digit, true)
     },
     tapColor: (color) => {
       if (paused || victory) return

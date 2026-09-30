@@ -15,6 +15,8 @@ interface Props {
   onCell: (cell: number) => void
   /** Keyboard focus reached a cell: select it. */
   onFocusCell: (cell: number) => void
+  /** Right mouse button on a cell. */
+  onAltCell: (cell: number) => void
 }
 
 const DIGITS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -24,7 +26,7 @@ function sameZone(a: number, b: number): boolean {
   return ra === rb || ca === cb || (Math.floor(ra / 3) === Math.floor(rb / 3) && Math.floor(ca / 3) === Math.floor(cb / 3))
 }
 
-export function Board({ game, selected, highlight, errors, hint, settings, onCell, onFocusCell }: Props) {
+export function Board({ game, selected, highlight, errors, hint, settings, onCell, onFocusCell, onAltCell }: Props) {
   // One Tab stop for the whole board: the selected cell (or the first). While the board has
   // focus, it follows the selection, so arrows move both.
   const ref = useRef<HTMLDivElement>(null)
@@ -54,7 +56,7 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
   const showSelection = !hintOpen && selected !== null
 
   return (
-    <div ref={ref} className="board" role="grid" aria-label="Sudoku board">
+    <div ref={ref} className="board" role="grid" aria-label="Sudoku board" onContextMenu={(e) => e.preventDefault()}>
       {values.map((v, i) => {
         const given = game.givens[i] !== 0
         const isError = errors.has(i) || mistakes.has(i)
@@ -82,6 +84,7 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
             tabIndex={i === (selected ?? 0) ? 0 : -1}
             onFocus={() => i !== selected && onFocusCell(i)}
             onClick={() => onCell(i)}
+            onPointerDown={(e) => e.button === 2 && e.pointerType === 'mouse' && onAltCell(i)}
           >
             {v ? (
               <span className={`value${given ? ' given' : ''}${isError && !given ? ' error' : ''}`}>{v}</span>

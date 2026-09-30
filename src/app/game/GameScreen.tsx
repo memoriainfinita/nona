@@ -19,7 +19,7 @@ interface Props {
 }
 
 const SHORTCUTS = {
-  game: 'Arrows move · 1–9 place · N notes · E erase · C color · H hint · Space pause · Ctrl+Z / Ctrl+Y',
+  game: 'Arrows move · 1–9 place · N notes · Right-click the other mode · E erase · C color · H hint · Space pause · Ctrl+Z / Ctrl+Y',
   hint: 'Enter next step or Apply · Esc close · Any move on the board closes the hint',
   color: 'C color mode · 1–8 pick a color · 9 or 0 no color',
 }
@@ -55,7 +55,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
       <span className="paused-time">{formatClock(game.elapsedMs)}</span>
     </div>
   ) : (
-    <Board game={game} selected={view.selected} highlight={highlight} errors={view.errors} hint={hint} settings={settings} onCell={act.tapCell} onFocusCell={act.selectCell} />
+    <Board game={game} selected={view.selected} highlight={highlight} errors={view.errors} hint={hint} settings={settings} onCell={act.tapCell} onFocusCell={act.selectCell} onAltCell={act.altCell} />
   )
 
   const tools = hint ? (
@@ -84,7 +84,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
   const keys = colorMode ? (
     <Palette current={paletteCurrent} named={wide} onColor={act.tapColor} />
   ) : (
-    <Keypad remaining={remaining} pinned={cellFirst ? null : view.pinned} notesMode={view.notesMode} settings={settings} long={wide} onDigit={act.tapDigit} />
+    <Keypad remaining={remaining} pinned={cellFirst ? null : view.pinned} notesMode={view.notesMode} settings={settings} long={wide} onDigit={act.tapDigit} onAltDigit={act.altDigit} />
   )
 
   const content =

@@ -126,6 +126,15 @@ describe('cell first', () => {
     cells()[i].click()
     button(/^3, /).click()
     await waitFor(() => label(i).includes(', 3'))
+    // Right-click on a digit: a note with Notes off, the value with Notes on.
+    const j = emptyIndex()
+    cells()[j].click()
+    await userEvent.click(button(/^4, /), { button: 'right' })
+    await waitFor(() => cells()[j].querySelector('.notes')?.textContent === '4')
+    button('Notes').click()
+    await waitFor(() => button('Notes').getAttribute('aria-pressed') === 'true')
+    await userEvent.click(button(/^6, /), { button: 'right' })
+    await waitFor(() => label(j).includes(', 6'))
   })
 })
 
@@ -163,6 +172,26 @@ describe('keyboard', () => {
     await waitFor(() => $('.paused-board, .pause-full'))
     key(' ')
     await waitFor(() => $('.board .cell'))
+  })
+})
+
+describe('right-click', () => {
+  test('number first: the pinned digit goes in the other notes mode', async () => {
+    await startGame()
+    button(/^5, /).click()
+    await waitFor(() => button(/^5, /).getAttribute('aria-pressed') === 'true')
+    const i = emptyIndex()
+    await userEvent.click(cells()[i], { button: 'right' })
+    await waitFor(() => cells()[i].querySelector('.notes')?.textContent === '5')
+    expect(label(i)).toMatch(/empty$/)
+    await userEvent.click(cells()[i], { button: 'right' })
+    await waitFor(() => !cells()[i].querySelector('.notes'))
+    button('Notes').click()
+    await waitFor(() => button('Notes').getAttribute('aria-pressed') === 'true')
+    await userEvent.click(cells()[i], { button: 'right' })
+    await waitFor(() => label(i).includes(', 5'))
+    button('Undo').click()
+    await waitFor(() => label(i).endsWith('empty'))
   })
 })
 

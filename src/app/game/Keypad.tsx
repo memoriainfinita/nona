@@ -8,11 +8,13 @@ interface Props {
   /** Long labels ("3 left", "done") on the wide layouts. */
   long: boolean
   onDigit: (digit: number) => void
+  /** Right mouse button on a digit. */
+  onAltDigit: (digit: number) => void
 }
 
-export function Keypad({ remaining, pinned, notesMode, settings, long, onDigit }: Props) {
+export function Keypad({ remaining, pinned, notesMode, settings, long, onDigit, onAltDigit }: Props) {
   return (
-    <div className={`keypad${notesMode ? ' notes-mode' : ''}`}>
+    <div className={`keypad${notesMode ? ' notes-mode' : ''}`} onContextMenu={(e) => e.preventDefault()}>
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => {
         const left = remaining[d]
         const done = left === 0
@@ -28,6 +30,7 @@ export function Keypad({ remaining, pinned, notesMode, settings, long, onDigit }
             aria-label={done ? `${d}, complete` : `${d}, ${left} left`}
             aria-pressed={settings.inputMode === 'digit-first' ? pinned === d : undefined}
             onClick={() => onDigit(d)}
+            onPointerDown={(e) => e.button === 2 && e.pointerType === 'mouse' && onAltDigit(d)}
           >
             <span className="key-digit">{d}</span>
             {settings.digitCounter && <span className="key-count">{count}</span>}
