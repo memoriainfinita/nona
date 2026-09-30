@@ -28,6 +28,13 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Plan de implementación en `plan.md`, fases 0–6
 - Fase 0 terminada: esqueleto Vite 8 + React 19.3 + TS 7, tests en Node y Firefox. Repo público
   https://github.com/memoriainfinita/nona con CI en verde (typecheck, tests, build)
+- Fase 1 terminada: crate `engine/` (puente del fork `f56364e`, `hint` sobre candidatos y `analyze`),
+  `HintEngine` en `src/engine/` (worker y WASM cargados en la primera pista; fallo de carga
+  descarta el worker y el siguiente intento arranca otro). WASM tras wasm-opt: 375 KiB.
+  Tests en Firefox: los cuatro puzzles de semilla 1 resueltos solo con pistas (48, 55, 59 y 68,
+  las mismas que el bench), EngineError y EngineLoadError. CI compila el WASM y queda en verde
+- Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita) y el worker con WASM
+  en `vite build` (la app aún no lo importa; se comprueba en la Fase 5)
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -138,6 +145,10 @@ pistas, midiendo cada llamada desde JS.
 - [bench] Medir en Firefox con COOP/COEP (`crossOriginIsolated`): sin ellas
   `performance.now()` pierde resolución y un `get_hint` marcó 0,0 ms. Confirmed 2026-09.
 
+- [engine] `pnpm build:engine` antes de typecheck, test o dev: `src/engine` importa `engine/pkg`,
+  que no se versiona. wasm-bindgen fijado a `=0.2.129` en `engine/Cargo.toml`; la CI instala el CLI
+  de esa versión. wasm-opt sale del paquete npm `binaryen`, igual en local y en CI. Confirmed 2026-09.
+
 ## Preferences
 
 - pnpm, no npm
@@ -146,7 +157,8 @@ pistas, midiendo cada llamada desde JS.
 
 - [x] Plan de implementación a partir de `design.md`: `plan.md`
 - [x] Fase 0 de `plan.md`: base
-- [ ] Fase 1 de `plan.md`: motor
+- [x] Fase 1 de `plan.md`: motor
+- [ ] Fase 2 de `plan.md`: banco
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM
