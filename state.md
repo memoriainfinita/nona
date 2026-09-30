@@ -212,4 +212,6 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- Sin pendientes
+- [ ] Revisar: el usuario ve pistas de "single" que no son singles (2026-09-30). Sin reproducir; falta
+  un caso concreto (puzzle y paso). Validado hasta ahora: 0 deducciones incorrectas en 117.660, pero
+  eso comprueba el resultado, no el nombre de la técnica
