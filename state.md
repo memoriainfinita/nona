@@ -82,21 +82,21 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   sacadas de la web publicada. About del repo: descripción "Sudoku with hints that show you how to
   solve it, not just the answer" (igual en README e `index.html`), homepage a Pages y 10 topics
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
-- Fase 7 (pistas legibles) diseñada, sin empezar. Revisión del 2026-10-01: 60 puzzles del banco
-  por nivel jugados solo con pistas a través del puente, con un script del scratchpad (no se
-  conserva; el arnés de la fase 7 lo sustituye). 0 pistas incorrectas. Hallazgos:
-  - Singles sobre candidatos que el jugador no ve: la app pasa los candidatos del motor (básicos
-    menos lo eliminado por pistas). Desde intermediate, en todas las partidas; ~800 de ~18.800
-    singles. Ejemplo: intermediate semilla 2000001, pista 22, "Naked Single" R4C6 = 5 con 2 y 5
-    en el tablero
-  - Una pista elimina en una sola celda: un patrón con varias afectadas sale como pistas seguidas
-    iguales (Box/Line 84 de 167, Pointing 136 de 460, Hidden Pair 80 de 240, X-Wing 30 de 60)
-  - Celdas implicadas sin papel (patrón y afectada mezcladas; singles sin su unidad; 3D Medusa
-    hasta 66 celdas, con repetidas)
-  - Explicaciones del motor pobres o mal formadas desde expert ("AIC: chain of length 9.",
-    fish con `["r1", "r4"]`, coordenadas "(8, 9)")
-  - Pistas avanzadas sobre candidatos que ya no están en las notas (Finned X-Wing 94 de 139)
-  - Fill notes rellena con candidatos básicos y devuelve lo que quitó una pista
+- Fase 7 (pistas legibles) implementada el 2026-10-01 y publicada.
+  Puente nuevo en `engine/src/lib.rs` (singles visibles primero, eliminaciones agrupadas, papeles,
+  `detail` por familia desde `ProofCertificate`); textos en `src/app/game/hintText.ts`; tablero con
+  papeles y candidatos del motor; Fill notes con candidatos del motor
+- Arnés `engine/examples/survey.rs`, 60 puzzles por nivel (20.210 pistas): 0 incorrectas, 0 patrones
+  repetidos, 0 sin plantilla, 0 cadenas con extremos falsos. Singles que dependen de eliminaciones
+  anteriores: 538, todas con aviso en la tarjeta. Menos pistas de eliminación: Box/Line 167 → 75,
+  Pointing 460 → 287 + 16 Pointing Triple, Naked Pair 760 → 348
+- Motivo de la fase (revisión del 2026-10-01, con el puente anterior): singles sobre candidatos que
+  el jugador no ve, una eliminación por pista, celdas sin papel, explicaciones del motor pobres o
+  mal formadas, Fill notes devolvía lo que quitaba una pista
+- Tests: 124 (Node y Firefox), typecheck y build en verde. size-limit: JS inicial 90,12 kB (tope 97),
+  WASM 166,73 kB (tope subido de 167 a 183 kB, 10% sobre lo medido)
+- Revisado con capturas de Playwright Firefox (móvil oscuro, escritorio claro, móvil claro): pasos 2
+  y 3 de Naked Pair y de Hidden Single
 
 ### Motor: lo que sigue vigente
 
@@ -104,8 +104,9 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 
 - `generate` no siempre entrega el nivel pedido
 - WASM no es más lento que el nativo en esta máquina; carga del módulo por worker 6–82 ms
-- Pistas a mitad de partida en WASM (fork `f56364e`): mediana de 0,07 a 0,13 ms; el peor caso, master,
-  hasta 184 ms nativo y 128 ms en Firefox
+- Pistas a mitad de partida en WASM (fork `f56364e`): mediana de 0,07 a 0,13 ms. Peor caso en master:
+  184 ms nativo con 3 puzzles; con 60 puzzles, 0,5–1 s nativo en AIC, XYZ-Wing y ALS-XZ (motor solo,
+  sin el puente; medido el 2026-10-01)
 - `get_hint` del motor original devuelve la misma eliminación en bucle; el fork añade
   `Solver::get_hint_with_candidates`, que usa los candidatos de la rejilla. La app guarda los
   candidatos del motor aparte de las notas del jugador
@@ -161,6 +162,9 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
   Confirmed 2026-09.
 - [size] Topes de size-limit en gzip (`"gzip": true`; sin él mide brotli), un 10% sobre lo medido.
   Confirmed 2026-09.
+- [hints] Regenerar `src/app/hint-samples.json` (una pista real por técnica para los tests de textos)
+  tras cambiar el puente: desde `engine/`, `cargo run --release --example survey -- 60 --dump
+  ../src/app/hint-samples.json`. Confirmed 2026-10.
 - [test] Tests de interfaz: `StoreProvider` cierra su conexión al desmontar (si no, `deleteDB` se
   bloquea); `optimizeDeps.include` evita que Vite recargue a mitad de test. Confirmed 2026-09.
 
@@ -170,5 +174,5 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 
 ## TODO
 
-- [ ] Fase 7: pistas legibles (`plan.md`)
+- [ ] Fase 7: prueba manual del usuario en Firefox (Hard, una pista de Pair o Pointing: patrón, candidatos y tachados legibles)
 - [ ] Después de la fase 7: una frase fija por técnica en el paso 1, que diga qué es

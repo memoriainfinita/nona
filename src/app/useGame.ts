@@ -334,7 +334,7 @@ export function useGame(initial: Game): [GameView, GameActions] {
         applyStep(step)
         askEngine(step.session)
       } else if (card.stage === 'conclusion') {
-        play(applyHintMove(gameRef.current, card.hint, settings.autoCleanNotes), card.hint.cell)
+        play(applyHintMove(gameRef.current, card.hint, settings.autoCleanNotes), card.hint.place?.cell)
       } else if (card.stage === 'technique' || card.stage === 'cells') {
         setHint(nextStage(hint))
       }

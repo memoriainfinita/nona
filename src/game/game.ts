@@ -193,10 +193,13 @@ export function colorMove(game: Game, cell: number, color: number): Move {
   return m.build()
 }
 
-/** Fills notes in empty cells that have none, from the placed values. Noted cells stay. One move. */
+/**
+ * Fills notes in empty cells that have none, with the engine candidates: what hints ruled out
+ * does not come back. Noted cells stay. One move.
+ */
 export function autoNotesMove(game: Game): Move {
   const m = new MoveBuilder(game.board)
-  const candidates = basicCandidates(game.board.values)
+  const candidates = engineCandidates(game)
   game.board.values.forEach((v, i) => {
     if (!v && !game.board.notes[i]) m.set('notes', i, candidates[i])
   })
@@ -230,24 +233,26 @@ export function engineCandidates(game: Game): Uint16Array {
 }
 
 export interface HintConclusion {
-  kind: 'place' | 'eliminate'
-  cell: number
-  values: number[]
+  place: { cell: number; value: number } | null
+  eliminations: { cell: number; values: number[] }[]
 }
 
 /**
- * Apply of a hint. A placement writes the value; an elimination removes the digits from the
- * engine candidates and from the player's notes when present. One move, so undo reverts both.
+ * Apply of a hint. A placement writes the value; eliminations remove the digits from the engine
+ * candidates and from the player's notes when present, in every cell of the pattern. One move,
+ * so undo reverts all of it.
  */
 export function applyHintMove(game: Game, hint: HintConclusion, autoCleanNotes: boolean): Move {
   const m = new MoveBuilder(game.board)
-  if (hint.kind === 'place') {
-    if (!game.givens[hint.cell]) placeInto(m, hint.cell, hint.values[0], autoCleanNotes)
+  if (hint.place) {
+    if (!game.givens[hint.place.cell]) placeInto(m, hint.place.cell, hint.place.value, autoCleanNotes)
     return m.build()
   }
-  const bits = hint.values.reduce((mask, v) => mask | (1 << v), 0)
-  m.set('eliminated', hint.cell, game.board.eliminated[hint.cell] | bits)
-  m.set('notes', hint.cell, game.board.notes[hint.cell] & ~bits)
+  for (const { cell, values } of hint.eliminations) {
+    const bits = values.reduce((mask, v) => mask | (1 << v), 0)
+    m.set('eliminated', cell, game.board.eliminated[cell] | bits)
+    m.set('notes', cell, game.board.notes[cell] & ~bits)
+  }
   return m.build()
 }
 

@@ -153,10 +153,13 @@ last_updated: 2026-10-01
   "R4C6 had 2 and 5; 2 was ruled out by an earlier hint"
 - Una pista agrupa todas las eliminaciones del mismo patrón (técnica, dígito y celdas del
   patrón): un Apply para todas, una sola jugada para Undo, cuenta como una pista
-  - Subsets, intersecciones y fish: las afectadas se calculan del patrón (resto de la unidad;
-    cubiertas menos bases)
-  - Wings, ALS, cadenas y rectángulos: se vuelve a preguntar al motor, saltando las singles
-    intercaladas, mientras salga el mismo patrón
+  - Las afectadas se calculan del patrón: subsets (resto de la unidad), intersecciones y fish
+    (cubiertas menos bases, viendo todas las aletas), ALS con z (celdas que ven todas las z),
+    Sue de Coq (cada conjunto, resto de su unidad), cadenas (celdas que ven los dos extremos)
+  - 3D Medusa, Empty Rectangle y rectángulos: solo la eliminación del motor
+  - Si el cálculo no incluye la eliminación del motor, se usa esa sola
+  - Volver a preguntar al motor tras cada eliminación se descartó: hasta 1 s más por pista en
+    master para agrupar casi nada en estas familias
 - Papeles de celda: patrón, afectadas y unidad (fila, columna o caja, en singles e
   intersecciones). Sin celdas repetidas
 - Tablero: patrón con el anillo de acento (`hint`), afectadas con `hint-target`, unidad con
@@ -168,8 +171,9 @@ last_updated: 2026-10-01
   (R4C6, "box 5"). Una plantilla por familia: singles, subsets, intersecciones, fish,
   wings/ALS, cadenas, rectángulos
 - Cadenas: nodos en orden en el texto de la tarjeta, sin enlaces dibujados en el tablero; la
-  tarjeta hace scroll. Si la prueba no trae la cadena ordenada (comprobar 3D Medusa), texto
-  genérico
+  tarjeta hace scroll. Se leen por posición ("isn't", "is", alternando): la polaridad que da el
+  motor no es consistente (W-Wing la trae invertida). Con un número impar de nodos, texto
+  genérico. 3D Medusa trae los nodos sin orden: texto genérico
 - Conclusión con varias afectadas, agrupada por dígito: "Remove 6 from R7C5, R8C5 and R9C5";
   una línea por dígito
 - Nombre de la técnica: `Display` del motor, salvo "Pointing Triple" cuando el pointing tiene

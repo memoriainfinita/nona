@@ -72,7 +72,7 @@ function moveFor(g: Game, a: Action): Move {
     case 'removeWrong':
       return removeWrongMove(g)
     case 'eliminate':
-      return applyHintMove(g, { kind: 'eliminate', cell: a.cell, values: [a.digit] }, true)
+      return applyHintMove(g, { place: null, eliminations: [{ cell: a.cell, values: [a.digit] }] }, true)
   }
 }
 
@@ -178,7 +178,7 @@ describe('rules', () => {
     g = commit(g, colorMove(g, cell, 3))
     const other = firstEmpty(g)
     const digit = [1, 2, 3, 4, 5, 6, 7, 8, 9].find((d) => d !== g.solution[other] && g.board.notes[other] & (1 << d))!
-    g = commit(g, applyHintMove(g, { kind: 'eliminate', cell: other, values: [digit] }, true))
+    g = commit(g, applyHintMove(g, { place: null, eliminations: [{ cell: other, values: [digit] }] }, true))
     const before = g.board
     const undoBefore = g.undo.length
     g = commit(g, clearNotesMove(g))
@@ -222,7 +222,7 @@ describe('hints on the board', () => {
     const cell = firstEmpty(g)
     const digit = [1, 2, 3, 4, 5, 6, 7, 8, 9].find((v) => v !== g.solution[cell] && g.board.notes[cell] & (1 << v))!
     const notesBefore = g.board.notes[cell]
-    g = commit(g, applyHintMove(g, { kind: 'eliminate', cell, values: [digit] }, true))
+    g = commit(g, applyHintMove(g, { place: null, eliminations: [{ cell, values: [digit] }] }, true))
     expect(g.board.notes[cell] & (1 << digit)).toBe(0)
     expect(engineCandidates(g)[cell] & (1 << digit)).toBe(0)
     g = undo(g)
@@ -230,17 +230,46 @@ describe('hints on the board', () => {
     expect(engineCandidates(g)[cell] & (1 << digit)).not.toBe(0)
   })
 
+  test('eliminations in several cells are one move; undo restores them all', () => {
+    let g = newGame()
+    g = commit(g, autoNotesMove(g))
+    const empty = g.board.values.flatMap((v, i) => (v ? [] : [i]))
+    const picks = empty.slice(0, 3).map((cell) => ({
+      cell,
+      values: [[1, 2, 3, 4, 5, 6, 7, 8, 9].find((v) => v !== g.solution[cell] && g.board.notes[cell] & (1 << v))!],
+    }))
+    const before = g.board
+    const undoBefore = g.undo.length
+    g = commit(g, applyHintMove(g, { place: null, eliminations: picks }, true))
+    expect(g.undo.length).toBe(undoBefore + 1)
+    for (const { cell, values } of picks) {
+      expect(g.board.notes[cell] & (1 << values[0])).toBe(0)
+      expect(engineCandidates(g)[cell] & (1 << values[0])).toBe(0)
+    }
+    expect(undo(g).board).toEqual(before)
+  })
+
+  test('fill notes uses the engine candidates: what a hint ruled out does not come back', () => {
+    let g = newGame()
+    const cell = firstEmpty(g)
+    const digit = [1, 2, 3, 4, 5, 6, 7, 8, 9].find((v) => v !== g.solution[cell] && basicCandidates(g.board.values)[cell] & (1 << v))!
+    g = commit(g, applyHintMove(g, { place: null, eliminations: [{ cell, values: [digit] }] }, true))
+    g = commit(g, autoNotesMove(g))
+    expect(g.board.notes[cell] & (1 << digit)).toBe(0)
+    expect(g.board.notes[cell]).toBe(engineCandidates(g)[cell])
+  })
+
   test('an elimination on a cell without notes changes no notes but is applied', () => {
     const g = newGame()
     const cell = firstEmpty(g)
-    const move = applyHintMove(g, { kind: 'eliminate', cell, values: [g.solution[cell] === 1 ? 2 : 1] }, true)
+    const move = applyHintMove(g, { place: null, eliminations: [{ cell, values: [g.solution[cell] === 1 ? 2 : 1] }] }, true)
     expect(move.map((c) => c.field)).toEqual(['eliminated'])
   })
 
   test('a placement writes the value', () => {
     let g = newGame()
     const cell = firstEmpty(g)
-    g = commit(g, applyHintMove(g, { kind: 'place', cell, values: [g.solution[cell]] }, true))
+    g = commit(g, applyHintMove(g, { place: { cell, value: g.solution[cell] }, eliminations: [] }, true))
     expect(g.board.values[cell]).toBe(g.solution[cell])
   })
 

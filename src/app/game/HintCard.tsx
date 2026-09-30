@@ -1,8 +1,12 @@
+import { engineCandidates, type Game } from '../../game/game'
+import { basicCandidates } from '../../game/grid'
 import type { HintSession } from '../../game/hint'
-import { cellName, joinDigits } from '../format'
+import { conclusionLines, explanation, type HintContext } from './hintText'
 
 interface Props {
   session: HintSession
+  /** The board the hint was asked on: the card compares its candidates. */
+  game: Game
   /** The engine answered before: no loading message. */
   engineReady: boolean
   onNext: () => void
@@ -11,54 +15,52 @@ interface Props {
 
 interface Text {
   kicker: string
-  title: string
-  body?: string
+  /** One line each; several for eliminations of more than one digit. */
+  title: string[]
+  body?: string[]
   next: string
   step?: number
   mistake?: boolean
   busy?: boolean
 }
 
-function text(session: HintSession, engineReady: boolean): Text {
+function text(session: HintSession, engineReady: boolean, ctx: HintContext): Text {
   const { card } = session
   switch (card.stage) {
     case 'wrong': {
       const n = card.cells.length
       return {
         kicker: 'HINT · MISTAKE',
-        title: n === 1 ? 'There is 1 mistake on the board' : `There are ${n} mistakes on the board`,
-        body: n === 1 ? 'The highlighted number is not part of the solution.' : 'The highlighted numbers are not part of the solution.',
+        title: [n === 1 ? 'There is 1 mistake on the board' : `There are ${n} mistakes on the board`],
+        body: [n === 1 ? 'The highlighted number is not part of the solution.' : 'The highlighted numbers are not part of the solution.'],
         next: n === 1 ? 'Remove it' : 'Remove them',
         mistake: true,
       }
     }
     case 'loading':
       return engineReady
-        ? { kicker: 'HINT', title: 'Looking for the next step…', next: 'Loading…', busy: true }
-        : { kicker: 'HINT', title: 'Loading the hint engine…', body: 'Only before the first hint. It stays loaded while you play.', next: 'Loading…', busy: true }
+        ? { kicker: 'HINT', title: ['Looking for the next step…'], next: 'Loading…', busy: true }
+        : { kicker: 'HINT', title: ['Loading the hint engine…'], body: ['Only before the first hint. It stays loaded while you play.'], next: 'Loading…', busy: true }
     case 'failed':
-      return { kicker: 'HINT', title: 'Couldn’t load the hint engine', next: 'Retry' }
+      return { kicker: 'HINT', title: ['Couldn’t load the hint engine'], next: 'Retry' }
     default: {
       const { hint } = card
-      const conclusion =
-        hint.kind === 'place'
-          ? `${cellName(hint.cell)} is ${hint.values[0]}`
-          : `Remove ${joinDigits(hint.values)} from ${cellName(hint.cell)}`
+      const conclusion = conclusionLines(hint)
       if (hint.backtracking) {
-        if (card.stage === 'technique') return { kicker: 'HINT', title: 'No logical step found', next: 'Show cell', step: 1 }
-        if (card.stage === 'cells') return { kicker: 'HINT · NO LOGICAL STEP', title: 'Look at the highlighted cell.', next: 'Show value', step: 2 }
+        if (card.stage === 'technique') return { kicker: 'HINT', title: ['No logical step found'], next: 'Show cell', step: 1 }
+        if (card.stage === 'cells') return { kicker: 'HINT · NO LOGICAL STEP', title: ['Look at the highlighted cell.'], next: 'Show value', step: 2 }
         return { kicker: 'HINT · NO LOGICAL STEP', title: conclusion, next: 'Apply', step: 3 }
       }
       const name = hint.technique.toUpperCase()
-      if (card.stage === 'technique') return { kicker: 'HINT · LOOK FOR A', title: hint.technique, next: 'Show cells', step: 1 }
-      if (card.stage === 'cells') return { kicker: `HINT · ${name}`, title: 'Look at the highlighted cells.', next: 'Show conclusion', step: 2 }
-      return { kicker: `HINT · ${name}`, title: conclusion, body: hint.explanation, next: 'Apply', step: 3 }
+      if (card.stage === 'technique') return { kicker: 'HINT · LOOK FOR A', title: [hint.technique], next: 'Show cells', step: 1 }
+      if (card.stage === 'cells') return { kicker: `HINT · ${name}`, title: ['Look at the highlighted cells.'], next: 'Show conclusion', step: 2 }
+      return { kicker: `HINT · ${name}`, title: conclusion, body: explanation(hint, ctx), next: 'Apply', step: 3 }
     }
   }
 }
 
-export function HintCard({ session, engineReady, onNext, onClose }: Props) {
-  const t = text(session, engineReady)
+export function HintCard({ session, game, engineReady, onNext, onClose }: Props) {
+  const t = text(session, engineReady, { basic: basicCandidates(game.board.values), masks: engineCandidates(game) })
   return (
     <section className={`hint-card${t.mistake ? ' mistake' : ''}`} aria-live="polite" aria-label="Hint">
       <div className="hint-head">
@@ -71,8 +73,18 @@ export function HintCard({ session, engineReady, onNext, onClose }: Props) {
           </span>
         )}
       </div>
-      <p className="hint-title">{t.title}</p>
-      {t.body && <p className="hint-body">{t.body}</p>}
+      <div className="hint-text">
+        {t.title.map((line) => (
+          <p key={line} className="hint-title">
+            {line}
+          </p>
+        ))}
+        {t.body?.map((line) => (
+          <p key={line} className="hint-body">
+            {line}
+          </p>
+        ))}
+      </div>
       <div className="hint-actions">
         <button type="button" className="btn ghost" onClick={onClose}>
           Close

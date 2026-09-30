@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import type { Game } from '../../game/game'
+import { engineCandidates, type Game } from '../../game/game'
 import type { HintSession } from '../../game/hint'
 import type { Settings } from '../../game/settings'
 import { cellName } from '../format'
+import { targetCells, unitCellsOf } from './hintText'
 
 interface Props {
   game: Game
@@ -38,19 +39,30 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
 
   const { values, notes, colors } = game.board
   const card = hint?.card
-  const hintCells = new Set<number>()
-  let target = -1
-  let struck = 0
+  // Hint roles (design.md, Pistas legibles): pattern, targets (step 3) and unit. Pattern and
+  // target cells show the engine candidates, with the key ones marked and the removed ones struck.
+  const pattern = new Set<number>()
+  const targets = new Set<number>()
+  const unit = new Set<number>()
+  const marks = new Map<number, number>()
+  const struck = new Map<number, number>()
+  let shown: Uint16Array | null = null
   let mistakes = new Set<number>()
   if (card?.stage === 'wrong') mistakes = new Set(card.cells)
   if (card?.stage === 'cells' || card?.stage === 'conclusion') {
-    for (const c of card.hint.cells) hintCells.add(c)
-    hintCells.add(card.hint.cell)
-    // The conclusion marks the cell in the error tone only for an elimination, as on the canvas.
-    if (card.stage === 'conclusion' && card.hint.kind === 'eliminate') {
-      target = card.hint.cell
-      struck = card.hint.values.reduce((m, v) => m | (1 << v), 0)
+    const h = card.hint
+    for (const c of h.pattern) pattern.add(c)
+    for (const c of unitCellsOf(h)) unit.add(c)
+    for (const [c, d] of h.marks) marks.set(c, (marks.get(c) ?? 0) | (1 << d))
+    if (card.stage === 'conclusion') {
+      // The conclusion marks cells in the error tone only for eliminations, as on the canvas.
+      for (const e of h.eliminations) {
+        targets.add(e.cell)
+        struck.set(e.cell, e.values.reduce((m, v) => m | (1 << v), 0))
+      }
+      for (const c of targetCells(h)) pattern.add(c)
     }
+    shown = engineCandidates(game)
   }
   const hintOpen = !!card
   const showSelection = !hintOpen && selected !== null
@@ -63,15 +75,19 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
         const classes = ['cell']
         if (i % 9 === 2 || i % 9 === 5) classes.push('box-right')
         if (Math.floor(i / 9) === 2 || Math.floor(i / 9) === 5) classes.push('box-bottom')
-        if (i === target || mistakes.has(i)) classes.push('hint-target')
-        else if (hintCells.has(i)) classes.push('hint')
+        if (targets.has(i) || mistakes.has(i)) classes.push('hint-target')
+        else if (pattern.has(i)) classes.push('hint')
         else if (showSelection && i === selected) classes.push('selected')
         else if (!hintOpen && settings.digitHighlight && highlight && v === highlight) classes.push('same')
         else if (colors[i]) classes.push(`paint-${colors[i]}`)
+        else if (unit.has(i)) classes.push('zone')
         else if (showSelection && settings.zoneShading && sameZone(i, selected!)) classes.push('zone')
         if (colors[i]) classes.push('painted')
-        if ((showSelection && i === selected) || hintCells.has(i) || mistakes.has(i)) classes.push('ring')
+        if ((showSelection && i === selected) || pattern.has(i) || targets.has(i) || mistakes.has(i)) classes.push('ring')
         if (mistakes.has(i)) classes.push('ring-error')
+        const candidates = shown && (pattern.has(i) || targets.has(i)) ? shown[i] : notes[i]
+        const strikes = struck.get(i) ?? 0
+        const marked = marks.get(i) ?? 0
         const label = `${cellName(i)}, ${v ? `${v}${given ? ', given' : ''}${isError ? ', mistake' : ''}` : 'empty'}`
         return (
           <button
@@ -88,12 +104,12 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
           >
             {v ? (
               <span className={`value${given ? ' given' : ''}${isError && !given ? ' error' : ''}`}>{v}</span>
-            ) : notes[i] || (i === target && struck) ? (
+            ) : candidates ? (
               <span className="notes" aria-hidden="true">
                 {DIGITS.map((d) => {
-                  const on = (notes[i] & (1 << d)) !== 0
-                  const strike = i === target && (struck & (1 << d)) !== 0 && on
-                  const hi = !hintOpen && settings.digitHighlight && on && d === highlight
+                  const on = (candidates & (1 << d)) !== 0
+                  const strike = on && (strikes & (1 << d)) !== 0
+                  const hi = on && (hintOpen ? (marked & (1 << d)) !== 0 : settings.digitHighlight && d === highlight)
                   return (
                     <span key={d} className={strike ? 'note struck' : hi ? 'note hi' : 'note'}>
                       {on ? d : ''}

@@ -59,7 +59,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
   )
 
   const tools = hint ? (
-    <HintCard session={hint} engineReady={view.engineReady} onNext={act.hintNext} onClose={act.closeHint} />
+    <HintCard session={hint} game={game} engineReady={view.engineReady} onNext={act.hintNext} onClose={act.closeHint} />
   ) : (
     <Tools
       settings={settings}

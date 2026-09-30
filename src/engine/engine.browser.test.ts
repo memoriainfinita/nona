@@ -23,20 +23,22 @@ async function playWithHints(engine: HintEngine, puzzle: string) {
     const hint = await engine.hint(formatGrid(values), masks)
     if (!hint) throw new Error(`no hint after ${hints}`)
     hints++
-    const { cell, values: digits } = hint
-    if (hint.kind === 'place') {
-      const v = digits[0]
+    if (hint.place) {
+      const { cell, value } = hint.place
       expect(values[cell]).toBe(0)
-      expect(masks[cell] & (1 << v)).not.toBe(0)
-      values[cell] = v
+      expect(masks[cell] & (1 << value)).not.toBe(0)
+      values[cell] = value
       masks[cell] = 0
-      for (const p of PEERS[cell]) masks[p] &= ~(1 << v)
+      for (const p of PEERS[cell]) masks[p] &= ~(1 << value)
     } else {
-      const key = `${cell}:${digits.join()}`
-      expect(seen.has(key)).toBe(false)
-      seen.add(key)
-      for (const v of digits) masks[cell] &= ~(1 << v)
-      expect(masks[cell]).not.toBe(0)
+      expect(hint.eliminations.length).toBeGreaterThan(0)
+      for (const { cell, values: digits } of hint.eliminations) {
+        const key = `${cell}:${digits.join()}`
+        expect(seen.has(key)).toBe(false)
+        seen.add(key)
+        for (const v of digits) masks[cell] &= ~(1 << v)
+        expect(masks[cell]).not.toBe(0)
+      }
     }
   }
   for (let i = 0; i < 81; i++) for (const p of PEERS[i]) expect(values[p]).not.toBe(values[i])
@@ -50,15 +52,33 @@ describe('HintEngine in a worker', () => {
     expect(hints).toBeGreaterThan(0)
   }, 60_000)
 
-  test('hint carries technique name, cells and explanation', async () => {
+  test('hint carries technique name, pattern and detail', async () => {
     engine = new HintEngine()
     const values = parseGrid(PUZZLES.medium)
     const hint = await engine.hint(PUZZLES.medium, basicCandidates(values))
     expect(hint).not.toBeNull()
     expect(hint!.technique).toMatch(/^[A-Z][A-Za-z-]*( [A-Za-z0-9-]+)*$/)
     expect(hint!.backtracking).toBe(false)
-    expect(hint!.cells.length).toBeGreaterThan(0)
-    expect(hint!.explanation.length).toBeGreaterThan(0)
+    expect(hint!.pattern.length).toBeGreaterThan(0)
+    expect(hint!.detail.family).toBe('single')
+  })
+
+  test('singles on the placed values come before singles that need earlier eliminations', async () => {
+    engine = new HintEngine()
+    const values = parseGrid(PUZZLES.hard)
+    const basic = basicCandidates(values)
+    // Engine candidates with a digit removed from a cell: the hint still starts from what the board shows.
+    const masks = basic.slice()
+    const cell = masks.findIndex((m) => (m & (m - 1)) !== 0)
+    masks[cell] &= masks[cell] - 1
+    const hint = await engine.hint(PUZZLES.hard, masks)
+    const { cell: at, value } = hint!.place!
+    const bit = 1 << value
+    const peersIn = (u: number[]) => u.filter((c) => c !== at && basic[c] & bit).length === 0
+    const row = Array.from({ length: 9 }, (_, k) => Math.floor(at / 9) * 9 + k)
+    const col = Array.from({ length: 9 }, (_, k) => k * 9 + (at % 9))
+    const box = Array.from({ length: 9 }, (_, k) => (Math.floor(at / 27) * 3 + Math.floor(k / 3)) * 9 + Math.floor((at % 9) / 3) * 3 + (k % 3))
+    expect(basic[at] === bit || peersIn(row) || peersIn(col) || peersIn(box)).toBe(true)
   })
 
   test('solved grid gives no hint', async () => {

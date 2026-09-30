@@ -262,6 +262,52 @@ describe('focus', () => {
   })
 })
 
+describe('readable hints', () => {
+  const primary = () => $<HTMLButtonElement>('.hint-card button.primary')!
+  const ready = () => $('.hint-card') && !$('.hint-card button.primary[disabled]')
+  const indexOf = (el: HTMLElement) => cells().indexOf(el)
+
+  test('a grouped elimination: engine candidates on screen, every target struck, one Apply for all', async () => {
+    await mount()
+    button('Hard').click()
+    await waitFor(() => $$('button').some((b) => b.textContent === 'Start Hard'))
+    button('Start Hard').click()
+    await waitFor(() => $('.board'))
+    // Hints only, without notes on the board, until one removes candidates from several cells.
+    let targets: { cell: number; digits: number[] }[] = []
+    for (let n = 0; n < 200 && !targets.length; n++) {
+      button('Hint').click()
+      await waitFor(ready)
+      primary().click()
+      await waitFor(() => primary().textContent === 'Show conclusion')
+      // Step 2: the pattern shows the engine candidates, with the key ones marked.
+      const pattern = $$('.cell.hint').filter((c) => !c.querySelector('.value'))
+      expect(pattern.length).toBeGreaterThan(0)
+      for (const c of pattern) expect(c.querySelector('.notes .note.hi')).not.toBeNull()
+      primary().click()
+      await waitFor(() => primary().textContent === 'Apply')
+      const struck = $$('.cell.hint-target')
+      if (struck.length > 1) {
+        targets = struck.map((c) => ({ cell: indexOf(c), digits: [...c.querySelectorAll('.note.struck')].map((d) => Number(d.textContent)) }))
+        for (const t of targets) expect(t.digits.length).toBeGreaterThan(0)
+      }
+      primary().click()
+      await waitFor(() => !$('.hint-card'))
+    }
+    expect(targets.length).toBeGreaterThan(1)
+    // Fill notes uses the engine candidates: none of the removed digits comes back.
+    button('Fill notes').click()
+    await waitFor(() => $$('.cell .notes').length > 0)
+    for (const t of targets) {
+      const shown = [...cells()[t.cell].querySelectorAll('.note')].map((d) => Number(d.textContent)).filter(Boolean)
+      for (const d of t.digits) expect(shown).not.toContain(d)
+    }
+    button('Undo').click()
+    button('Undo').click()
+    await waitFor(() => $$('.cell .notes').length === 0)
+  }, 90_000)
+})
+
 describe('games', () => {
   test('solving with hints only reaches the victory screen and the stats', async () => {
     await startGame()

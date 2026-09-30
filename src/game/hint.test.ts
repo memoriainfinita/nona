@@ -23,7 +23,8 @@ function withWrongNumber(): Game {
 }
 
 const HINT: Hint = {
-  technique: 'Hidden Single', backtracking: false, kind: 'place', cell: 0, values: [5], cells: [0], explanation: '...',
+  technique: 'Hidden Single', backtracking: false, place: { cell: 0, value: 5 }, eliminations: [], pattern: [0], unit: 0,
+  marks: [[0, 5]], detail: { family: 'single', naked: false, cell: 0, value: 5, unit: 0 },
 }
 
 describe('hint card', () => {

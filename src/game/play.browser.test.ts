@@ -23,8 +23,8 @@ test.each(['medium', 'expert', 'master'] as const)('plays a transformed %s game 
   while (!isSolved(g)) {
     const hint = await engine.hint(formatGrid(g.board.values), engineCandidates(g))
     expect(hint).not.toBeNull()
-    if (hint!.kind === 'place') expect(hint!.values[0]).toBe(g.solution[hint!.cell])
-    else expect(hint!.values).not.toContain(g.solution[hint!.cell])
+    if (hint!.place) expect(hint!.place.value).toBe(g.solution[hint!.place.cell])
+    else for (const e of hint!.eliminations) expect(e.values).not.toContain(g.solution[e.cell])
     g = commit(g, applyHintMove(g, hint!, true))
     expect(++hints).toBeLessThan(200)
   }
