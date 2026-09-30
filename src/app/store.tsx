@@ -18,6 +18,7 @@ import {
   saveGame,
   saveSettings,
 } from '../storage/db'
+import { newId } from './id'
 
 export interface Store {
   db: Db
@@ -114,7 +115,7 @@ export function StoreProvider({ children, dbName }: { children: ReactNode; dbNam
         const [list, played] = await Promise.all([loadLevel(level), playedSeeds(db, level)])
         const picked = pickPuzzle(list, played, Math.random)
         const now = Date.now()
-        return create(createGame({ id: crypto.randomUUID(), level, seed: picked.entry.seed, daily: null, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
+        return create(createGame({ id: newId(), level, seed: picked.entry.seed, daily: null, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
       },
       startDaily: async () => {
         const now = Date.now()
@@ -125,7 +126,7 @@ export function StoreProvider({ children, dbName }: { children: ReactNode; dbNam
           return existing
         }
         const picked = dailyPuzzle(await loadDaily(), today)
-        return create(createGame({ id: crypto.randomUUID(), level: picked.entry.level, seed: picked.entry.seed, daily: today, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
+        return create(createGame({ id: newId(), level: picked.entry.level, seed: picked.entry.seed, daily: today, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
       },
       discard: async (id) => {
         const game = data.games.find((g) => g.id === id)

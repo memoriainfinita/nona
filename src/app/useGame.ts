@@ -31,6 +31,7 @@ import {
   openHint,
 } from '../game/hint'
 import { completeGame, type HistoryEntry, isNewBest } from '../game/records'
+import { newId } from './id'
 import { useStore } from './store'
 
 export interface Victory {
@@ -198,7 +199,7 @@ export function useGame(initial: Game): [GameView, GameActions] {
   const finishIfSolved = useCallback(
     (next: Game) => {
       if (!isSolved(next)) return
-      const entry = completeGame(next, crypto.randomUUID(), Date.now())
+      const entry = completeGame(next, newId(), Date.now())
       const best = isNewBest([...store.history, entry], entry)
       setVictory({ entry, best })
       setHint(null)
