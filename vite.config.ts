@@ -5,6 +5,8 @@ import { playwright } from '@vitest/browser-playwright'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  // Declared up front so the browser tests don't reload mid-run when Vite finds them.
+  optimizeDeps: { include: ['react', 'react-dom/client', 'lucide-react', 'idb', 'zod'] },
   test: {
     projects: [
       { extends: true, test: { name: 'unit', include: ['src/**/*.test.ts'], exclude: ['src/**/*.browser.test.*'], environment: 'node' } },

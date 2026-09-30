@@ -48,9 +48,17 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   una partida la pasa al historial en una transacción. Copia de seguridad JSON versionada
   (`BACKUP_VERSION` 1, migraciones por versión), validada con Zod; Merge y Replace en una
   transacción cada uno. 9 tests en Firefox contra IndexedDB real, una base por test
+- Fase 5 terminada: interfaz en `src/app/` a partir del lienzo (tokens oscuro/claro, 7 acentos,
+  tamaños S/M/L; móvil, móvil en horizontal, tablet y escritorio con barra lateral). Revisada con
+  capturas de Playwright Firefox en los cuatro formatos y los dos temas. 7 tests de interacción en
+  Firefox sobre la app real (número primero, celda primero, teclado, color, la pista se cierra con
+  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 78 tests
+  en total. Build: JS inicial 87 KB gzip; WASM 152 KB gzip; worker y WASM incluidos por Vite
+- Sin probar en la interfaz: flujo de Import (sí en los tests de storage), pausa automática al
+  ocultar la pestaña, tarjeta del sudoku del día resuelto, vibración, dígitos completos ocultos,
+  tarjeta de error del motor (sí en los tests del cliente)
 - `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
-- Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita) y el worker con WASM
-  en `vite build` (la app aún no lo importa; se comprueba en la Fase 5)
+- Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
 ### Pruebas del motor (2026-09-29, nativo, release)
 
@@ -167,6 +175,8 @@ pistas, midiendo cada llamada desde JS.
 - [bank] Ampliar el banco: `gen-bank run --target N` (reanuda de `bank/work/log.jsonl`),
   `assemble --normal A --daily B` (totales por nivel; solo añade por el final y registra la tanda
   en `meta.json`), `verify`. `bank/work/` no se versiona. Confirmed 2026-09.
+- [test] Tests de interfaz: `StoreProvider` cierra su conexión al desmontar (si no, `deleteDB` se
+  bloquea); `optimizeDeps.include` evita que Vite recargue a mitad de test. Confirmed 2026-09.
 
 ## Preferences
 
@@ -180,7 +190,8 @@ pistas, midiendo cada llamada desde JS.
 - [x] Fase 2 de `plan.md`: banco
 - [x] Fase 3 de `plan.md`: lógica de juego
 - [x] Fase 4 de `plan.md`: persistencia
-- [ ] Fase 5 de `plan.md`: interfaz
+- [x] Fase 5 de `plan.md`: interfaz
+- [ ] Fase 6 de `plan.md`: publicación
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM
