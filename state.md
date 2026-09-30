@@ -39,6 +39,12 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Coste por puzzle aceptado (piloto y tanda completa): easy y medium ~0,01 s; intermediate
   ~0,2 s (sale de los hard pedidos); hard ~2 s (1 de cada 4 hard pedidos); expert ~2,4 s;
   master ~15 s (9 de cada 10 master pedidos). Los intermediate pedidos salen medium (197/210)
+- Fase 3 terminada: lógica de juego pura en `src/game/` (partida con jugadas y deshacer por
+  cambios, errores, pista por etapas con su cómputo, registro y estadísticas, sudoku del día,
+  elección de puzzle no jugado, transformaciones, PRNG, ajustes). 63 tests, con propiedades
+  fast-check; un test en Firefox juega partidas transformadas de medium, expert y master solo
+  con pistas a través del módulo y deshace hasta el inicio
+- `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita) y el worker con WASM
   en `vite build` (la app aún no lo importa; se comprueba en la Fase 5)
 
@@ -168,7 +174,8 @@ pistas, midiendo cada llamada desde JS.
 - [x] Fase 0 de `plan.md`: base
 - [x] Fase 1 de `plan.md`: motor
 - [x] Fase 2 de `plan.md`: banco
-- [ ] Fase 3 de `plan.md`: lógica de juego
+- [x] Fase 3 de `plan.md`: lógica de juego
+- [ ] Fase 4 de `plan.md`: persistencia
 - [x] Lienzo: pasar el acento por defecto a índigo
 - [x] Decidir la salida al bucle de pistas: fork
 - [x] Medir `get_hint_with_candidates` a mitad de partida en WASM

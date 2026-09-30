@@ -38,3 +38,19 @@ export function basicCandidates(values: readonly number[]): Uint16Array {
   })
   return masks
 }
+
+/** Cells whose value repeats in their row, column or box. */
+export function conflictCells(values: readonly number[]): Set<number> {
+  const out = new Set<number>()
+  values.forEach((v, i) => {
+    if (v && PEERS[i].some((p) => values[p] === v)) out.add(i)
+  })
+  return out
+}
+
+/** How many of each digit are still missing: remaining[v] for v 1-9 (index 0 unused). */
+export function remainingDigits(values: readonly number[]): number[] {
+  const remaining = [0, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+  for (const v of values) if (v) remaining[v]--
+  return remaining
+}
