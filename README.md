@@ -3,7 +3,7 @@
 [![Live demo](https://img.shields.io/badge/demo-live-8c95f6?style=flat)](https://memoriainfinita.github.io/nona/)
 [![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 
-Sudoku with step-by-step hints based on human solving techniques.
+Sudoku with hints that show you how to solve it, not just the answer.
 
 **Live:** https://memoriainfinita.github.io/nona/
 
