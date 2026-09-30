@@ -50,13 +50,17 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   transacción cada uno. 9 tests en Firefox contra IndexedDB real, una base por test
 - Fase 5 terminada: interfaz en `src/app/` a partir del lienzo (tokens oscuro/claro, 7 acentos,
   tamaños S/M/L; móvil, móvil en horizontal, tablet y escritorio con barra lateral). Revisada con
-  capturas de Playwright Firefox en los cuatro formatos y los dos temas. 8 tests de interacción en
-  Firefox sobre la app real (número primero, celda primero, teclado, color, Fill y Clear notes, la pista se cierra con
-  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 84 tests
-  en total. Build: JS inicial 87 KB gzip; WASM 152 KB gzip; worker y WASM incluidos por Vite
-- Sin probar en la interfaz: flujo de Import (sí en los tests de storage), pausa automática al
-  ocultar la pestaña, tarjeta del sudoku del día resuelto, vibración, dígitos completos ocultos,
-  tarjeta de error del motor (sí en los tests del cliente)
+  capturas de Playwright Firefox en los cuatro formatos y los dos temas. 12 tests de interacción en
+  Firefox sobre la app real (número primero con sus tres estados, celda primero, teclado, color, Fill y
+  Clear notes, clic derecho, foco y Enter, ajuste de vibración, la pista se cierra con una jugada,
+  partida completa con pistas hasta la victoria e historial, recarga y descartar con Undo). 88 tests
+  en total. Build medido en la fase 5: JS inicial 87 KB gzip; WASM 152 KB gzip; worker y WASM incluidos por Vite
+- Comprobado en la interfaz con un script de Playwright Firefox, sin test fijo (2026-09-30): pausa al
+  ocultar la pestaña (y sin ella con el ajuste apagado; el reloj se para y reanuda), tarjeta del
+  sudoku del día resuelto, ocultar dígitos completos, Export, Import con Merge y con Replace, archivo
+  no válido, tarjeta de error del motor con Retry, y que esa pista fallida no cuenta
+- Vibración: probada por el usuario en Chrome para Android, vibra. Firefox para Android no vibra en
+  ninguna web (Mozilla la dejó sin efecto); el ajuste lo avisa y no aparece sin `navigator.vibrate`
 - Prueba manual en Firefox (2026-09-30), dada por buena por el usuario. Salió el problema de Fill
   notes, resuelto: el botón pasa a Clear notes (`design.md`). Tras ella: en móvil y tablet en
   vertical, los números van antes que las herramientas
@@ -65,6 +69,11 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   `transform` (opcional en el esquema, `BACKUP_VERSION` sigue en 1); las anteriores muestran el
   puzzle base
 - Probado por el usuario por la IP de la LAN (`pnpm dev --host`): funciona
+- Tras la segunda prueba manual (2026-09-30), en `design.md`. Probados por el usuario: clic derecho en
+  el modo contrario de notas; tocar el número fijado activa las notas y una tercera vez lo suelta;
+  tablero de borde a borde en el móvil, con números y notas más grandes y finos y notas más
+  contrastadas. Solo en tests: Enter y Espacio no repiten el último clic, el tablero es una sola
+  parada de Tab, notas con N
 - `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
@@ -194,7 +203,5 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [ ] Propuesta: clic derecho en escritorio invierte el modo de notas (Notas apagado: pone o quita
-  la nota; Notas encendido: escribe el número). En número primero, con el dígito fijado
 - [ ] Fijar `DAILY_EPOCH` con la fecha de publicación (provisional `2026-10-01`)
 - [ ] Fase 6 de `plan.md`: publicación en GitHub Pages
