@@ -35,7 +35,7 @@ export function PageHeader({ title, back }: { title: string; back: boolean }) {
   )
 }
 
-export function Sidebar({ route, onPlay }: { route: Route; onPlay: () => void }) {
+export function Sidebar({ route, dark, onPlay }: { route: Route; dark: boolean; onPlay: () => void }) {
   const item = (to: Route, label: string, icon: ReactNode) => (
     <a
       href={`#${to}`}
@@ -50,7 +50,9 @@ export function Sidebar({ route, onPlay }: { route: Route; onPlay: () => void })
   )
   return (
     <nav className="sidebar" aria-label="Main">
-      <span className="brand">nona</span>
+      <span className="brand">
+        <Logo size={36} light={!dark} />
+      </span>
       {item('/play', 'Play', <Grid3x3 size={20} />)}
       {item('/stats', 'Stats', <ChartNoAxesColumn size={20} />)}
       <span className="grow" />

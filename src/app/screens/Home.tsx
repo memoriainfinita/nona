@@ -8,11 +8,11 @@ import { formatDailyDate, formatTime, LEVEL_NAMES } from '../format'
 import type { Layout } from '../layout'
 import { navigate } from '../router'
 import { useStore } from '../store'
-import { Toast } from '../ui'
+import { Logo, Toast } from '../ui'
 
 const TOAST_MS = 5000
 
-export function Home({ layout }: { layout: Layout }) {
+export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
   const store = useStore()
   const [level, setLevel] = useState<Level>(() => store.games[0]?.level ?? 'medium')
   const [discarded, setDiscarded] = useState<Game | null>(null)
@@ -109,6 +109,7 @@ export function Home({ layout }: { layout: Layout }) {
     <main className={`home home-${layout.kind}`}>
       {!layout.sidebar && (
         <div className="home-header">
+          <Logo size={28} light={!dark} />
           <span className="brand big">nona</span>
           <button type="button" className="icon-btn" aria-label="Stats" onClick={() => navigate('/stats')}>
             <ChartNoAxesColumn size={20} />

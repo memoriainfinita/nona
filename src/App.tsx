@@ -53,7 +53,7 @@ function Shell() {
   ) : route === '/settings' ? (
     <Settings layout={layout} dark={dark} />
   ) : (
-    <Home layout={layout} />
+    <Home layout={layout} dark={dark} />
   )
 
   return (
@@ -61,6 +61,7 @@ function Shell() {
       {layout.sidebar && (
         <Sidebar
           route={route}
+          dark={dark}
           onPlay={() => {
             if (route === '/play') setActiveId(null)
             else navigate('/play')

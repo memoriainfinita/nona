@@ -85,7 +85,8 @@ p {
 }
 
 .sidebar .brand { margin-bottom: 16px; }
-.brand.big { font-size: 22px; flex-grow: 1; }
+.brand.big { font-size: 22px; flex-grow: 1; margin-left: 6px; }
+.brand svg { display: block; }
 
 .nav-item {
   width: 44px;
