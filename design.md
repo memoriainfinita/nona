@@ -189,6 +189,9 @@ last_updated: 2026-09-30
 - Móvil: botonera en fila de 9
 - Móvil en vertical: el tablero ocupa todo el ancho, sin márgenes ni esquinas redondeadas;
   botonera y herramientas conservan el margen
+- Móvil: números del tablero a 0,86 de la casilla, finos (200 los del jugador, 300 los iniciales);
+  notas a 0,32, grosor 300. Escritorio y tablet sin cambios
+- Notas con más contraste en los dos temas: oscuro `#cdd1ce` (sobre color `#dadcd8`), claro `#3a3e39`
 - Móvil y tablet en vertical: tablero, botonera y debajo las herramientas (o la tarjeta de pista)
 - Tablet: vertical y horizontal
 - Escritorio: barra lateral con Play, Stats, Settings

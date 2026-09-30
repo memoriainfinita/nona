@@ -29,8 +29,8 @@
   --board-thin: #353a38;
   --board-thick: #9aa19d;
   --board-given: #eceae4;
-  --board-note: #8f9591;
-  --board-note-on-color: #c9ccc8;
+  --board-note: #cdd1ce;
+  --board-note-on-color: #dadcd8;
   --board-zone: #232826;
   --board-hint-target: #3a1f1c;
 
@@ -74,8 +74,8 @@
   --board-thin: #d9d5cb;
   --board-thick: #3a3d3b;
   --board-given: #1c1d1b;
-  --board-note: #5f635e;
-  --board-note-on-color: #5f635e;
+  --board-note: #3a3e39;
+  --board-note-on-color: #3a3e39;
   --board-zone: #f1efea;
   --board-hint-target: #f8dedb;
 

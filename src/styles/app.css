@@ -279,6 +279,12 @@ p {
 }
 
 .cell.painted .note { color: var(--board-note-on-color); }
+
+/* Phone: bigger digits and notes, the cells are small. */
+.game-phone .cell { font-size: calc(100cqw / 9 * 0.86 * var(--text-scale)); }
+.game-phone .value { font-weight: 200; }
+.game-phone .value.given { font-weight: 300; }
+.game-phone .note { font-size: max(9px, calc(100cqw / 9 * 0.32 * var(--text-scale))); font-weight: 300; }
 .note.hi { color: var(--accent); font-weight: 700; }
 
 .note.struck {
