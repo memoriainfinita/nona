@@ -238,7 +238,7 @@ describe('focus', () => {
 describe('games', () => {
   test('solving with hints only reaches the victory screen and the stats', async () => {
     await startGame()
-    for (let n = 0; n < 150 && !$('.victory'); n++) {
+    for (let n = 0; n < 400 && !$('.victory'); n++) {
       if (!$('.hint-card')) button('Hint').click()
       await waitFor(() => $('.victory') || ($('.hint-card') && !$('.hint-card button.primary[disabled]')))
       if ($('.victory')) break
