@@ -52,7 +52,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   tamaños S/M/L; móvil, móvil en horizontal, tablet y escritorio con barra lateral). Revisada con
   capturas de Playwright Firefox en los cuatro formatos y los dos temas. 8 tests de interacción en
   Firefox sobre la app real (número primero, celda primero, teclado, color, Fill y Clear notes, la pista se cierra con
-  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 80 tests
+  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 84 tests
   en total. Build: JS inicial 87 KB gzip; WASM 152 KB gzip; worker y WASM incluidos por Vite
 - Sin probar en la interfaz: flujo de Import (sí en los tests de storage), pausa automática al
   ocultar la pestaña, tarjeta del sudoku del día resuelto, vibración, dígitos completos ocultos,
@@ -60,6 +60,11 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Prueba manual en Firefox (2026-09-30), dada por buena por el usuario. Salió el problema de Fill
   notes, resuelto: el botón pasa a Clear notes (`design.md`). Tras ella: en móvil y tablet en
   vertical, los números van antes que las herramientas
+- Icono de la app en la cabecera de inicio (móvil y tablet) y en la barra lateral con "nona" debajo
+- Historial: cada entrada abre el tablero resuelto en solo lectura y Play again. Las entradas guardan
+  `transform` (opcional en el esquema, `BACKUP_VERSION` sigue en 1); las anteriores muestran el
+  puzzle base
+- Probado por el usuario por la IP de la LAN (`pnpm dev --host`): funciona
 - `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
@@ -178,6 +183,8 @@ pistas, midiendo cada llamada desde JS.
 - [bank] Ampliar el banco: `gen-bank run --target N` (reanuda de `bank/work/log.jsonl`),
   `assemble --normal A --daily B` (totales por nivel; solo añade por el final y registra la tanda
   en `meta.json`), `verify`. `bank/work/` no se versiona. Confirmed 2026-09.
+- [web] Nada que exija contexto seguro (`crypto.randomUUID` y similares): la app también se sirve por
+  HTTP en la LAN. Ids con `newId()` de `src/app/id.ts`. Confirmed 2026-09.
 - [test] Tests de interfaz: `StoreProvider` cierra su conexión al desmontar (si no, `deleteDB` se
   bloquea); `optimizeDeps.include` evita que Vite recargue a mitad de test. Confirmed 2026-09.
 
