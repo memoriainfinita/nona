@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { Game } from '../../game/game'
 import type { HintSession } from '../../game/hint'
 import type { Settings } from '../../game/settings'
@@ -12,6 +13,8 @@ interface Props {
   hint: HintSession | null
   settings: Settings
   onCell: (cell: number) => void
+  /** Keyboard focus reached a cell: select it. */
+  onFocusCell: (cell: number) => void
 }
 
 const DIGITS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -21,7 +24,16 @@ function sameZone(a: number, b: number): boolean {
   return ra === rb || ca === cb || (Math.floor(ra / 3) === Math.floor(rb / 3) && Math.floor(ca / 3) === Math.floor(cb / 3))
 }
 
-export function Board({ game, selected, highlight, errors, hint, settings, onCell }: Props) {
+export function Board({ game, selected, highlight, errors, hint, settings, onCell, onFocusCell }: Props) {
+  // One Tab stop for the whole board: the selected cell (or the first). While the board has
+  // focus, it follows the selection, so arrows move both.
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const board = ref.current
+    if (selected === null || !board?.contains(document.activeElement)) return
+    board.querySelectorAll<HTMLElement>('.cell')[selected]?.focus()
+  }, [selected])
+
   const { values, notes, colors } = game.board
   const card = hint?.card
   const hintCells = new Set<number>()
@@ -42,7 +54,7 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
   const showSelection = !hintOpen && selected !== null
 
   return (
-    <div className="board" role="grid" aria-label="Sudoku board">
+    <div ref={ref} className="board" role="grid" aria-label="Sudoku board">
       {values.map((v, i) => {
         const given = game.givens[i] !== 0
         const isError = errors.has(i) || mistakes.has(i)
@@ -67,6 +79,8 @@ export function Board({ game, selected, highlight, errors, hint, settings, onCel
             className={classes.join(' ')}
             aria-label={label}
             data-color={colors[i] || undefined}
+            tabIndex={i === (selected ?? 0) ? 0 : -1}
+            onFocus={() => i !== selected && onFocusCell(i)}
             onClick={() => onCell(i)}
           >
             {v ? (

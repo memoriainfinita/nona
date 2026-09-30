@@ -1,6 +1,7 @@
 import { deleteDB } from 'idb'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { userEvent } from 'vitest/browser'
 import { App } from '../App'
 
 // Interaction tests on the real app in Firefox: each test gets its own IndexedDB.
@@ -162,6 +163,46 @@ describe('keyboard', () => {
     await waitFor(() => $('.paused-board, .pause-full'))
     key(' ')
     await waitFor(() => $('.board .cell'))
+  })
+})
+
+describe('focus', () => {
+  // Real clicks and key presses: synthetic events don't press focused buttons.
+  test('Enter does not repeat a click; Tab enters and leaves the board in one stop', async () => {
+    await startGame()
+    const five = button(/^5, /)
+    await userEvent.click(five)
+    await waitFor(() => five.getAttribute('aria-pressed') === 'true')
+    await userEvent.keyboard('{Enter}')
+    expect(five.getAttribute('aria-pressed')).toBe('true')
+    const notes = button('Notes')
+    await userEvent.click(notes)
+    await waitFor(() => notes.getAttribute('aria-pressed') === 'true')
+    await userEvent.keyboard('{Enter}')
+    expect(notes.getAttribute('aria-pressed')).toBe('true')
+    await userEvent.click(notes)
+    const i = emptyIndex()
+    await userEvent.click(cells()[i])
+    await waitFor(() => label(i).includes(', 5'))
+    await userEvent.keyboard('{Enter}')
+    await new Promise((r) => setTimeout(r, 100))
+    expect(label(i)).toContain(', 5')
+    expect(document.activeElement?.classList.contains('cell')).toBe(false)
+
+    // Keyboard: Tab reaches the board on the selected cell, arrows move focus and selection, Enter
+    // on the board does nothing, the next Tab leaves it.
+    cells()[i].focus()
+    await userEvent.keyboard('{ArrowRight}')
+    const next = i % 9 === 8 ? i - 8 : i + 1
+    await waitFor(() => document.activeElement === cells()[next] && cells()[next].classList.contains('selected'))
+    const before = label(next)
+    await userEvent.keyboard('{Enter}')
+    await new Promise((r) => setTimeout(r, 100))
+    expect(label(next)).toBe(before)
+    await userEvent.tab()
+    expect(document.activeElement?.classList.contains('cell')).toBe(false)
+    await userEvent.tab({ shift: true })
+    expect(document.activeElement).toBe(cells()[next])
   })
 })
 

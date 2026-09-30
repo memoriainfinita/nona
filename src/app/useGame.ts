@@ -76,6 +76,8 @@ export interface GameActions {
   pause: () => void
   resume: () => void
   moveSelection: (dr: number, dc: number) => void
+  /** Selects a cell without playing it (keyboard focus reaching the board). */
+  selectCell: (cell: number) => void
   eraseSelected: () => void
 }
 
@@ -327,6 +329,7 @@ export function useGame(initial: Game): [GameView, GameActions] {
       if (s === null) return setSelected(40)
       setSelected(((Math.floor(s / 9) + dr + 9) % 9) * 9 + (((s % 9) + dc + 9) % 9))
     },
+    selectCell: (cell) => setSelected(cell),
     eraseSelected: () => {
       const cell = selectedRef.current
       if (cell !== null) play(eraseMove(gameRef.current, cell), cell)
@@ -350,6 +353,8 @@ export function useGame(initial: Game): [GameView, GameActions] {
       if (key === 'Enter') return e.preventDefault(), actions.hintNext()
       if (key === 'Escape') return e.preventDefault(), actions.closeHint()
     }
+    // A focused cell would take Enter as a tap: on the board, digits go in with 1-9.
+    if (key === 'Enter' && target?.closest('.board')) return e.preventDefault()
     const arrows: Record<string, [number, number]> = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }
     if (arrows[key]) return e.preventDefault(), actions.moveSelection(...arrows[key])
     if (/^[0-9]$/.test(key)) {

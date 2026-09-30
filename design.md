@@ -38,6 +38,9 @@ last_updated: 2026-09-30
   notas en una jugada, que Undo revierte
 - Teclado: flechas, 1-9, M notas, E goma, Espacio pausa y reanuda, Retroceso/Supr,
   Ctrl+Z / Ctrl+Y, H pista, C modo color
+- Los botones del juego no se quedan con el foco al pincharlos: Enter y Espacio no repiten el
+  último clic. Con Tab, el tablero es una sola parada (la celda seleccionada) y el foco sigue a
+  las flechas; Enter en el tablero no hace nada salvo con la pista abierta
 
 ## Colorear casillas
 

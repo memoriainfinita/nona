@@ -55,7 +55,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
       <span className="paused-time">{formatClock(game.elapsedMs)}</span>
     </div>
   ) : (
-    <Board game={game} selected={view.selected} highlight={highlight} errors={view.errors} hint={hint} settings={settings} onCell={act.tapCell} />
+    <Board game={game} selected={view.selected} highlight={highlight} errors={view.errors} hint={hint} settings={settings} onCell={act.tapCell} onFocusCell={act.selectCell} />
   )
 
   const tools = hint ? (
@@ -140,7 +140,9 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
     )
 
   return (
-    <main className={`game game-${layout.kind}`}>
+    // A clicked button keeps no focus, so Enter and Space don't repeat the last click.
+    // Buttons reached with Tab still work from the keyboard.
+    <main className={`game game-${layout.kind}`} onMouseDown={(e) => (e.target as Element).closest('button') && e.preventDefault()}>
       {!wide && !landscape && (
         <div className="game-header">
           <button type="button" className="icon-btn" aria-label="Back to menu" onClick={onMenu}>
