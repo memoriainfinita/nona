@@ -132,9 +132,9 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
     ) : (
       <>
         {board}
-        {tools}
         {keys}
         {colorMode && <p className="color-help">Tap cells to paint them. Tap Color again to go back to numbers.</p>}
+        {tools}
       </>
     )
 

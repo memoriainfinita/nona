@@ -57,6 +57,9 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Sin probar en la interfaz: flujo de Import (sí en los tests de storage), pausa automática al
   ocultar la pestaña, tarjeta del sudoku del día resuelto, vibración, dígitos completos ocultos,
   tarjeta de error del motor (sí en los tests del cliente)
+- Prueba manual en Firefox (2026-09-30), dada por buena por el usuario. Salió el problema de Fill
+  notes (ver TODO). Tras ella: en móvil y tablet en vertical, los números van antes que las
+  herramientas
 - `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
@@ -184,8 +187,9 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [ ] Prueba manual en Firefox antes de publicar (`pnpm build:engine`, `pnpm dev`). Sin cubrir por
-  tests: pausa automática al cambiar de pestaña, flujo de Import, tarjeta del sudoku del día resuelto,
-  dígitos completos ocultos; vibración solo en móvil
+- [ ] Investigar: tras Fill notes no hay manera de quitar las notas (visto en la prueba manual,
+  2026-09-30). Hoy solo Undo, si es la última jugada, o la goma celda a celda
+- [ ] Propuesta: clic derecho en escritorio invierte el modo de notas (Notas apagado: pone o quita
+  la nota; Notas encendido: escribe el número). En número primero, con el dígito fijado
 - [ ] Fijar `DAILY_EPOCH` con la fecha de publicación (provisional `2026-10-01`)
-- [ ] Fase 6 de `plan.md`: publicación en GitHub Pages, después de la prueba manual
+- [ ] Fase 6 de `plan.md`: publicación en GitHub Pages

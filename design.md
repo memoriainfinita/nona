@@ -172,6 +172,7 @@ last_updated: 2026-09-30
 - Maquetas: lienzo de Claude Design https://claude.ai/artifact/YE8Y6Qxn6K4PEQdsze4nGX
 - Estilo oscuro con acento
 - Móvil: botonera en fila de 9
+- Móvil y tablet en vertical: tablero, botonera y debajo las herramientas (o la tarjeta de pista)
 - Tablet: vertical y horizontal
 - Escritorio: barra lateral con Play, Stats, Settings
 - Menú: Continue (partidas en curso), sudoku del día, nuevo juego (6 niveles + Start)
