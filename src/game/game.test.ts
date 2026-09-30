@@ -4,6 +4,7 @@ import { loadLevel } from '../bank/bank'
 import {
   applyHintMove,
   autoNotesMove,
+  clearNotesMove,
   colorMove,
   commit,
   createGame,
@@ -48,6 +49,7 @@ const action = fc.oneof(
   fc.record({ type: fc.constant('erase'), cell: fc.nat(80) }),
   fc.record({ type: fc.constant('color'), cell: fc.nat(80), color: fc.nat(8) }),
   fc.record({ type: fc.constant('autoNotes') }),
+  fc.record({ type: fc.constant('clearNotes') }),
   fc.record({ type: fc.constant('removeWrong') }),
   fc.record({ type: fc.constant('eliminate'), cell: fc.nat(80), digit: fc.integer({ min: 1, max: 9 }) }),
 )
@@ -65,6 +67,8 @@ function moveFor(g: Game, a: Action): Move {
       return colorMove(g, a.cell, a.color)
     case 'autoNotes':
       return autoNotesMove(g)
+    case 'clearNotes':
+      return clearNotesMove(g)
     case 'removeWrong':
       return removeWrongMove(g)
     case 'eliminate':
@@ -164,6 +168,27 @@ describe('rules', () => {
       if (v) expect(g.board.notes[i]).toBe(0)
       else if (i !== noted) expect(g.board.notes[i]).toBe(candidates[i])
     })
+  })
+
+  test('clear notes removes every note, as one move; values, colours and eliminations stay', () => {
+    let g = newGame()
+    g = commit(g, autoNotesMove(g))
+    const cell = firstEmpty(g)
+    g = commit(g, placeMove(g, cell, g.solution[cell], false))
+    g = commit(g, colorMove(g, cell, 3))
+    const other = firstEmpty(g)
+    const digit = [1, 2, 3, 4, 5, 6, 7, 8, 9].find((d) => d !== g.solution[other] && g.board.notes[other] & (1 << d))!
+    g = commit(g, applyHintMove(g, { kind: 'eliminate', cell: other, values: [digit] }, true))
+    const before = g.board
+    const undoBefore = g.undo.length
+    g = commit(g, clearNotesMove(g))
+    expect(g.undo.length).toBe(undoBefore + 1)
+    expect(g.board.notes.every((n) => n === 0)).toBe(true)
+    expect(g.board.values).toEqual(before.values)
+    expect(g.board.colors).toEqual(before.colors)
+    expect(g.board.eliminated).toEqual(before.eliminated)
+    expect(clearNotesMove(g)).toEqual([])
+    expect(undo(g).board.notes).toEqual(before.notes)
   })
 
   test('notes only go in empty cells; the eraser takes the value first, then the notes', () => {

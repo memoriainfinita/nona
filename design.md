@@ -34,6 +34,8 @@ last_updated: 2026-09-30
 - Contador de cuántos quedan de cada dígito en la botonera
 - Deshacer y rehacer
 - Herramientas: Undo, Redo, Notes, Color, Erase, Fill notes, Hint
+- Fill notes pasa a Clear notes cuando todas las celdas vacías tienen notas: borra todas las
+  notas en una jugada, que Undo revierte
 - Teclado: flechas, 1-9, M notas, E goma, Espacio pausa y reanuda, Retroceso/Supr,
   Ctrl+Z / Ctrl+Y, H pista, C modo color
 

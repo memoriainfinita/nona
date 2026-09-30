@@ -68,6 +68,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
       colorMode={colorMode}
       canUndo={game.undo.length > 0}
       canRedo={game.redo.length > 0}
+      notesTool={view.notesTool}
       compact={landscape}
       short={layout.kind === 'phone'}
       onUndo={act.undo}

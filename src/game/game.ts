@@ -203,6 +203,13 @@ export function autoNotesMove(game: Game): Move {
   return m.build()
 }
 
+/** Removes every note on the board. Values, colours and engine eliminations stay. One move. */
+export function clearNotesMove(game: Game): Move {
+  const m = new MoveBuilder(game.board)
+  game.board.notes.forEach((_, i) => m.set('notes', i, 0))
+  return m.build()
+}
+
 /** Non-given values that differ from the solution. */
 export function wrongCells(game: Game): number[] {
   return game.board.values.flatMap((v, i) => (v && !game.givens[i] && v !== game.solution[i] ? [i] : []))

@@ -50,16 +50,16 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   transacción cada uno. 9 tests en Firefox contra IndexedDB real, una base por test
 - Fase 5 terminada: interfaz en `src/app/` a partir del lienzo (tokens oscuro/claro, 7 acentos,
   tamaños S/M/L; móvil, móvil en horizontal, tablet y escritorio con barra lateral). Revisada con
-  capturas de Playwright Firefox en los cuatro formatos y los dos temas. 7 tests de interacción en
-  Firefox sobre la app real (número primero, celda primero, teclado, color, la pista se cierra con
-  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 78 tests
+  capturas de Playwright Firefox en los cuatro formatos y los dos temas. 8 tests de interacción en
+  Firefox sobre la app real (número primero, celda primero, teclado, color, Fill y Clear notes, la pista se cierra con
+  una jugada, partida completa con pistas hasta la victoria, recarga y descartar con Undo). 80 tests
   en total. Build: JS inicial 87 KB gzip; WASM 152 KB gzip; worker y WASM incluidos por Vite
 - Sin probar en la interfaz: flujo de Import (sí en los tests de storage), pausa automática al
   ocultar la pestaña, tarjeta del sudoku del día resuelto, vibración, dígitos completos ocultos,
   tarjeta de error del motor (sí en los tests del cliente)
 - Prueba manual en Firefox (2026-09-30), dada por buena por el usuario. Salió el problema de Fill
-  notes (ver TODO). Tras ella: en móvil y tablet en vertical, los números van antes que las
-  herramientas
+  notes, resuelto: el botón pasa a Clear notes (`design.md`). Tras ella: en móvil y tablet en
+  vertical, los números van antes que las herramientas
 - `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
@@ -187,8 +187,6 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [ ] Investigar: tras Fill notes no hay manera de quitar las notas (visto en la prueba manual,
-  2026-09-30). Hoy solo Undo, si es la última jugada, o la goma celda a celda
 - [ ] Propuesta: clic derecho en escritorio invierte el modo de notas (Notas apagado: pone o quita
   la nota; Notas encendido: escribe el número). En número primero, con el dígito fijado
 - [ ] Fijar `DAILY_EPOCH` con la fecha de publicación (provisional `2026-10-01`)

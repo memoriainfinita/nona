@@ -94,6 +94,22 @@ describe('number first (default)', () => {
   })
 })
 
+describe('notes tool', () => {
+  test('Fill notes turns into Clear notes; clearing can be undone', async () => {
+    await startGame()
+    const notes = () => $$('.cell .notes').length
+    expect(notes()).toBe(0)
+    button('Fill notes').click()
+    await waitFor(() => notes() > 0)
+    const filled = notes()
+    button('Clear notes').click()
+    await waitFor(() => notes() === 0)
+    await waitFor(() => button('Fill notes'))
+    button('Undo').click()
+    await waitFor(() => notes() === filled)
+  })
+})
+
 describe('cell first', () => {
   test('select a cell, then the digit', async () => {
     await mount()

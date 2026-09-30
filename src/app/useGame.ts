@@ -4,6 +4,7 @@ import {
   addTime,
   applyHintMove,
   autoNotesMove,
+  clearNotesMove,
   colorMove,
   commit,
   engineCandidates,
@@ -53,6 +54,8 @@ export interface GameView {
   engineReady: boolean
   victory: Victory | null
   errors: Set<number>
+  /** What the notes tool does now: fill while some empty cell can take notes, then clear. null = nothing to do. */
+  notesTool: 'fill' | 'clear' | null
 }
 
 export interface GameActions {
@@ -64,6 +67,7 @@ export interface GameActions {
   toggleColor: () => void
   undo: () => void
   redo: () => void
+  /** Fills or clears the notes, as `GameView.notesTool` says. */
   autoNotes: () => void
   openHint: () => void
   hintNext: () => void
@@ -285,7 +289,10 @@ export function useGame(initial: Game): [GameView, GameActions] {
       closeHint()
       setGame((g) => redo(g))
     },
-    autoNotes: () => play(autoNotesMove(gameRef.current)),
+    autoNotes: () => {
+      const fill = autoNotesMove(gameRef.current)
+      play(fill.length ? fill : clearNotesMove(gameRef.current))
+    },
     openHint: () => {
       if (hint || paused || victory) return
       setColorMode(false)
@@ -381,6 +388,7 @@ export function useGame(initial: Game): [GameView, GameActions] {
     engineReady,
     victory,
     errors: errorCells(game, settings.errors),
+    notesTool: autoNotesMove(game).length ? 'fill' : clearNotesMove(game).length ? 'clear' : null,
   }
   return [view, actions]
 }

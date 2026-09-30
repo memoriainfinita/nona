@@ -1,4 +1,4 @@
-import { Eraser, Lightbulb, PaintBucket, Pencil, Redo2, Sparkles, Undo2 } from 'lucide-react'
+import { BrushCleaning, Eraser, Lightbulb, PaintBucket, Pencil, Redo2, Sparkles, Undo2 } from 'lucide-react'
 import type { ComponentType, CSSProperties } from 'react'
 import type { Settings } from '../../game/settings'
 
@@ -9,9 +9,11 @@ interface Props {
   colorMode: boolean
   canUndo: boolean
   canRedo: boolean
+  /** Fill notes, or Clear notes once every empty cell has them; null = nothing to fill or clear. */
+  notesTool: 'fill' | 'clear' | null
   /** Icons only (phone on its side). */
   compact: boolean
-  /** "Fill" instead of "Fill notes" on the phone. */
+  /** "Fill" / "Clear" instead of "Fill notes" / "Clear notes" on the phone. */
   short: boolean
   onUndo: () => void
   onRedo: () => void
@@ -38,7 +40,11 @@ export function Tools(p: Props) {
     { label: 'Color', Icon: PaintBucket, onClick: p.onColor, pressed: p.colorMode },
     { label: 'Erase', Icon: Eraser, onClick: p.onErase, pressed: p.eraseMode },
   ]
-  if (p.settings.autoNotesButton) tools.push({ label: p.short ? 'Fill' : 'Fill notes', Icon: Sparkles, onClick: p.onFill })
+  if (p.settings.autoNotesButton) {
+    const clear = p.notesTool === 'clear'
+    const label = clear ? (p.short ? 'Clear' : 'Clear notes') : p.short ? 'Fill' : 'Fill notes'
+    tools.push({ label, Icon: clear ? BrushCleaning : Sparkles, onClick: p.onFill, disabled: p.notesTool === null })
+  }
   if (p.settings.hintButton) tools.push({ label: 'Hint', Icon: Lightbulb, onClick: p.onHint })
   return (
     <div className={`tools${p.compact ? ' compact' : ''}`} style={{ '--tools': tools.length } as CSSProperties}>
@@ -47,7 +53,7 @@ export function Tools(p: Props) {
           key={label}
           type="button"
           className={`tool${pressed ? ' on' : ''}`}
-          aria-label={label === 'Fill' ? 'Fill notes' : label}
+          aria-label={label === 'Fill' || label === 'Clear' ? `${label} notes` : label}
           aria-pressed={pressed === undefined ? undefined : pressed}
           title={p.compact ? label : undefined}
           disabled={disabled}
