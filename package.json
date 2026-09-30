@@ -11,7 +11,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc",
-    "test": "vitest run"
+    "test": "vitest run",
+    "size": "size-limit"
   },
   "dependencies": {
     "idb": "^8.0.3",
@@ -33,5 +34,19 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.1",
     "vitest": "^5.0.2"
-  }
+  },
+  "size-limit": [
+    {
+      "name": "Initial JS",
+      "path": "dist/assets/index-*.js",
+      "limit": "97 kB",
+      "gzip": true
+    },
+    {
+      "name": "WASM engine",
+      "path": "dist/assets/*.wasm",
+      "limit": "167 kB",
+      "gzip": true
+    }
+  ]
 }

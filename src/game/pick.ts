@@ -3,10 +3,10 @@ import { type Rng, randomInt, stringRng } from './rng'
 import { applyTransform, IDENTITY, randomTransform, type Transform } from './transform'
 
 /**
- * First day of the daily list (UTC). Fixed at publication (plan.md, Fase 6); until then, a
- * placeholder.
+ * First day of the daily list (UTC): the publication date (plan.md, Fase 6). Never change it:
+ * every player's daily sudoku is counted from here.
  */
-export const DAILY_EPOCH = '2026-10-01'
+export const DAILY_EPOCH = '2026-09-30'
 
 const DAY_MS = 86_400_000
 
