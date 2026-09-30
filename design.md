@@ -186,6 +186,8 @@ last_updated: 2026-09-30
 - Maquetas: lienzo de Claude Design https://claude.ai/artifact/YE8Y6Qxn6K4PEQdsze4nGX
 - Estilo oscuro con acento
 - Móvil: botonera en fila de 9
+- Móvil en vertical: el tablero ocupa todo el ancho, sin márgenes ni esquinas redondeadas;
+  botonera y herramientas conservan el margen
 - Móvil y tablet en vertical: tablero, botonera y debajo las herramientas (o la tarjeta de pista)
 - Tablet: vertical y horizontal
 - Escritorio: barra lateral con Play, Stats, Settings

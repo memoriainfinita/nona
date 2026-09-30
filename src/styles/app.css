@@ -430,6 +430,8 @@ p {
 }
 
 .game-phone .keypad { margin: 0 -8px; }
+/* The board runs edge to edge on the phone; keys and tools keep the gutter. */
+.game-phone > .board { width: calc(100% + 32px); margin: 0 -16px; border-radius: 0; }
 
 .game-tablet {
   max-width: 820px;
