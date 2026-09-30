@@ -74,7 +74,10 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   tablero de borde a borde en el móvil, con números y notas más grandes y finos y notas más
   contrastadas. Solo en tests: Enter y Espacio no repiten el último clic, el tablero es una sola
   parada de Tab, notas con N
-- `DAILY_EPOCH` en `src/game/pick.ts` es provisional (`2026-10-01`): se fija al publicar
+- Fase 6 terminada (2026-09-30): publicada en https://memoriainfinita.github.io/nona/ desde la CI.
+  `DAILY_EPOCH` fijado en `2026-09-30`. size-limit en gzip: JS inicial 88,08 kB (tope 97), WASM
+  151,17 kB (tope 167). Comprobada la web publicada en Playwright Firefox: inicio, partida, pista
+  con worker y WASM, sudoku del día; sin errores de página ni peticiones fallidas
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
 
 ### Pruebas del motor (2026-09-29, nativo, release)
@@ -194,6 +197,12 @@ pistas, midiendo cada llamada desde JS.
   en `meta.json`), `verify`. `bank/work/` no se versiona. Confirmed 2026-09.
 - [web] Nada que exija contexto seguro (`crypto.randomUUID` y similares): la app también se sirve por
   HTTP en la LAN. Ids con `newId()` de `src/app/id.ts`. Confirmed 2026-09.
+- [ci] Se publica en Pages solo con push a `main` y si pasa el job `test` entero (typecheck, tests,
+  build, `pnpm size`). Pages con `build_type=workflow`. Confirmed 2026-09.
+- [daily] `DAILY_EPOCH` (`2026-09-30`) no se cambia nunca: de él sale el sudoku del día de todos.
+  Confirmed 2026-09.
+- [size] Topes de size-limit en gzip (`"gzip": true`; sin él mide brotli), un 10% sobre lo medido.
+  Confirmed 2026-09.
 - [test] Tests de interfaz: `StoreProvider` cierra su conexión al desmontar (si no, `deleteDB` se
   bloquea); `optimizeDeps.include` evita que Vite recargue a mitad de test. Confirmed 2026-09.
 
@@ -203,5 +212,4 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [ ] Fijar `DAILY_EPOCH` con la fecha de publicación (provisional `2026-10-01`)
-- [ ] Fase 6 de `plan.md`: publicación en GitHub Pages
+- Sin pendientes
