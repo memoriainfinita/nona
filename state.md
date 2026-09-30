@@ -25,7 +25,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Diseño completo en `design.md`. Maquetas en el lienzo de Claude Design enlazado desde
   `design.md`: 28 pantallas por dispositivo (móvil, tablet, escritorio), tema claro,
   acentos y componentes
-- Plan de implementación en `plan.md`, fases 0–6
+- Plan de implementación en `plan.md`, fases 0–7
 - Fase 0 terminada: esqueleto Vite 8 + React 19.3 + TS 7, tests en Node y Firefox. Repo público
   https://github.com/memoriainfinita/nona con CI en verde (typecheck, tests, build)
 - Fase 1 terminada: crate `engine/` (puente del fork `f56364e`, `hint` sobre candidatos y `analyze`),
@@ -82,6 +82,21 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   sacadas de la web publicada. About del repo: descripción "Sudoku with hints that show you how to
   solve it, not just the answer" (igual en README e `index.html`), homepage a Pages y 10 topics
 - Sin probar: la marca `backtracking` (ningún puzzle de prueba la necesita)
+- Fase 7 (pistas legibles) diseñada, sin empezar. Revisión del 2026-10-01: 60 puzzles del banco
+  por nivel jugados solo con pistas a través del puente, con un script del scratchpad (no se
+  conserva; el arnés de la fase 7 lo sustituye). 0 pistas incorrectas. Hallazgos:
+  - Singles sobre candidatos que el jugador no ve: la app pasa los candidatos del motor (básicos
+    menos lo eliminado por pistas). Desde intermediate, en todas las partidas; ~800 de ~18.800
+    singles. Ejemplo: intermediate semilla 2000001, pista 22, "Naked Single" R4C6 = 5 con 2 y 5
+    en el tablero
+  - Una pista elimina en una sola celda: un patrón con varias afectadas sale como pistas seguidas
+    iguales (Box/Line 84 de 167, Pointing 136 de 460, Hidden Pair 80 de 240, X-Wing 30 de 60)
+  - Celdas implicadas sin papel (patrón y afectada mezcladas; singles sin su unidad; 3D Medusa
+    hasta 66 celdas, con repetidas)
+  - Explicaciones del motor pobres o mal formadas desde expert ("AIC: chain of length 9.",
+    fish con `["r1", "r4"]`, coordenadas "(8, 9)")
+  - Pistas avanzadas sobre candidatos que ya no están en las notas (Finned X-Wing 94 de 139)
+  - Fill notes rellena con candidatos básicos y devuelve lo que quitó una pista
 
 ### Motor: lo que sigue vigente
 
@@ -155,6 +170,5 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 
 ## TODO
 
-- [ ] Revisar: el usuario ve pistas de "single" que no son singles (2026-09-30). Sin reproducir; falta
-  un caso concreto (puzzle y paso). Validado hasta ahora: 0 deducciones incorrectas en 117.660, pero
-  eso comprueba el resultado, no el nombre de la técnica
+- [ ] Fase 7: pistas legibles (`plan.md`)
+- [ ] Después de la fase 7: una frase fija por técnica en el paso 1, que diga qué es

@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-09-30
+last_updated: 2026-10-01
 ---
 
 # nona — design
@@ -16,7 +16,7 @@ last_updated: 2026-09-30
 ## Idioma
 
 - Interfaz en inglés
-- Explicaciones de las pistas tal cual las da el motor
+- Explicaciones de las pistas propias, no las del motor (ver Pistas)
 
 ## Tablero e interacción
 
@@ -86,7 +86,8 @@ last_updated: 2026-09-30
 - Apply de una eliminación: quita esos candidatos de las notas del jugador si los tiene; sin
   notas en la celda, no cambia nada visible y la pista queda aplicada
 - Autocompletar notas: solo celdas vacías sin notas; las anotadas no se tocan; se deshace
-  como una sola jugada
+  como una sola jugada. Rellena con los candidatos del motor (los de los números colocados
+  menos lo eliminado por pistas), sin devolver lo que quitó una pista
 - Deshacer/rehacer: todo cambio del tablero (números, notas, colores, autocompletar, Apply).
   Pausa y abrir o cerrar la pista no entran
 - Deshacer un Apply de eliminación revierte las notas y los candidatos del motor
@@ -143,6 +144,36 @@ last_updated: 2026-09-30
   celda, paso 3 el valor con Apply y sin explicación. Cuenta como pista
 - Si el motor no carga: la tarjeta muestra "Couldn't load the hint engine" con Retry y
   Close; la partida sigue normal y la pista no cuenta
+
+### Pistas legibles (fase 7)
+
+- Primero las singles visibles: naked y hidden sobre los candidatos básicos (solo los
+  números colocados). Si no hay ninguna, el motor busca sobre sus candidatos
+- Single que solo existe por eliminaciones de pistas anteriores: la tarjeta lo dice. Ejemplo:
+  "R4C6 had 2 and 5; 2 was ruled out by an earlier hint"
+- Una pista agrupa todas las eliminaciones del mismo patrón (técnica, dígito y celdas del
+  patrón): un Apply para todas, una sola jugada para Undo, cuenta como una pista
+  - Subsets, intersecciones y fish: las afectadas se calculan del patrón (resto de la unidad;
+    cubiertas menos bases)
+  - Wings, ALS, cadenas y rectángulos: se vuelve a preguntar al motor, saltando las singles
+    intercaladas, mientras salga el mismo patrón
+- Papeles de celda: patrón, afectadas y unidad (fila, columna o caja, en singles e
+  intersecciones). Sin celdas repetidas
+- Tablero: patrón con el anillo de acento (`hint`), afectadas con `hint-target`, unidad con
+  sombreado suave como el de zona. Se hace en la app y se revisa con capturas, sin lienzo
+- Pasos 2 y 3: las celdas del patrón y las afectadas muestran los candidatos del motor en el
+  sitio de las notas del jugador, con el dígito clave resaltado. Al cerrar la tarjeta vuelven
+  las notas
+- Explicaciones propias a partir de la prueba estructurada del motor, en el formato de la app
+  (R4C6, "box 5"). Una plantilla por familia: singles, subsets, intersecciones, fish,
+  wings/ALS, cadenas, rectángulos
+- Cadenas: nodos en orden en el texto de la tarjeta, sin enlaces dibujados en el tablero; la
+  tarjeta hace scroll. Si la prueba no trae la cadena ordenada (comprobar 3D Medusa), texto
+  genérico
+- Conclusión con varias afectadas, agrupada por dígito: "Remove 6 from R7C5, R8C5 and R9C5";
+  una línea por dígito
+- Nombre de la técnica: `Display` del motor, salvo "Pointing Triple" cuando el pointing tiene
+  tres celdas
 
 ## Estadísticas
 
@@ -247,6 +278,8 @@ last_updated: 2026-09-30
 - En la app solo se usa para pistas. El WASM se carga al pedir la primera
 - Errores, conflictos y autocompletar notas se calculan en JS
 - El puente devuelve con cada pista el nombre legible de la técnica (`Display` de Rust)
+- Papeles de celda y datos de explicación salen de `ProofCertificate`, pública en
+  `sudoku-core`. El fork no cambia
 
 ## Banco
 

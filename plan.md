@@ -1,6 +1,6 @@
 ---
 created: 2026-09-30
-last_updated: 2026-09-30
+last_updated: 2026-10-01
 ---
 
 # nona — plan
@@ -109,3 +109,20 @@ Implementación de `design.md`. Estado de cada fase en `state.md`.
 - CI: compila el WASM, pasa todos los tests y size-limit, construye y publica en GitHub Pages. Si algo falla, no publica
 
 **Terminado:** la app publicada en Pages desde la CI.
+
+## Fase 7: pistas legibles
+
+Diseño en `design.md`, Pistas legibles.
+
+- Arnés de revisión en `engine/examples/`: juega el banco solo con pistas a través del puente y
+  cuenta por técnica (singles no visibles, patrones repetidos, celdas, explicaciones); comprueba
+  cada eliminación agrupada contra la solución
+- Puente: singles visibles primero, agrupación por patrón, papeles de celda, nodos de cadena
+  en orden, datos de explicación desde `ProofCertificate`
+- App: plantillas de explicación por familia, tarjeta con varias afectadas, aviso de single
+  que depende de eliminaciones anteriores, "Pointing Triple"
+- Tablero: marcado por papel y candidatos del motor durante los pasos 2 y 3
+- Fill notes con los candidatos del motor
+- size-limit tras el cambio del puente
+
+**Terminado:** con el arnés sobre 60 puzzles por nivel, cero singles no visibles sin aviso, cero pistas que repiten el patrón de la anterior, ninguna explicación con el formato del motor y ninguna eliminación agrupada incorrecta; tests de interacción en Firefox para una pista agrupada y para los candidatos visibles.
