@@ -184,14 +184,8 @@ pistas, midiendo cada llamada desde JS.
 
 ## TODO
 
-- [x] Plan de implementación a partir de `design.md`: `plan.md`
-- [x] Fase 0 de `plan.md`: base
-- [x] Fase 1 de `plan.md`: motor
-- [x] Fase 2 de `plan.md`: banco
-- [x] Fase 3 de `plan.md`: lógica de juego
-- [x] Fase 4 de `plan.md`: persistencia
-- [x] Fase 5 de `plan.md`: interfaz
-- [ ] Fase 6 de `plan.md`: publicación
-- [x] Lienzo: pasar el acento por defecto a índigo
-- [x] Decidir la salida al bucle de pistas: fork
-- [x] Medir `get_hint_with_candidates` a mitad de partida en WASM
+- [ ] Prueba manual en Firefox antes de publicar (`pnpm build:engine`, `pnpm dev`). Sin cubrir por
+  tests: pausa automática al cambiar de pestaña, flujo de Import, tarjeta del sudoku del día resuelto,
+  dígitos completos ocultos; vibración solo en móvil
+- [ ] Fijar `DAILY_EPOCH` con la fecha de publicación (provisional `2026-10-01`)
+- [ ] Fase 6 de `plan.md`: publicación en GitHub Pages, después de la prueba manual

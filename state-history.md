@@ -4,6 +4,15 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-09-30 — Banco: listas que crecen y sudoku del día en orden
+
+**Qué cambió:** el banco inmutable de 200 por nivel, del que la fecha elegía al azar el sudoku del día, pasa a dos conjuntos que solo crecen por el final: banco normal (500 por nivel en la primera tanda) y lista del día ordenada (732 días), recorrida desde la fecha de lanzamiento. Las partidas normales eligen primero puzzles no jugados.
+**Por qué:**
+- 200 por nivel no daban ni para un año de diarios sin repetir base; con elección al azar, la base se repite a las pocas semanas
+- Ampliar un banco inmutable no servía al diario, que salía siempre del primero
+- Con la lista en orden, añadir puzzles no cambia los días ya publicados
+- El piloto mostró que generar es barato: 3,3 h de CPU para los 3732
+
 ### 2026-09-29 — Marca y acento por defecto: índigo en vez de ámbar
 
 **Qué cambió:** el acento por defecto y el color del icono pasan de ámbar (`#E6A63B`) a índigo (`#8C95F6` oscuro, `#4B55C4` claro). El ámbar queda como acento elegible.
