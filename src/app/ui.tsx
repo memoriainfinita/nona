@@ -50,8 +50,9 @@ export function Sidebar({ route, dark, onPlay }: { route: Route; dark: boolean; 
   )
   return (
     <nav className="sidebar" aria-label="Main">
-      <span className="brand">
+      <span className="brand stacked">
         <Logo size={36} light={!dark} />
+        nona
       </span>
       {item('/play', 'Play', <Grid3x3 size={20} />)}
       {item('/stats', 'Stats', <ChartNoAxesColumn size={20} />)}

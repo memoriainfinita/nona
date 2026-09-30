@@ -110,7 +110,7 @@ last_updated: 2026-09-30
   Oscuro: baldosa `#1B1E1D`, casillas `#353A38`, novena `#8C95F6`. Claro: baldosa blanca
   con borde `#DAD6CC`, casillas `#D5D0C4`, novena `#4B55C4`
 - El icono va también en la app: a 28 px delante de "nona" en la cabecera de inicio (móvil y
-  tablet) y a 36 px en lugar de la palabra arriba de la barra lateral (escritorio)
+  tablet) y a 36 px con "nona" debajo arriba de la barra lateral (escritorio)
 - Descartados: cuadrícula entera, novena lisa, 9 sin relleno, IX, n sobre rejilla,
   dígito 9 suelto; formas del 9 round, straight, hook, angular; resto de la familia del
   violeta (periwinkle, violet, iris, lavender, purple, orchid, magenta)
