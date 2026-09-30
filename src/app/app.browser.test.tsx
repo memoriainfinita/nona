@@ -128,6 +128,16 @@ describe('notes tool', () => {
   })
 })
 
+describe('settings', () => {
+  test('the vibration switch shows only where the browser has vibrate', async () => {
+    await mount()
+    window.location.hash = '/settings'
+    await waitFor(() => $('.settings'))
+    const shown = $$('button[role="switch"]').some((b) => b.getAttribute('aria-label') === 'Vibration')
+    expect(shown).toBe('vibrate' in navigator)
+  })
+})
+
 describe('cell first', () => {
   test('select a cell, then the digit', async () => {
     await mount()

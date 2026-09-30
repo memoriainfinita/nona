@@ -194,7 +194,10 @@ export function Settings({ layout, dark }: { layout: Layout; dark: boolean }) {
         <Toggle {...bound} k="zoneShading" label="Zone shading" />
         <Toggle {...bound} k="digitHighlight" label="Digit highlight" />
         <Toggle {...bound} k="timerVisible" label="Show timer" help="The clock keeps running when hidden." />
-        <Toggle {...bound} k="vibration" label="Vibration" help="On placing a number and on mistakes." />
+        {/* Hidden where the browser has no vibrate. Firefox for Android keeps it but never vibrates. */}
+        {'vibrate' in navigator && (
+          <Toggle {...bound} k="vibration" label="Vibration" help="On placing a number and on mistakes. Not supported by Firefox or on iPhone." />
+        )}
       </section>
       <section className="stack">
         <h2 className="section-title">DATA</h2>

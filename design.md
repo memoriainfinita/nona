@@ -177,6 +177,9 @@ last_updated: 2026-09-30
 | Tamaño de números y notas | S / M / L | M |
 | Vibración en móvil al colocar o al cometer un error | sí / no | sí |
 
+- Vibración: el ajuste no aparece si el navegador no tiene `navigator.vibrate` (iPhone, Firefox de
+  escritorio). Firefox para Android la tiene pero no vibra (Mozilla la desactivó): lo dice la ayuda
+
 - Sección Data al final de Ajustes: Export, Import y Clear history
 - Índigo: color de marca y acento por defecto. Oscuro `#8C95F6`, claro `#4B55C4`; ≥6:1 en los dos
 - Ámbar deja de ser el color de marca porque ya lo usa sadhana; queda como acento elegible
