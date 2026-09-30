@@ -97,6 +97,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   WASM 166,73 kB (tope subido de 167 a 183 kB, 10% sobre lo medido)
 - Revisado con capturas de Playwright Firefox (móvil oscuro, escritorio claro, móvil claro): pasos 2
   y 3 de Naked Pair y de Hidden Single
+- Prueba manual del usuario en Firefox sobre la web publicada (2026-10-01): patrón, candidatos del motor y
+  tachados se leen bien
 
 ### Motor: lo que sigue vigente
 
@@ -174,5 +176,4 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 
 ## TODO
 
-- [ ] Fase 7: prueba manual del usuario en Firefox (Hard, una pista de Pair o Pointing: patrón, candidatos y tachados legibles)
 - [ ] Después de la fase 7: una frase fija por técnica en el paso 1, que diga qué es
