@@ -332,4 +332,4 @@ last_updated: 2026-10-01
   (`AAAA-MM-DD`). Cada tanda lleva el mismo número de puzzles de cada nivel, barajados al
   generarla. Si la lista se acaba, vuelve a empezar por el principio (con otra transformación)
 - Lista del día: primera tanda de 732 (122 por nivel), dos años
-- Fecha de lanzamiento: [PENDIENTE: se fija al publicar]
+- Fecha de lanzamiento: 2026-09-30 (`DAILY_EPOCH`)

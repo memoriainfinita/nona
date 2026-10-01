@@ -7,7 +7,7 @@ Sudoku with hints that show you how to solve it, not just the answer.
 
 **Live:** https://memoriainfinita.github.io/nona/
 
-![nona on a phone, dark theme: a Hard game with notes, and the hint card on its second step, "Naked Single", with the cell highlighted](docs/nona-phone.png)
+![nona on a phone, dark theme: a Hard game with notes, and the hint card on its second step, "Naked Single", with the cell highlighted](docs/nona-demo.png)
 
 ## Hints
 
