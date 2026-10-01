@@ -4,3 +4,4 @@ dist/
 .backups/
 bank/work/
 .vitest/
+.archive/

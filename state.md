@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-10-01
+last_updated: 2026-10-02
 ---
 
 # nona — state
@@ -145,6 +145,8 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
   mismo nivel y SE en todos (2026-09-30). El no determinismo es del camino de pistas
 - Arnés de prueba en el scratchpad de la sesión: copia del motor con un `raw_step`
   público añadido; no se conserva
+- El corpus de TSudoku se conserva en `.archive/se-corpus/` (tres `.jsonl`), sin versionar:
+  datos de terceros con licencia sin comprobar
 
 ## Patterns
 
