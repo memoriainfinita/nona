@@ -105,7 +105,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Sudoku propio (2026-10-01), en `design.md`: pantalla `#/enter` (`src/app/screens/Enter.tsx`), `check` en el
   puente, `seed` null y `custom` en el historial. Tests: 165 (Node y Firefox), typecheck y build en verde.
   size-limit: JS inicial 93,55 kB (tope 97), WASM 168,25 kB (tope 183). Revisado con capturas de Playwright
-  Firefox (móvil oscuro, escritorio claro). Sin probar por el usuario
+  Firefox (móvil oscuro, escritorio claro). Probado por el usuario en la web publicada (2026-10-01): pegar y jugar funciona
 - Test intermitente: "a grouped elimination" (readable hints) falló una vez en la tanda completa del
   2026-10-01 y pasó en las 4 ejecuciones siguientes. Usa un puzzle hard al azar; causa sin ver, el error
   no se guardó
