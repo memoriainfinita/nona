@@ -178,6 +178,8 @@ last_updated: 2026-10-01
   una línea por dígito
 - Nombre de la técnica: `Display` del motor, salvo "Pointing Triple" cuando el pointing tiene
   tres celdas
+- Paso 1: debajo del nombre, una frase fija que dice qué es la técnica (`TECHNIQUE_INTRO` en
+  `hintText.ts`, las 45 del motor y Pointing Triple). Sin frase para el nombre, solo el nombre
 
 ## Estadísticas
 

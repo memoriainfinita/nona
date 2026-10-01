@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import type { Hint } from '../../engine/protocol'
 import { ALL_DIGITS, basicCandidates, parseGrid } from '../../game/grid'
 import samples from '../hint-samples.json'
-import { conclusionLines, dependentNote, explanation } from './hintText'
+import { conclusionLines, dependentNote, explanation, TECHNIQUE_INTRO } from './hintText'
 
 // One real hint per technique, written by `cargo run --release --example survey -- 60 --dump`
 // (engine/examples/survey.rs): the board, the engine candidates and the bridge's answer.
@@ -35,6 +35,10 @@ describe('hint texts', () => {
     }
     const cells = lines.join(' ').match(/R\dC\d/g) ?? []
     expect(cells.length).toBeGreaterThan(0)
+  })
+
+  test.each(all.map((s) => [s.hint.technique] as const))('%s: step 1 says what the technique is', (name) => {
+    expect(TECHNIQUE_INTRO[name]).toMatch(/^[A-Z0-9].*\.$/)
   })
 
   test('singles that need earlier eliminations say so; the others do not', () => {

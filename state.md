@@ -99,6 +99,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   y 3 de Naked Pair y de Hidden Single
 - Prueba manual del usuario en Firefox sobre la web publicada (2026-10-01): patrón, candidatos del motor y
   tachados se leen bien
+- Paso 1 de la pista: frase fija por técnica (`TECHNIQUE_INTRO`, 45 del motor y Pointing Triple).
+  Tests: 152. Arithmetic Counting y Siamese Fish sin pista real con la que comprobar su frase
 
 ### Motor: lo que sigue vigente
 
@@ -176,4 +178,3 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 
 ## TODO
 
-- [ ] Después de la fase 7: una frase fija por técnica en el paso 1, que diga qué es

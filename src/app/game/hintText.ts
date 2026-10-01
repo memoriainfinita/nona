@@ -194,6 +194,61 @@ export function dependentNote(hint: Hint, { basic, masks }: HintContext): string
   return `${d.value} was also possible in ${cells(others)}, ruled out by ${others.length === 1 ? 'an earlier hint' : 'earlier hints'}.`
 }
 
+/** Step 1: what the technique is, one fixed sentence per name (the engine's `Display`, plus "Pointing Triple"). */
+export const TECHNIQUE_INTRO: Record<string, string> = {
+  'Naked Single': 'A cell with only one candidate left.',
+  'Hidden Single': 'A digit that fits in only one cell of a row, column or box.',
+  'Naked Pair': 'Two cells of one unit that together hold only two digits.',
+  'Naked Triple': 'Three cells of one unit that together hold only three digits.',
+  'Naked Quad': 'Four cells of one unit that together hold only four digits.',
+  'Hidden Pair': 'Two digits that fit only in the same two cells of a unit.',
+  'Hidden Triple': 'Three digits that fit only in the same three cells of a unit.',
+  'Hidden Quad': 'Four digits that fit only in the same four cells of a unit.',
+  'Pointing Pair': 'In a box, a digit that fits only in two cells along one row or column.',
+  'Pointing Triple': 'In a box, a digit that fits only in three cells along one row or column.',
+  'Box/Line Reduction': 'In a row or column, a digit that fits only inside one box.',
+  'X-Wing':
+    'A digit that fits in two places in each of two rows, and those places line up in two columns. Or the same with rows and columns swapped.',
+  Swordfish: 'The X-Wing idea with three rows and columns.',
+  Jellyfish: 'The X-Wing idea with four rows and columns.',
+  'Finned X-Wing': 'An X-Wing with one or two extra candidates, the fin, in one box.',
+  'Finned Swordfish': 'A Swordfish with one or two extra candidates, the fin, in one box.',
+  'Finned Jellyfish': 'A Jellyfish with one or two extra candidates, the fin, in one box.',
+  'Franken Fish': 'A fish whose rows or columns include a box.',
+  'Mutant Fish': 'A fish that mixes rows, columns and boxes on both sides.',
+  'Siamese Fish': 'Two finned fish on the same digit whose fins share a box, read together.',
+  'Kraken Fish': 'A finned fish where chains show that every fin leads to the same conclusion.',
+  'Empty Rectangle': 'In a box, a digit confined to one row and one column, combined with a link outside the box.',
+  'Unique Rectangle':
+    "Four cells in two boxes that could swap two digits. The puzzle has one solution, so that pattern can't be completed.",
+  'Hidden Rectangle': 'A Unique Rectangle found through strong links on its two digits.',
+  'Avoidable Rectangle': "Like a Unique Rectangle, but with cells you've already solved.",
+  'Extended Unique Rectangle': 'The Unique Rectangle idea over more cells and more digits.',
+  'BUG+1': 'Every unsolved cell has two candidates except one. That one must take the digit that avoids a second solution.',
+  'XY-Wing':
+    'A cell with two candidates, X and Y, sees two others: one with X and Z, one with Y and Z. One of those two must be Z.',
+  'XYZ-Wing': 'Like an XY-Wing, but the middle cell also holds Z.',
+  'WXYZ-Wing': 'Four cells holding four digits, arranged so that one digit must land in one of them.',
+  'W-Wing': 'Two cells with the same two candidates, joined by a strong link on one of the digits.',
+  'X-Chain': 'A chain on a single digit that alternates between "isn\'t" and "is".',
+  AIC: 'A chain that alternates between "isn\'t" and "is", across different cells and digits.',
+  '3D Medusa': 'Candidates coloured in two sets along strong links. One colour is entirely true.',
+  'Sue de Coq': 'Cells where a box meets a row or column, whose candidates split between the two units.',
+  'ALS-XZ': 'Two almost locked sets, groups with one more digit than cells, linked by a shared digit.',
+  'ALS-XY-Wing': 'Three almost locked sets joined by two shared digits.',
+  'ALS Chain': 'A chain of almost locked sets linked by shared digits.',
+  'Death Blossom': 'Each candidate of one cell leads into an almost locked set. Whichever is true, a common digit is ruled out.',
+  'Aligned Pair Exclusion':
+    'Try every combination of two cells that see each other; combinations that would empty another cell are ruled out.',
+  'Aligned Triplet Exclusion':
+    'Try every combination of three cells that see each other; combinations that would empty another cell are ruled out.',
+  'Arithmetic Counting': 'Count how many times digits must appear across several units. A candidate that breaks the count is false.',
+  'Nishio Forcing Chain': "Assume a candidate is true. If that leads to a contradiction, it's false.",
+  'Cell Forcing Chain': 'Try every candidate of one cell. Whatever they all lead to is true.',
+  'Region Forcing Chain': 'Try every place a digit can go in a unit. Whatever they all lead to is true.',
+  'Dynamic Forcing Chain': 'A forcing chain that uses the deductions it makes along the way.',
+}
+
 /** Cells the hint changes: the placement, or every elimination's cell. */
 export function targetCells(hint: Hint): number[] {
   return hint.place ? [hint.place.cell] : hint.eliminations.map((e) => e.cell)

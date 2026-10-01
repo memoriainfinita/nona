@@ -1,7 +1,7 @@
 import { engineCandidates, type Game } from '../../game/game'
 import { basicCandidates } from '../../game/grid'
 import type { HintSession } from '../../game/hint'
-import { conclusionLines, explanation, type HintContext } from './hintText'
+import { conclusionLines, explanation, TECHNIQUE_INTRO, type HintContext } from './hintText'
 
 interface Props {
   session: HintSession
@@ -52,7 +52,10 @@ function text(session: HintSession, engineReady: boolean, ctx: HintContext): Tex
         return { kicker: 'HINT · NO LOGICAL STEP', title: conclusion, next: 'Apply', step: 3 }
       }
       const name = hint.technique.toUpperCase()
-      if (card.stage === 'technique') return { kicker: 'HINT · LOOK FOR A', title: [hint.technique], next: 'Show cells', step: 1 }
+      if (card.stage === 'technique') {
+        const intro = TECHNIQUE_INTRO[hint.technique]
+        return { kicker: 'HINT · LOOK FOR A', title: [hint.technique], body: intro ? [intro] : undefined, next: 'Show cells', step: 1 }
+      }
       if (card.stage === 'cells') return { kicker: `HINT · ${name}`, title: ['Look at the highlighted cells.'], next: 'Show conclusion', step: 2 }
       return { kicker: `HINT · ${name}`, title: conclusion, body: explanation(hint, ctx), next: 'Apply', step: 3 }
     }
