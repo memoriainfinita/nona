@@ -101,6 +101,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   tachados se leen bien
 - Paso 1 de la pista: frase fija por técnica (`TECHNIQUE_INTRO`, 45 del motor y Pointing Triple).
   Tests: 152. Arithmetic Counting y Siamese Fish sin pista real con la que comprobar su frase
+- Prueba manual del usuario en Firefox sobre la web publicada (2026-10-01): la frase del paso 1 se ve bien
 
 ### Motor: lo que sigue vigente
 
