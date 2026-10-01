@@ -598,3 +598,24 @@ pub fn analyze(puzzle: &str) -> Result<String, JsError> {
     let (difficulty, se) = Solver::new().analyze(&grid);
     Ok(serde_json::json!({ "level": difficulty.to_string(), "se": se }).to_string())
 }
+
+/// A puzzle entered by the player. Returns JSON: {"solutions": 0|1|2, "level": "...", "solution": "..."}.
+/// Counting stops at 2. Level (the engine's `Difficulty`) and solution (81 digits) only with exactly
+/// one solution, else null. Givens that break a rule count as no solution.
+#[wasm_bindgen]
+pub fn check(puzzle: &str) -> Result<String, JsError> {
+    let grid = Grid::from_string(puzzle).ok_or_else(|| JsError::new("invalid puzzle"))?;
+    let solver = Solver::new();
+    let solutions = if grid.validate().is_valid { solver.count_solutions(&grid, 2) } else { 0 };
+    let solved = if solutions == 1 { solver.solve(&grid) } else { None };
+    let Some(solved) = solved else {
+        return Ok(serde_json::json!({ "solutions": solutions, "level": null, "solution": null }).to_string());
+    };
+    let (difficulty, _) = solver.analyze(&grid);
+    Ok(serde_json::json!({
+        "solutions": 1,
+        "level": difficulty.to_string(),
+        "solution": solved.to_string_compact(),
+    })
+    .to_string())
+}

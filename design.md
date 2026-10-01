@@ -80,6 +80,7 @@ last_updated: 2026-10-01
 
 - Partida resuelta con pistas: cuenta como completada y suma XP, no marca mejor tiempo; la
   victoria indica "solved with hints"
+- Sudoku propio: cuenta como completado y suma XP; no marca mejor tiempo (ver Sudoku propio)
 - Una pista cuenta como usada cuando la tarjeta muestra el paso 1 (ya revela la técnica) o
   el paso de números erróneos, salvo con "Errores contra la solución" activo
 - "Errores contra la solución" y autocompletar notas no afectan al mejor tiempo
@@ -109,7 +110,7 @@ last_updated: 2026-10-01
 
 ## Web
 
-- Rutas con `#`: `#/play`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
+- Rutas con `#`: `#/play`, `#/enter`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
 - Icono de la app, "novena llena con 9": cuadrícula 3×3 en una baldosa redondeada; ocho
   casillas apagadas y la novena (abajo a la derecha) rellena del acento con un 9 trazado
   del color de la baldosa, siempre en índigo (marca; no sigue el acento del jugador).
@@ -180,6 +181,29 @@ last_updated: 2026-10-01
   tres celdas
 - Paso 1: debajo del nombre, una frase fija que dice qué es la técnica (`TECHNIQUE_INTRO` en
   `hintText.ts`, las 45 del motor y Pointing Triple). Sin frase para el nombre, solo el nombre
+
+## Sudoku propio
+
+- Clásico 9×9 que mete el jugador (de un periódico, un libro, otra app). Sin variantes
+- Inicio: botón "Enter a puzzle" debajo de Start; abre `#/enter`
+- Entrada: tablero vacío con la botonera; los números siguen el modo de entrada de los ajustes.
+  El mismo número otra vez vacía la celda. Undo, Clear y Paste
+- Teclado: flechas, 1–9, Backspace o 0 borra, Ctrl+Z, Ctrl+V pega
+- Paste: diálogo con un cuadro de texto, 81 casillas de 1–9 con `.` o `0` para las vacías;
+  espacios y saltos de línea no cuentan. Texto que no sirve: aviso en el diálogo. Sin leer el
+  portapapeles directamente: no funciona por HTTP en la LAN
+- Números que chocan en fila, columna o caja: en rojo en el tablero
+- Play: el motor (`check` del puente) cuenta soluciones hasta 2:
+  - 0: "This puzzle has no solution." y se sigue editando
+  - 2 o más: "This puzzle has more than one solution." y no se juega (errores contra la
+    solución y pistas necesitan una sola)
+  - 1: partida normal
+- Nivel: `analyze`, como en el banco. Beginner cuenta como Easy y Extreme como Master
+- Partida y registro: normales (pistas, notas, deshacer, pausa, historial, XP). "Easy · Custom" en
+  cabecera, inicio, estadísticas y victoria. No marca mejor tiempo
+- Datos: `seed` null. La entrada del historial guarda `custom: { puzzle, solution }`; ver el
+  tablero y Play again salen de ahí. Opcional en la copia de seguridad: `BACKUP_VERSION` sigue en 1
+- Fuera: guardar a medio teclear, compartir o exportar el puzzle, variantes
 
 ## Estadísticas
 

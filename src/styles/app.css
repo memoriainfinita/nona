@@ -525,6 +525,23 @@ p {
 .game-wide .hint-title { font-size: 19px; }
 .shortcuts { font-size: 12px; line-height: 1.6; color: var(--muted); }
 
+/* ---------- Enter a puzzle ---------- */
+
+.enter-message { font-size: 14px; line-height: 1.45; color: var(--error); }
+.game-wide .enter-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dialog p.enter-message { color: var(--error); }
+
+.paste-box {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  font: 14px/1.4 ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  resize: vertical;
+}
+
 .game-phoneLandscape { padding: 16px 24px; }
 
 .game-landscape {

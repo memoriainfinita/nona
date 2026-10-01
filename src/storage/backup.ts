@@ -48,7 +48,7 @@ const transformSchema = z.object({
 const gameSchema = z.object({
   id: z.string().min(1),
   level,
-  seed: int(0, Number.MAX_SAFE_INTEGER),
+  seed: int(0, Number.MAX_SAFE_INTEGER).nullable(),
   daily: date.nullable(),
   transform: transformSchema,
   givens: cells(9),
@@ -65,12 +65,13 @@ const gameSchema = z.object({
 const historySchema = z.object({
   id: z.string().min(1),
   level,
-  seed: int(0, Number.MAX_SAFE_INTEGER),
+  seed: int(0, Number.MAX_SAFE_INTEGER).nullable(),
   daily: date.nullable(),
   timeMs: z.number().min(0),
   hintsUsed: int(0, Number.MAX_SAFE_INTEGER),
   completedAt: z.number(),
   transform: transformSchema.optional(),
+  custom: z.object({ puzzle: z.string().regex(/^[1-9.]{81}$/), solution: z.string().regex(/^[1-9]{81}$/) }).optional(),
 }) satisfies z.ZodType<HistoryEntry>
 
 const settingsSchema = z

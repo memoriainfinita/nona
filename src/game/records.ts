@@ -1,5 +1,6 @@
 import type { Level } from '../bank/bank'
 import type { Game } from './game'
+import { formatGrid } from './grid'
 import type { Transform } from './transform'
 
 export const XP_PER_SUDOKU = 100
@@ -7,8 +8,8 @@ export const XP_PER_SUDOKU = 100
 export interface HistoryEntry {
   id: string
   level: Level
-  /** Seed of the base puzzle. */
-  seed: number
+  /** Seed of the base puzzle; null for a puzzle entered by the player. */
+  seed: number | null
   /** UTC date when it counts as that day's daily sudoku (solved within its date), else null. */
   daily: string | null
   timeMs: number
@@ -16,6 +17,8 @@ export interface HistoryEntry {
   completedAt: number
   /** Transformation the puzzle was played with. Missing in entries saved before it was kept. */
   transform?: Transform
+  /** A puzzle entered by the player (seed null): it is not in the bank, so the entry keeps it. */
+  custom?: { puzzle: string; solution: string }
 }
 
 /** UTC date as YYYY-MM-DD. */
@@ -41,6 +44,7 @@ export function completeGame(game: Game, id: string, now: number): HistoryEntry 
     hintsUsed: game.hintsUsed,
     completedAt: now,
     transform: game.transform,
+    ...(game.seed === null && { custom: { puzzle: formatGrid(game.givens), solution: formatGrid(game.solution) } }),
   }
 }
 
@@ -49,11 +53,16 @@ export function solvedWithHints(entry: HistoryEntry): boolean {
   return entry.hintsUsed > 0
 }
 
-/** Best time per level: the minimum among games solved without hints. */
+/** Best times count bank puzzles solved without hints; a puzzle entered by the player never sets one. */
+function countsForBest(entry: HistoryEntry): boolean {
+  return !solvedWithHints(entry) && entry.seed !== null
+}
+
+/** Best time per level: the minimum among games that count for it. */
 export function bestTimes(history: readonly HistoryEntry[]): Partial<Record<Level, number>> {
   const best: Partial<Record<Level, number>> = {}
   for (const e of history) {
-    if (solvedWithHints(e)) continue
+    if (!countsForBest(e)) continue
     const current = best[e.level]
     if (current === undefined || e.timeMs < current) best[e.level] = e.timeMs
   }
@@ -62,8 +71,8 @@ export function bestTimes(history: readonly HistoryEntry[]): Partial<Record<Leve
 
 /** True when this entry set a new best time for its level (the victory screen notice). */
 export function isNewBest(history: readonly HistoryEntry[], entry: HistoryEntry): boolean {
-  if (solvedWithHints(entry)) return false
-  return history.every((e) => e.id === entry.id || e.level !== entry.level || solvedWithHints(e) || e.timeMs > entry.timeMs)
+  if (!countsForBest(entry)) return false
+  return history.every((e) => e.id === entry.id || e.level !== entry.level || !countsForBest(e) || e.timeMs > entry.timeMs)
 }
 
 export function totals(history: readonly HistoryEntry[]): { completed: number; xp: number } {

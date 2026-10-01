@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { LEVELS } from '../../bank/bank'
 import { emptyCells } from '../../game/game'
 import { activity, bestTimes, type HistoryEntry, recent, totals } from '../../game/records'
-import { formatHistoryDate, formatTime, LEVEL_NAMES, weekdayLetter } from '../format'
+import { formatHistoryDate, formatTime, LEVEL_NAMES, playLabel, weekdayLetter } from '../format'
 import type { Layout } from '../layout'
 import { useStore } from '../store'
 import { Dialog, PageHeader } from '../ui'
@@ -71,7 +71,7 @@ function HistoryDialog({ entry, sheet, onClose }: { entry: HistoryEntry; sheet: 
   const playAgain = async () => {
     if (await store.replay(entry)) window.location.hash = '/play'
   }
-  const title = `${entry.daily ? 'Daily · ' : ''}${LEVEL_NAMES[entry.level]}`
+  const title = playLabel(entry)
   return (
     <Dialog
       title={title}
@@ -129,7 +129,7 @@ export function Stats({ layout }: { layout: Layout }) {
             window.location.hash = '/play'
           }}>
             <span className="ongoing-text">
-              <span className="ongoing-level">{g.daily ? `Daily · ${LEVEL_NAMES[g.level]}` : LEVEL_NAMES[g.level]}</span>
+              <span className="ongoing-level">{playLabel(g)}</span>
               <span className="muted small">
                 {formatTime(g.elapsedMs)} · {emptyCells(g)} cells left
               </span>
@@ -157,8 +157,7 @@ export function Stats({ layout }: { layout: Layout }) {
         {last.map((h) => (
           <button key={h.id} type="button" className="list-row history-row" onClick={() => setOpen(h)}>
             <span className="grow">
-              {h.daily ? 'Daily · ' : ''}
-              {LEVEL_NAMES[h.level]}
+              {playLabel(h)}
               {h.hintsUsed > 0 && <span className="muted small"> · hints</span>}
             </span>
             <span className="muted small">{formatHistoryDate(h.completedAt, now)}</span>

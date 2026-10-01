@@ -36,13 +36,15 @@ export function PageHeader({ title, back }: { title: string; back: boolean }) {
 }
 
 export function Sidebar({ route, dark, onPlay }: { route: Route; dark: boolean; onPlay: () => void }) {
+  // Entering a puzzle is part of Play.
+  const current = route === '/enter' ? '/play' : route
   const item = (to: Route, label: string, icon: ReactNode) => (
     <a
       href={`#${to}`}
       aria-label={label}
       title={label}
-      aria-current={route === to ? 'page' : undefined}
-      className={route === to ? 'nav-item on' : 'nav-item'}
+      aria-current={current === to ? 'page' : undefined}
+      className={current === to ? 'nav-item on' : 'nav-item'}
       onClick={to === '/play' ? onPlay : undefined}
     >
       {icon}

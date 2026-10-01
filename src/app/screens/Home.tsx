@@ -4,7 +4,7 @@ import { type DailyPuzzle, type Level, LEVELS, loadDaily } from '../../bank/bank
 import { emptyCells, type Game } from '../../game/game'
 import { dailyPuzzle } from '../../game/pick'
 import { dailyEntry, utcDate } from '../../game/records'
-import { formatDailyDate, formatTime, LEVEL_NAMES } from '../format'
+import { formatDailyDate, formatTime, LEVEL_NAMES, playLabel } from '../format'
 import type { Layout } from '../layout'
 import { navigate } from '../router'
 import { useStore } from '../store'
@@ -52,14 +52,14 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
         <div key={g.id} className="ongoing">
           <button type="button" className="ongoing-main" onClick={() => store.setActiveId(g.id)}>
             <span className="ongoing-text">
-              <span className="ongoing-level">{g.daily ? `Daily · ${LEVEL_NAMES[g.level]}` : LEVEL_NAMES[g.level]}</span>
+              <span className="ongoing-level">{playLabel(g)}</span>
               <span className="muted small">
                 {formatTime(g.elapsedMs)} · {emptyCells(g)} cells left
               </span>
             </span>
             <ChevronRight size={20} className="accent-text" />
           </button>
-          <button type="button" className="discard" aria-label={`Discard ${LEVEL_NAMES[g.level]} game`} onClick={() => discard(g.id)}>
+          <button type="button" className="discard" aria-label={`Discard ${playLabel(g)} game`} onClick={() => discard(g.id)}>
             <Trash2 size={18} strokeWidth={1.75} />
           </button>
         </div>
@@ -102,6 +102,9 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
       <button type="button" className="btn primary big" onClick={() => void store.startGame(level)}>
         Start {LEVEL_NAMES[level]}
       </button>
+      <button type="button" className="btn ghost" onClick={() => navigate('/enter')}>
+        Enter a puzzle
+      </button>
     </section>
   )
 
@@ -134,7 +137,7 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
           {newGame}
         </>
       )}
-      {discarded && <Toast text={`${LEVEL_NAMES[discarded.level]} game discarded`} action="Undo" onAction={undoDiscard} />}
+      {discarded && <Toast text={`${playLabel(discarded)} game discarded`} action="Undo" onAction={undoDiscard} />}
     </main>
   )
 }

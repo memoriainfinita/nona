@@ -1,4 +1,4 @@
-import type { Hint, HintResponse } from './protocol'
+import type { CheckRequest, CheckResult, EngineResponse, Hint, HintRequest } from './protocol'
 
 /** The engine could not be loaded. The UI offers Retry; the hint does not count. */
 export class EngineLoadError extends Error {
@@ -16,7 +16,7 @@ const defaultFactory: WorkerFactory = () =>
   new Worker(new URL('./hint.worker.ts', import.meta.url), { type: 'module' })
 
 interface Pending {
-  resolve: (hint: Hint | null) => void
+  resolve: (result: never) => void
   reject: (error: Error) => void
 }
 
@@ -35,26 +35,35 @@ export class HintEngine {
   }
 
   hint(puzzle: string, masks: Uint16Array): Promise<Hint | null> {
-    const worker = this.ensureWorker()
-    const id = this.nextId++
-    return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
-      worker.postMessage({ id, puzzle, masks })
-    })
+    return this.request({ type: 'hint', puzzle, masks })
+  }
+
+  /** A puzzle entered by the player: solutions (up to 2), and level and solution if just one. */
+  check(puzzle: string): Promise<CheckResult> {
+    return this.request({ type: 'check', puzzle })
   }
 
   terminate(): void {
     this.fail(new EngineLoadError('engine terminated'))
   }
 
+  private request<T>(message: Omit<HintRequest, 'id'> | Omit<CheckRequest, 'id'>): Promise<T> {
+    const worker = this.ensureWorker()
+    const id = this.nextId++
+    return new Promise<T>((resolve, reject) => {
+      this.pending.set(id, { resolve: resolve as (result: never) => void, reject })
+      worker.postMessage({ id, ...message })
+    })
+  }
+
   private ensureWorker(): Worker {
     if (this.worker) return this.worker
     const worker = this.createWorker()
-    worker.onmessage = ({ data }: MessageEvent<HintResponse>) => {
+    worker.onmessage = ({ data }: MessageEvent<EngineResponse>) => {
       const pending = this.pending.get(data.id)
       if (!pending) return
       this.pending.delete(data.id)
-      if (data.ok) pending.resolve(data.hint)
+      if (data.ok) pending.resolve(data.result as never)
       else if (data.error === 'load') this.fail(new EngineLoadError(data.message), pending)
       else pending.reject(new EngineError(data.message))
     }

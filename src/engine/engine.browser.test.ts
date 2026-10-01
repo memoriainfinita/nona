@@ -93,6 +93,36 @@ describe('HintEngine in a worker', () => {
   })
 })
 
+describe('check: a puzzle entered by the player', () => {
+  test('one solution: the solution and a level', async () => {
+    engine = new HintEngine()
+    const result = await engine.check(PUZZLES.expert)
+    expect(result.solutions).toBe(1)
+    expect(result.level).toMatch(/^(Beginner|Easy|Medium|Intermediate|Hard|Expert|Master|Extreme)$/)
+    const solution = parseGrid(result.solution!)
+    expect(solution).not.toContain(0)
+    parseGrid(PUZZLES.expert).forEach((v, i) => v && expect(solution[i]).toBe(v))
+    for (let i = 0; i < 81; i++) for (const p of PEERS[i]) expect(solution[p]).not.toBe(solution[i])
+  })
+
+  test('more than one solution: counting stops at 2', async () => {
+    engine = new HintEngine()
+    expect(await engine.check('.'.repeat(81))).toEqual({ solutions: 2, level: null, solution: null })
+  })
+
+  test('no solution, with and without givens that break a rule', async () => {
+    engine = new HintEngine()
+    // Row 1 leaves R1C9 only 9, which column 9 already has.
+    expect(await engine.check('12345678.' + '........9' + '.'.repeat(63))).toEqual({ solutions: 0, level: null, solution: null })
+    expect(await engine.check('55' + '.'.repeat(79))).toEqual({ solutions: 0, level: null, solution: null })
+  })
+
+  test('invalid text rejects with EngineError', async () => {
+    engine = new HintEngine()
+    await expect(engine.check('x'.repeat(81))).rejects.toBeInstanceOf(EngineError)
+  })
+})
+
 describe('load failure', () => {
   const blobWorker = (source: string) => () =>
     new Worker(URL.createObjectURL(new Blob([source], { type: 'text/javascript' })), { type: 'module' })

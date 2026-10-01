@@ -29,8 +29,8 @@ export type Move = Change[]
 export interface Game {
   id: string
   level: Level
-  /** Seed of the base puzzle in the bank (its id). */
-  seed: number
+  /** Seed of the base puzzle in the bank (its id); null for a puzzle entered by the player. */
+  seed: number | null
   /** UTC date (YYYY-MM-DD) for the daily sudoku, null for a normal game. */
   daily: string | null
   transform: Transform
@@ -48,7 +48,7 @@ export interface Game {
 export interface NewGame {
   id: string
   level: Level
-  seed: number
+  seed: number | null
   daily: string | null
   transform: Transform
   /** Already transformed. */

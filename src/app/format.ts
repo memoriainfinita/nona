@@ -9,6 +9,12 @@ export const LEVEL_NAMES: Record<Level, string> = {
   master: 'Master',
 }
 
+/** A game or history entry by its kind: "Daily · Hard", "Hard · Custom" (entered by the player) or "Hard". */
+export function playLabel({ level, daily, seed }: { level: Level; daily: string | null; seed: number | null }): string {
+  if (daily) return `Daily · ${LEVEL_NAMES[level]}`
+  return seed === null ? `${LEVEL_NAMES[level]} · Custom` : LEVEL_NAMES[level]
+}
+
 /** m:ss, or h:mm:ss from an hour. */
 export function formatTime(ms: number): string {
   const total = Math.floor(ms / 1000)

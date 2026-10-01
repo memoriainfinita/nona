@@ -52,12 +52,32 @@ export type HintDetail =
 
 export interface HintRequest {
   id: number
+  type: 'hint'
   /** 81 chars, '.' for empty cells. */
   puzzle: string
   /** Engine candidates: masks[i] has bit v set for digit v. */
   masks: Uint16Array
 }
 
-export type HintResponse =
-  | { id: number; ok: true; hint: Hint | null }
+/** A puzzle entered by the player: how many solutions, and its level and solution if just one. */
+export interface CheckRequest {
+  id: number
+  type: 'check'
+  /** 81 chars, '.' for empty cells. */
+  puzzle: string
+}
+
+export type EngineRequest = HintRequest | CheckRequest
+
+export interface CheckResult {
+  /** Counting stops at 2. */
+  solutions: 0 | 1 | 2
+  /** The engine's difficulty name ("Beginner" ... "Extreme"), only with one solution. */
+  level: string | null
+  /** 81 digits, only with one solution. */
+  solution: string | null
+}
+
+export type EngineResponse =
+  | { id: number; ok: true; result: Hint | null | CheckResult }
   | { id: number; ok: false; error: 'load' | 'engine'; message: string }

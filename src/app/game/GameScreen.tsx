@@ -2,7 +2,7 @@ import { Check, ChevronLeft, Pause } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { Game } from '../../game/game'
 import { remainingDigits } from '../../game/grid'
-import { formatClock, formatTime, LEVEL_NAMES } from '../format'
+import { formatClock, formatTime, LEVEL_NAMES, playLabel } from '../format'
 import type { Layout } from '../layout'
 import { useStore } from '../store'
 import { useGame } from '../useGame'
@@ -30,6 +30,8 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
   const [view, act] = useGame(initial)
   const { game, hint, paused, victory, colorMode } = view
   const level = LEVEL_NAMES[game.level]
+  // Header and victory: "Hard · Custom" for a puzzle entered by the player.
+  const label = game.daily ? level : playLabel(game)
   const wide = layout.kind === 'wide'
   const landscape = layout.kind === 'phoneLandscape'
   const remaining = remainingDigits(game.board.values)
@@ -104,7 +106,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
         <div className="side-panel">
           <div className="side-head">
             <div className="side-clock">
-              <span className="level-label">{level.toUpperCase()}</span>
+              <span className="level-label">{label.toUpperCase()}</span>
               {clock && <span className="clock-big">{clock}</span>}
             </div>
             {pauseButton}
@@ -122,7 +124,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
             <button type="button" className="icon-btn" aria-label="Back to menu" onClick={onMenu}>
               <ChevronLeft size={20} />
             </button>
-            <span className="level-name">{level}</span>
+            <span className="level-name">{label}</span>
             <span className="clock">{clock}</span>
             {pauseButton}
           </div>
@@ -149,7 +151,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
             <ChevronLeft size={22} />
           </button>
           <div className="game-title">
-            <span className="level-name">{level}</span>
+            <span className="level-name">{label}</span>
             {clock && <span className="clock">{clock}</span>}
           </div>
           {!paused && pauseButton}
@@ -166,6 +168,7 @@ export function GameScreen({ initial, layout, onMenu, onPlayAnother }: Props) {
       {victory && (
         <VictoryDialog
           level={level}
+          label={label}
           time={victory.entry.timeMs}
           best={victory.best}
           withHints={victory.entry.hintsUsed > 0}
@@ -200,6 +203,8 @@ function PauseFull({ level, time, onResume, onMenu }: { level: string; time: num
 
 interface VictoryProps {
   level: string
+  /** "Hard · Custom" for a puzzle entered by the player. */
+  label: string
   time: number
   best: boolean
   withHints: boolean
@@ -208,7 +213,7 @@ interface VictoryProps {
   onMenu: () => void
 }
 
-function VictoryDialog({ level, time, best, withHints, daily, onAnother, onMenu }: VictoryProps) {
+function VictoryDialog({ level, label, time, best, withHints, daily, onAnother, onMenu }: VictoryProps) {
   const first = useRef<HTMLButtonElement>(null)
   useEffect(() => first.current?.focus(), [])
   return (
@@ -216,7 +221,7 @@ function VictoryDialog({ level, time, best, withHints, daily, onAnother, onMenu 
       <div className="victory" role="dialog" aria-modal="true" aria-labelledby="victory-title">
         <Check size={44} strokeWidth={1.75} className="accent-text" />
         <h2 id="victory-title">Solved</h2>
-        <span className="muted">{daily ? `Daily · ${level}` : level}</span>
+        <span className="muted">{daily ? `Daily · ${level}` : label}</span>
         <span className="victory-time">{formatTime(time)}</span>
         {best && <span className="pill accent">New best for {level}</span>}
         {withHints && <span className="pill">Solved with hints</span>}

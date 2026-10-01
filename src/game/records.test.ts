@@ -35,6 +35,15 @@ describe('completing a game', () => {
     expect(e.transform).toEqual(game({}).transform)
   })
 
+  test('a puzzle entered by the player keeps its givens and solution in the entry', () => {
+    const givens = [5, ...new Array(80).fill(0)]
+    const solution = new Array(81).fill(5)
+    const e = completeGame(game({ seed: null, givens, solution }), 'c', 0)
+    expect(e.seed).toBeNull()
+    expect(e.custom).toEqual({ puzzle: '5' + '.'.repeat(80), solution: '5'.repeat(81) })
+    expect(completeGame(game({}), 'b', 0).custom).toBeUndefined()
+  })
+
   test('a daily counts as daily only when solved within its UTC date', () => {
     const daily = game({ daily: '2026-10-05' })
     expect(completeGame(daily, 'a', Date.parse('2026-10-05T23:59:00Z')).daily).toBe('2026-10-05')
@@ -62,6 +71,14 @@ describe('stats', () => {
     expect(isNewBest([old, slower], slower)).toBe(false)
     expect(isNewBest([old, helped], helped)).toBe(false)
     expect(isNewBest([faster], faster)).toBe(true)
+  })
+
+  test('a puzzle entered by the player never sets a best time', () => {
+    const custom = entry({ level: 'hard', timeMs: 100, seed: null })
+    const bank = entry({ level: 'hard', timeMs: 700 })
+    expect(bestTimes([custom, bank])).toEqual({ hard: 700 })
+    expect(isNewBest([bank, custom], custom)).toBe(false)
+    expect(isNewBest([custom, bank], bank)).toBe(true)
   })
 
   test('every completed game gives 100 XP, with or without hints', () => {

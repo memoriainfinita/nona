@@ -79,6 +79,7 @@ describe('IndexedDB', () => {
     await saveGame(db, game('a', 1, 11))
     await finishGame(db, 'none', entry('h1', 22))
     await finishGame(db, 'none', { ...entry('h2', 33), level: 'hard' })
+    await finishGame(db, 'none', { ...entry('h3'), seed: null, custom: { puzzle: PUZZLE, solution: SOLUTION } })
     expect(await playedSeeds(db, 'medium')).toEqual(new Set([11, 22]))
   })
 
@@ -182,5 +183,17 @@ describe('export and import', () => {
     const again = parseBackup(JSON.stringify({ ...file, history: [withTransform] }))
     if (!again.ok) throw new Error(again.error)
     expect(again.backup.history[0]).toEqual(withTransform)
+  })
+
+  test('puzzles entered by the player round-trip: seed null, history with the puzzle', () => {
+    const custom = { ...game('c'), seed: null }
+    const done = { ...entry('hc'), seed: null, custom: { puzzle: PUZZLE, solution: SOLUTION } }
+    const file = { app: 'nona', version: BACKUP_VERSION, exportedAt: 0, games: [custom], history: [done], settings: {} }
+    const parsed = parseBackup(JSON.stringify(file))
+    if (!parsed.ok) throw new Error(parsed.error)
+    expect(parsed.backup.games[0]).toEqual(custom)
+    expect(parsed.backup.history[0]).toEqual(done)
+    const broken = { ...done, custom: { puzzle: PUZZLE.slice(1), solution: SOLUTION } }
+    expect(parseBackup(JSON.stringify({ ...file, history: [broken] }))).toEqual({ ok: false, error: 'invalid' })
   })
 })

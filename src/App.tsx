@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { GameScreen } from './app/game/GameScreen'
 import { useLayout } from './app/layout'
 import { navigate, useRoute } from './app/router'
+import { Enter } from './app/screens/Enter'
 import { Home } from './app/screens/Home'
 import { Settings } from './app/screens/Settings'
 import { Stats } from './app/screens/Stats'
@@ -48,6 +49,8 @@ function Shell() {
       onMenu={() => setActiveId(null)}
       onPlayAnother={(g) => setActiveId(g.id)}
     />
+  ) : route === '/enter' ? (
+    <Enter layout={layout} />
   ) : route === '/stats' ? (
     <Stats layout={layout} />
   ) : route === '/settings' ? (

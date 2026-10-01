@@ -60,7 +60,7 @@ export function listHistory(db: Db): Promise<HistoryEntry[]> {
 /** Seeds of a level's base puzzles already played or in progress, to pick fresh ones first. */
 export async function playedSeeds(db: Db, level: Level): Promise<Set<number>> {
   const [games, history] = await Promise.all([db.getAll('games'), db.getAll('history')])
-  return new Set([...games, ...history].filter((x) => x.level === level).map((x) => x.seed))
+  return new Set([...games, ...history].flatMap((x) => (x.level === level && x.seed !== null ? [x.seed] : [])))
 }
 
 /** Stored settings over the defaults, so settings added later get their default. */

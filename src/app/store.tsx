@@ -2,10 +2,12 @@ import { createContext, type ReactNode, useCallback, useContext, useEffect, useM
 import { type BankPuzzle, type Level, loadDaily, loadLevel } from '../bank/bank'
 import { HintEngine } from '../engine/client'
 import { createGame, type Game } from '../game/game'
+import { parseGrid } from '../game/grid'
 import { dailyPuzzle, historyPuzzle, type Picked, pickPuzzle } from '../game/pick'
 import type { HistoryEntry } from '../game/records'
 import { utcDate } from '../game/records'
 import type { Settings } from '../game/settings'
+import { IDENTITY } from '../game/transform'
 import {
   type Db,
   deleteGame,
@@ -36,8 +38,10 @@ export interface Store {
   startGame: (level: Level) => Promise<Game>
   /** Today's daily: the game in progress for it, or a new one. */
   startDaily: () => Promise<Game>
+  /** A puzzle entered by the player, already checked: one solution. */
+  startCustom: (givens: number[], solution: number[], level: Level) => Promise<Game>
   /** The puzzle of a history entry as it was played; null if its seed is not in the bank. */
-  puzzleOf: (entry: HistoryEntry) => Promise<Picked<BankPuzzle> | null>
+  puzzleOf: (entry: HistoryEntry) => Promise<PlayedPuzzle | null>
   /** A new normal game with the puzzle of a history entry. */
   replay: (entry: HistoryEntry) => Promise<Game | null>
   discard: (id: string) => Promise<Game | undefined>
@@ -46,6 +50,9 @@ export interface Store {
   /** Re-reads everything from IndexedDB (after import or clear). */
   reload: () => Promise<void>
 }
+
+/** A puzzle as it was played: from the bank, or entered by the player. */
+export type PlayedPuzzle = Omit<Picked<BankPuzzle>, 'entry'>
 
 const StoreContext = createContext<Store | null>(null)
 
@@ -101,9 +108,14 @@ export function StoreProvider({ children, dbName }: { children: ReactNode; dbNam
       setActiveId(saved.id)
       return saved
     }
-    const puzzleOf = async (entry: HistoryEntry) =>
-      historyPuzzle([await loadLevel(entry.level)], entry.seed, entry.transform) ??
-      historyPuzzle([await loadDaily()], entry.seed, entry.transform)
+    const puzzleOf = async (entry: HistoryEntry): Promise<PlayedPuzzle | null> => {
+      if (entry.custom) return { transform: IDENTITY, givens: parseGrid(entry.custom.puzzle), solution: parseGrid(entry.custom.solution) }
+      if (entry.seed === null) return null
+      return (
+        historyPuzzle([await loadLevel(entry.level)], entry.seed, entry.transform) ??
+        historyPuzzle([await loadDaily()], entry.seed, entry.transform)
+      )
+    }
     return {
       ...data,
       engine: engine.current!,
@@ -135,6 +147,8 @@ export function StoreProvider({ children, dbName }: { children: ReactNode; dbNam
         const picked = dailyPuzzle(await loadDaily(), today)
         return create(createGame({ id: newId(), level: picked.entry.level, seed: picked.entry.seed, daily: today, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
       },
+      startCustom: (givens, solution, level) =>
+        create(createGame({ id: newId(), level, seed: null, daily: null, transform: IDENTITY, givens, solution, now: Date.now() })),
       puzzleOf,
       replay: async (entry) => {
         const picked = await puzzleOf(entry)

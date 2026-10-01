@@ -1,4 +1,5 @@
 import { deleteDB } from 'idb'
+import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
@@ -23,10 +24,11 @@ afterEach(async () => {
   await deleteDB(dbName)
 })
 
-async function mount() {
+/** `strict` renders as main.tsx does: StrictMode mounts every component twice in development. */
+async function mount(strict = false) {
   root?.unmount()
   root = createRoot(host)
-  root.render(<App dbName={dbName} />)
+  root.render(strict ? <StrictMode><App dbName={dbName} /></StrictMode> : <App dbName={dbName} />)
   await expect.poll(() => host.querySelector('main'), { timeout: 15_000 }).toBeTruthy()
 }
 
@@ -356,5 +358,110 @@ describe('games', () => {
     $<HTMLButtonElement>('.ongoing-main')!.click()
     await waitFor(() => $('.board'))
     expect(label(i)).toContain(', 2')
+  })
+})
+
+describe('enter a puzzle', () => {
+  // A medium from the engine tests (Generator::with_seed(1)): one solution.
+  const PUZZLE = '.981.6.........389....4...52.531.76.4...2...1.13.648.26...8....321.........4.312.'
+  const givenCells = () => cells().flatMap((c, i) => (c.getAttribute('aria-label')!.includes('given') ? [i] : []))
+
+  async function openEnter(strict = false) {
+    await mount(strict)
+    button('Enter a puzzle').click()
+    await waitFor(() => $('.enter .board'))
+  }
+
+  async function pasteInDialog(text: string) {
+    button('Paste').click()
+    await waitFor(() => $('.paste-box'))
+    await userEvent.fill($<HTMLTextAreaElement>('.paste-box')!, text)
+    button('Use').click()
+  }
+
+  test('typed givens: the same digit again empties a cell; Undo and Clear; Play explains what is wrong', async () => {
+    await openEnter()
+    expect(button('Play').disabled).toBe(true)
+    const five = button(/^5, /)
+    five.click()
+    await waitFor(() => five.getAttribute('aria-pressed') === 'true')
+    cells()[0].click()
+    await waitFor(() => label(0) === 'R1C1, 5, given')
+    cells()[1].click()
+    await waitFor(() => label(1).startsWith('R1C2, 5, given'))
+    cells()[1].click()
+    await waitFor(() => label(1) === 'R1C2, empty')
+    button('Undo').click()
+    await waitFor(() => label(1).startsWith('R1C2, 5, given'))
+    button('Play').click()
+    await waitFor(() => $('.enter-message')?.textContent === 'This puzzle has no solution.')
+    button('Undo').click()
+    await waitFor(() => label(1) === 'R1C2, empty' && !$('.enter-message'))
+    button('Play').click()
+    await waitFor(() => $('.enter-message')?.textContent === 'This puzzle has more than one solution.')
+    expect($('.enter .board')).toBeTruthy()
+    button('Clear').click()
+    await waitFor(() => givenCells().length === 0)
+  })
+
+  test('a pasted puzzle with one solution is played as a normal game, marked Custom, and kept in the history', async () => {
+    await openEnter()
+    await pasteInDialog('not a puzzle')
+    await waitFor(() => $('.dialog .enter-message'))
+    await pasteInDialog(PUZZLE)
+    await waitFor(() => !$('.dialog') && givenCells().length === [...PUZZLE].filter((c) => c !== '.').length)
+    button('Play').click()
+    await waitFor(() => $('.game:not(.enter) .board'))
+    expect($('.level-name')!.textContent).toMatch(/^[A-Z][a-z]+ · Custom$/)
+    for (const i of givenCells()) expect(label(i)).toContain(`, ${PUZZLE[i]}, given`)
+
+    for (let n = 0; n < 400 && !$('.victory'); n++) {
+      if (!$('.hint-card')) button('Hint').click()
+      await waitFor(() => $('.victory') || ($('.hint-card') && !$('.hint-card button.primary[disabled]')))
+      if ($('.victory')) break
+      $<HTMLButtonElement>('.hint-card button.primary')!.click()
+      await new Promise((r) => setTimeout(r, 0))
+    }
+    await waitFor(() => $('.victory'))
+    expect($('.victory')!.textContent).toContain('· Custom')
+    button('Menu').click()
+    await waitFor(() => $('.home'))
+    window.location.hash = '/stats'
+    await waitFor(() => $('.stats'))
+    expect($('.history-row')!.textContent).toContain('· Custom')
+    $<HTMLButtonElement>('.history-row')!.click()
+    await waitFor(() => $$('.dialog .board.readonly .cell').length === 81)
+    button('Play again').click()
+    await waitFor(() => !$('.dialog') && $('.board[role="grid"] .cell'))
+    expect($('.level-name')!.textContent).toMatch(/ · Custom$/)
+    for (const i of givenCells()) expect(label(i)).toContain(`, ${PUZZLE[i]}, given`)
+    expect(givenCells().length).toBe([...PUZZLE].filter((c) => c !== '.').length)
+  }, 60_000)
+
+  test('in StrictMode, as in development, Play still starts the game', async () => {
+    await openEnter(true)
+    await pasteInDialog(PUZZLE)
+    await waitFor(() => !$('.dialog') && givenCells().length > 0)
+    button('Play').click()
+    await waitFor(() => $('.game:not(.enter) .board'))
+  })
+
+  test('Ctrl+V on the screen pastes; text that is not a puzzle says what to paste', async () => {
+    await openEnter()
+    // Firefox gives a synthetic paste event no text: copy from a text box and paste for real.
+    const paste = async (text: string) => {
+      const box = document.createElement('textarea')
+      box.value = text
+      document.body.append(box)
+      box.select()
+      await userEvent.copy()
+      box.remove()
+      ;(document.activeElement as HTMLElement | null)?.blur()
+      await userEvent.paste()
+    }
+    await paste('12345')
+    await waitFor(() => $('.enter-message')?.textContent?.startsWith('Paste 81 cells'))
+    await paste(PUZZLE.replace(/\./g, '0'))
+    await waitFor(() => givenCells().length > 0 && !$('.enter-message'))
   })
 })
