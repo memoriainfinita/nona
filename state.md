@@ -115,7 +115,7 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   Firefox y Chrome sin red abren la app, empiezan partida y dan pista; una versión nueva queda en
   espera con la app abierta y entra al cerrarla y abrirla. Tests: 166. size-limit: JS inicial
   93,63 kB (tope 97), WASM 168,25 kB (tope 183). Publicada; en la web publicada, Firefox y Chrome sin
-  red abren, juegan y dan pista. Sin probar la instalación en el móvil
+  red abren, juegan y dan pista. Instalada por el usuario en su móvil (2026-10-03): funciona
 
 ### Motor: lo que sigue vigente
 
