@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-10-02
+last_updated: 2026-10-03
 ---
 
 # nona — state
@@ -114,7 +114,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
   Firefox y Chrome sin red abren la app, empiezan partida y dan pista; una versión nueva queda en
   espera con la app abierta y entra al cerrarla y abrirla. Tests: 166. size-limit: JS inicial
-  93,63 kB (tope 97), WASM 168,25 kB (tope 183). Sin publicar ni probar la instalación en el móvil
+  93,63 kB (tope 97), WASM 168,25 kB (tope 183). Publicada; en la web publicada, Firefox y Chrome sin
+  red abren, juegan y dan pista. Sin probar la instalación en el móvil
 
 ### Motor: lo que sigue vigente
 
