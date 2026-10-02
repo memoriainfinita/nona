@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-10-01
+last_updated: 2026-10-02
 ---
 
 # nona — design
@@ -8,7 +8,7 @@ last_updated: 2026-10-01
 ## Plataforma y datos
 
 - Navegador de escritorio, móvil y tablet
-- Sin modo offline
+- Instalable como app (PWA) y sin conexión (ver Web)
 - GitHub Pages, web estática
 - Partidas y estadísticas por dispositivo
 - Exportar e importar los datos a mano para llevarlos a otro dispositivo
@@ -111,6 +111,14 @@ last_updated: 2026-10-01
 ## Web
 
 - Rutas con `#`: `#/play`, `#/enter`, `#/stats`, `#/settings`. Sin enlaces para compartir puzzles
+- PWA con `vite-plugin-pwa`: manifiesto "nona", `standalone`, iconos PNG 192 y 512, maskable 512 e
+  icono de Apple 180, sacados de `public/icon.svg` con `scripts/icons.mjs`
+- Sin conexión: el service worker guarda todo el build (HTML, JS, CSS, WASM y banco). Tras la primera
+  visita, la app abre, juega y da pistas sin red
+- Actualizaciones sin `skipWaiting`: la versión nueva entra cuando se cierran todas las ventanas de la
+  app. Nunca recarga a mitad de partida y no hay aviso en pantalla
+- Se instala solo por HTTPS (Pages); por la IP de la LAN funciona como web normal
+- `theme-color` sigue el tema (el `--bg` de cada uno): barra de estado del móvil y de la app instalada
 - Icono de la app, "novena llena con 9": cuadrícula 3×3 en una baldosa redondeada; ocho
   casillas apagadas y la novena (abajo a la derecha) rellena del acento con un 9 trazado
   del color de la baldosa, siempre en índigo (marca; no sigue el acento del jugador).

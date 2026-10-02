@@ -126,3 +126,14 @@ Diseño en `design.md`, Pistas legibles.
 - size-limit tras el cambio del puente
 
 **Terminado:** con el arnés sobre 60 puzzles por nivel, cero singles no visibles sin aviso, cero pistas que repiten el patrón de la anterior, ninguna explicación con el formato del motor y ninguna eliminación agrupada incorrecta; tests de interacción en Firefox para una pista agrupada y para los candidatos visibles.
+
+## Fase 8: instalable y sin conexión
+
+Diseño en `design.md`, Web.
+
+- Iconos PNG del manifiesto desde `public/icon.svg` (`scripts/icons.mjs`)
+- `vite-plugin-pwa`: manifiesto, service worker con todo el build, sin `skipWaiting`
+- `theme-color` según el tema
+- size-limit tras el cambio
+
+**Terminado:** Chrome sin errores de instalabilidad; en Firefox y Chrome, sin red, la app abre, empieza una partida y da una pista; una versión nueva espera con la app abierta y entra al cerrarla.

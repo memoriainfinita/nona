@@ -4,6 +4,13 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-10-02 — Con modo sin conexión
+
+**Qué cambió:** `design.md` decía "Sin modo offline". La app pasa a ser instalable (PWA) y a funcionar
+sin red.
+**Por qué:** el usuario pidió poder instalarla. Todo lo que usa ya era local (motor WASM, banco,
+IndexedDB), así que el service worker cubre también el uso sin conexión.
+
 ### 2026-10-01 — Mediciones del motor, fuera de `state.md`
 
 **Qué cambió:** las tablas de pruebas del motor (nativo, WASM, bucle de pistas y pistas a mitad de

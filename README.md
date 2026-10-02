@@ -43,6 +43,10 @@ Completed games, XP, the last 7 days, best times without hints, and the history.
 
 Everything stays in the browser (IndexedDB). Export saves a JSON backup; Import restores it with Merge or Replace.
 
+## Install
+
+nona is a web app you can install: Chrome or Edge offer it in the address bar or the menu, Firefox for Android and Safari on iPhone add it to the home screen, and Firefox on Windows pins it to the taskbar. After the first visit it works offline. A new version is used once every window of the app has been closed.
+
 ## Look
 
 Dark and light themes, 7 accents, three number sizes, and layouts for phone, tablet and desktop.

@@ -4,6 +4,8 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { App } from '../App'
+// Custom properties only, no layout: the theme-color test reads --bg.
+import '../styles/tokens.css'
 
 // Interaction tests on the real app in Firefox: each test gets its own IndexedDB.
 let root: Root | undefined
@@ -137,6 +139,23 @@ describe('settings', () => {
     await waitFor(() => $('.settings'))
     const shown = $$('button[role="switch"]').some((b) => b.getAttribute('aria-label') === 'Vibration')
     expect(shown).toBe('vibrate' in navigator)
+  })
+
+  test('the theme-color meta follows the theme', async () => {
+    const meta = document.createElement('meta')
+    meta.name = 'theme-color'
+    document.head.append(meta)
+    try {
+      await mount()
+      window.location.hash = '/settings'
+      await waitFor(() => $('.settings'))
+      button('Light').click()
+      await waitFor(() => meta.content === '#f6f4ef')
+      button('Dark').click()
+      await waitFor(() => meta.content === '#121413')
+    } finally {
+      meta.remove()
+    }
   })
 })
 

@@ -109,6 +109,12 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Test intermitente: "a grouped elimination" (readable hints) falló una vez en la tanda completa del
   2026-10-01 y pasó en las 4 ejecuciones siguientes. Usa un puzzle hard al azar; causa sin ver, el error
   no se guardó
+- Fase 8, instalable y sin conexión (2026-10-02), en `design.md` y `plan.md`: `vite-plugin-pwa` 1.3.0,
+  iconos de `scripts/icons.mjs`, `theme-color` según el tema. Service worker con 20 archivos (1,58 MB).
+  Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
+  Firefox y Chrome sin red abren la app, empiezan partida y dan pista; una versión nueva queda en
+  espera con la app abierta y entra al cerrarla y abrirla. Tests: 166. size-limit: JS inicial
+  93,63 kB (tope 97), WASM 168,25 kB (tope 183). Sin publicar ni probar la instalación en el móvil
 
 ### Motor: lo que sigue vigente
 
@@ -179,6 +185,8 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 - [hints] Regenerar `src/app/hint-samples.json` (una pista real por técnica para los tests de textos)
   tras cambiar el puente: desde `engine/`, `cargo run --release --example survey -- 60 --dump
   ../src/app/hint-samples.json`. Confirmed 2026-10.
+- [pwa] Tras cambiar `public/icon.svg`, regenerar los PNG del manifiesto con `node scripts/icons.mjs`
+  (Playwright Firefox, dibujados en canvas: sus capturas no guardan la transparencia). Confirmed 2026-10.
 - [test] Tests de interfaz: `StoreProvider` cierra su conexión al desmontar (si no, `deleteDB` se
   bloquea); `optimizeDeps.include` evita que Vite recargue a mitad de test. Confirmed 2026-09.
 

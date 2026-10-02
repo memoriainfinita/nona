@@ -34,6 +34,9 @@ function Shell() {
     root.dataset.theme = dark ? 'dark' : 'light'
     root.dataset.accent = settings.accent
     root.dataset.size = settings.textSize
+    // Status bar of the installed app and of mobile browsers follows the theme.
+    const bg = getComputedStyle(root).getPropertyValue('--bg').trim()
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
   }, [dark, settings.accent, settings.textSize])
 
   // The game on screen is captured when it is opened: finishing it removes it from the list.
