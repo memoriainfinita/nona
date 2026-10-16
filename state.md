@@ -123,10 +123,11 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   tarde se reconoce por la semilla. Acento: `src/game/accent.ts`, ajuste `customAccent` (opcional en la
   copia, `BACKUP_VERSION` sigue en 1). Tests: 181 (130 Node y 51 navegador), typecheck y build en verde.
   size-limit: JS inicial 95,37 kB (tope 97), WASM 169,03 kB (tope 183). Revisado con capturas de
-  Playwright Chromium (móvil oscuro, tablet oscuro, escritorio claro). Sin publicar ni probar por el usuario
+  Playwright Chromium (móvil oscuro, tablet oscuro, escritorio claro). Publicada el 2026-10-16 (PR #1, CI de
+  `main` y despliegue en verde). Sin comprobar en la web publicada ni probada por el usuario
 - Número fijado (2026-10-16), a petición del usuario: tocarlo otra vez alterna número y nota, sin tercer
-  estado; lo sueltan la goma y Esc. En `design.md`. Test de interacción actualizado. Sin probar por el
-  usuario
+  estado; lo sueltan la goma y Esc. En `design.md`. Test de interacción actualizado. Publicado con la fase 9;
+  sin probar por el usuario
 - En este entorno en la nube no se puede descargar Firefox para Playwright (host bloqueado): los tests de
   navegador de la fase 9 se pasaron en Chromium con una config local; la CI los pasa en Firefox
 
