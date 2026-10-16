@@ -22,8 +22,10 @@ last_updated: 2026-10-02
 
 - Modo de entrada configurable (ver Ajustes):
   - Número primero: tocar un número en la botonera lo deja fijado; cada celda vacía que
-    se toque lo recibe. Tocar otra vez el número fijado activa las notas; una tercera vez lo
-    suelta y apaga las notas. Tocar otro número lo fija sin cambiar el modo de notas
+    se toque lo recibe. Tocar otra vez el número fijado alterna entre número y nota. Tocar otro
+    número lo fija sin cambiar el modo de notas. Lo sueltan la goma y Esc (Esc apaga también
+    las notas). Antes, una tercera vez lo soltaba: se quitó porque estorbaba para
+    pasar de número a nota
   - Celda primero: seleccionar la celda y luego el número
 - Seleccionar una celda con número resalta sus iguales en el tablero y en las notas
 - Sombreado de fila, columna y caja de la celda seleccionada
@@ -38,7 +40,7 @@ last_updated: 2026-10-02
 - Fill notes pasa a Clear notes cuando todas las celdas vacías tienen notas: borra todas las
   notas en una jugada, que Undo revierte
 - Teclado: flechas, 1-9, N notas, E goma, Espacio pausa y reanuda, Retroceso/Supr,
-  Ctrl+Z / Ctrl+Y, H pista, C modo color
+  Ctrl+Z / Ctrl+Y, H pista, C modo color, Esc suelta el número fijado
 - Clic derecho (ratón): hace lo contrario del modo de notas. Número primero: sobre una celda, con el
   dígito fijado. Celda primero: sobre un número de la botonera, en la celda seleccionada. Sin menú
   del navegador sobre tablero y botonera

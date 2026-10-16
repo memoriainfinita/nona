@@ -78,7 +78,7 @@ describe('number first (default)', () => {
     await waitFor(() => label(i).endsWith('empty'))
   })
 
-  test('tapping the pinned digit again turns notes on; a third tap unpins it and turns notes off', async () => {
+  test('tapping the pinned digit again switches between numbers and notes; Esc releases it', async () => {
     await startGame()
     const five = () => button(/^5, /)
     const notesOn = () => button('Notes').getAttribute('aria-pressed') === 'true'
@@ -91,7 +91,13 @@ describe('number first (default)', () => {
     const i = emptyIndex()
     cells()[i].click()
     await waitFor(() => cells()[i].querySelector('.notes')?.textContent === '5')
+    // A third tap goes back to numbers, still pinned.
     five().click()
+    await waitFor(() => !notesOn())
+    expect(five().getAttribute('aria-pressed')).toBe('true')
+    five().click()
+    await waitFor(() => notesOn())
+    key('Escape')
     await waitFor(() => five().getAttribute('aria-pressed') === 'false' && !notesOn())
   })
 
