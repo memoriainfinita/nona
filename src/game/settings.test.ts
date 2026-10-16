@@ -3,8 +3,8 @@ import { addTime, createGame } from './game'
 import { DEFAULT_SETTINGS } from './settings'
 import { IDENTITY } from './transform'
 
-test('15 settings with the defaults of design.md', () => {
-  expect(Object.keys(DEFAULT_SETTINGS)).toHaveLength(15)
+test('16 settings with the defaults of design.md', () => {
+  expect(Object.keys(DEFAULT_SETTINGS)).toHaveLength(16)
   expect(DEFAULT_SETTINGS).toMatchObject({
     errors: 'solution',
     autoCleanNotes: true,
@@ -13,6 +13,7 @@ test('15 settings with the defaults of design.md', () => {
     autoPause: true,
     theme: 'system',
     accent: 'indigo',
+    customAccent: null,
     textSize: 'M',
   })
 })

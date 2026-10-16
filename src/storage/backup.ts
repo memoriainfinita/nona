@@ -88,7 +88,8 @@ const settingsSchema = z
     autoNotesButton: z.boolean(),
     autoPause: z.boolean(),
     theme: z.enum(['light', 'dark', 'system']),
-    accent: z.enum(['indigo', 'amber', 'pink', 'violet', 'blue', 'teal', 'green']),
+    accent: z.enum(['indigo', 'amber', 'pink', 'violet', 'blue', 'teal', 'green', 'custom']),
+    customAccent: z.string().regex(/^#[0-9a-f]{6}$/i).nullable(),
     textSize: z.enum(['S', 'M', 'L']),
     vibration: z.boolean(),
   })

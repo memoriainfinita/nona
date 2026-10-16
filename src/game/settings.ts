@@ -1,4 +1,4 @@
-/** The 15 settings of design.md (Ajustes), with their defaults. */
+/** The 16 settings of design.md (Ajustes), with their defaults. */
 export interface Settings {
   errors: 'none' | 'conflicts' | 'solution'
   autoCleanNotes: boolean
@@ -12,7 +12,9 @@ export interface Settings {
   autoNotesButton: boolean
   autoPause: boolean
   theme: 'light' | 'dark' | 'system'
-  accent: 'indigo' | 'amber' | 'pink' | 'violet' | 'blue' | 'teal' | 'green'
+  accent: 'indigo' | 'amber' | 'pink' | 'violet' | 'blue' | 'teal' | 'green' | 'custom'
+  /** Colour picked for the custom accent (#rrggbb); null until one is saved. */
+  customAccent: string | null
   textSize: 'S' | 'M' | 'L'
   vibration: boolean
 }
@@ -31,6 +33,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = {
   autoPause: true,
   theme: 'system',
   accent: 'indigo',
+  customAccent: null,
   textSize: 'M',
   vibration: true,
 }

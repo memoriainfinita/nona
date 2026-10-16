@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { GameScreen } from './app/game/GameScreen'
 import { useLayout } from './app/layout'
 import { navigate, useRoute } from './app/router'
@@ -8,6 +8,10 @@ import { Settings } from './app/screens/Settings'
 import { Stats } from './app/screens/Stats'
 import { StoreProvider, useStore } from './app/store'
 import { Sidebar } from './app/ui'
+import { accentVariants } from './game/accent'
+
+// Loaded when first opened, so it stays out of the initial JS (size-limit).
+const Daily = lazy(() => import('./app/screens/Daily').then((m) => ({ default: m.Daily })))
 
 function useSystemDark(): boolean {
   const query = '(prefers-color-scheme: dark)'
@@ -33,11 +37,15 @@ function Shell() {
     const root = document.documentElement
     root.dataset.theme = dark ? 'dark' : 'light'
     root.dataset.accent = settings.accent
+    // A custom accent has no rule in tokens.css: its version for this theme goes inline.
+    const custom = settings.accent === 'custom' && settings.customAccent ? accentVariants(settings.customAccent) : null
+    if (custom) root.style.setProperty('--accent', dark ? custom.dark : custom.light)
+    else root.style.removeProperty('--accent')
     root.dataset.size = settings.textSize
     // Status bar of the installed app and of mobile browsers follows the theme.
     const bg = getComputedStyle(root).getPropertyValue('--bg').trim()
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
-  }, [dark, settings.accent, settings.textSize])
+  }, [dark, settings.accent, settings.customAccent, settings.textSize])
 
   // The game on screen is captured when it is opened: finishing it removes it from the list.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,6 +62,10 @@ function Shell() {
     />
   ) : route === '/enter' ? (
     <Enter layout={layout} />
+  ) : route === '/daily' ? (
+    <Suspense fallback={null}>
+      <Daily layout={layout} />
+    </Suspense>
   ) : route === '/stats' ? (
     <Stats layout={layout} />
   ) : route === '/settings' ? (

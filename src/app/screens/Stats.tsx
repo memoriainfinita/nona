@@ -58,7 +58,7 @@ function SolvedBoard({ givens, solution }: { givens: number[]; solution: number[
 type Viewed = { givens: number[]; solution: number[] } | 'loading' | 'missing'
 
 /** A history entry: the solved puzzle as it was played, and Play again. */
-function HistoryDialog({ entry, sheet, onClose }: { entry: HistoryEntry; sheet: boolean; onClose: () => void }) {
+export function HistoryDialog({ entry, sheet, onClose }: { entry: HistoryEntry; sheet: boolean; onClose: () => void }) {
   const store = useStore()
   const [viewed, setViewed] = useState<Viewed>('loading')
   useEffect(() => {

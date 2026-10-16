@@ -9,8 +9,12 @@ export const LEVEL_NAMES: Record<Level, string> = {
   master: 'Master',
 }
 
-/** A game or history entry by its kind: "Daily · Hard", "Hard · Custom" (entered by the player) or "Hard". */
-export function playLabel({ level, daily, seed }: { level: Level; daily: string | null; seed: number | null }): string {
+/**
+ * A game or history entry by its kind: "Daily · Hard", "Hard · Custom" (entered by the player) or
+ * "Hard". Given `today`, the daily of another day carries its date: "Daily 12 Oct · Hard".
+ */
+export function playLabel({ level, daily, seed }: { level: Level; daily: string | null; seed: number | null }, today?: string): string {
+  if (daily && today && daily !== today) return `Daily ${formatDayMonth(daily)} · ${LEVEL_NAMES[level]}`
   if (daily) return `Daily · ${LEVEL_NAMES[level]}`
   return seed === null ? `${LEVEL_NAMES[level]} · Custom` : LEVEL_NAMES[level]
 }
@@ -39,6 +43,16 @@ export function formatDailyDate(date: string, long = false): string {
   const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(d)
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''
   return `${get('weekday')} ${get('day')} ${get('month')}`.toUpperCase()
+}
+
+/** "12 Oct" for a UTC date YYYY-MM-DD. */
+export function formatDayMonth(date: string): string {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+}
+
+/** "October 2026" for a month (0-based) of the UTC calendar. */
+export function formatMonth(year: number, month: number): string {
+  return new Date(Date.UTC(year, month, 15)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
 
 /** "Today", "Yesterday" or "Mon 28" in the device's local time. */

@@ -171,7 +171,18 @@ describe('export and import', () => {
     const badBoard = { ...game('x'), board: { ...game('x').board, values: [1, 2, 3] } }
     expect(parseBackup(JSON.stringify({ ...valid, games: [badBoard] }))).toEqual({ ok: false, error: 'invalid' })
     expect(parseBackup(JSON.stringify({ ...valid, version: BACKUP_VERSION + 1 }))).toEqual({ ok: false, error: 'newer' })
+    expect(parseBackup(JSON.stringify({ ...valid, settings: { customAccent: 'yellow' } }))).toEqual({ ok: false, error: 'invalid' })
     expect(parseBackup(JSON.stringify(valid)).ok).toBe(true)
+  })
+
+  test('a custom accent travels in the backup; files from before it get the default', () => {
+    const base = { app: 'nona', version: BACKUP_VERSION, exportedAt: 0, games: [], history: [] }
+    const custom = parseBackup(JSON.stringify({ ...base, settings: { accent: 'custom', customAccent: '#e8d44d' } }))
+    if (!custom.ok) throw new Error(custom.error)
+    expect(custom.backup.settings).toMatchObject({ accent: 'custom', customAccent: '#e8d44d' })
+    const older = parseBackup(JSON.stringify({ ...base, settings: { accent: 'teal' } }))
+    if (!older.ok) throw new Error(older.error)
+    expect(older.backup.settings.customAccent).toBeNull()
   })
 
   test('history entries saved without a transform still import', () => {

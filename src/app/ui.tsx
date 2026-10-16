@@ -36,8 +36,8 @@ export function PageHeader({ title, back }: { title: string; back: boolean }) {
 }
 
 export function Sidebar({ route, dark, onPlay }: { route: Route; dark: boolean; onPlay: () => void }) {
-  // Entering a puzzle is part of Play.
-  const current = route === '/enter' ? '/play' : route
+  // Entering a puzzle and the daily calendar are part of Play.
+  const current = route === '/enter' || route === '/daily' ? '/play' : route
   const item = (to: Route, label: string, icon: ReactNode) => (
     <a
       href={`#${to}`}

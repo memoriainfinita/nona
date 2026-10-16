@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { App } from '../App'
+import { accentVariants } from '../game/accent'
 // Custom properties only, no layout: the theme-color test reads --bg.
 import '../styles/tokens.css'
 
@@ -156,6 +157,32 @@ describe('settings', () => {
     } finally {
       meta.remove()
     }
+  })
+
+  test('custom accent: picked in its dialog, applied per theme, kept after a reload', async () => {
+    const html = document.documentElement
+    await mount()
+    window.location.hash = '/settings'
+    await waitFor(() => $('.settings'))
+    button('Dark').click()
+    button('Custom').click()
+    await waitFor(() => $('.dialog .accent-hex'))
+    await userEvent.fill($<HTMLInputElement>('.accent-hex')!, '#E8D44D')
+    const { dark, light } = accentVariants('#e8d44d')
+    // The light theme needs a darker yellow: the preview says it was adjusted.
+    await waitFor(() => $('.accent-preview.light')!.textContent!.includes(`${light.toUpperCase()} · adjusted`))
+    button('Save').click()
+    await waitFor(() => !$('.dialog') && html.dataset.accent === 'custom')
+    expect(html.style.getPropertyValue('--accent')).toBe(dark)
+    button('Light').click()
+    await waitFor(() => html.style.getPropertyValue('--accent') === light)
+    await mount()
+    window.location.hash = '/settings'
+    await waitFor(() => $('.settings'))
+    expect(button('Custom').getAttribute('aria-checked')).toBe('true')
+    expect(html.style.getPropertyValue('--accent')).toBe(light)
+    button('Indigo').click()
+    await waitFor(() => html.dataset.accent === 'indigo' && html.style.getPropertyValue('--accent') === '')
   })
 })
 
@@ -482,5 +509,50 @@ describe('enter a puzzle', () => {
     await waitFor(() => $('.enter-message')?.textContent?.startsWith('Paste 81 cells'))
     await paste(PUZZLE.replace(/\./g, '0'))
     await waitFor(() => givenCells().length > 0 && !$('.enter-message'))
+  })
+})
+
+describe('daily calendar', () => {
+  const day = (label: RegExp) => $$('.day').find((d) => label.test(d.getAttribute('aria-label') ?? '')) as HTMLButtonElement | undefined
+
+  test('opens on today; Play starts the daily, which then shows in progress', async () => {
+    await mount()
+    button('Past days').click()
+    await waitFor(() => $('.daily-page .day'))
+    const today = $('.day.today')!
+    expect(today.getAttribute('aria-pressed')).toBe('true')
+    expect($('.day-card')!.textContent).toContain('TODAY')
+    // Nothing after today.
+    const n = Number(today.textContent)
+    expect(day(new RegExp(`^${n + 1} `))?.disabled ?? true).toBe(true)
+    button('Play').click()
+    await waitFor(() => $('.board[role="grid"]'))
+    button('Back to menu').click()
+    await waitFor(() => $('.home .ongoing'))
+    expect($('.ongoing-level')!.textContent).toMatch(/^Daily · /)
+    button('Past days').click()
+    await waitFor(() => $('.day.progress'))
+    expect($('.day-card')!.textContent).toContain('in progress')
+    button('Continue').click()
+    await waitFor(() => $('.board[role="grid"]'))
+  })
+
+  test('the first daily can be played later, as a game of its date', async () => {
+    await mount()
+    window.location.hash = '/daily'
+    await waitFor(() => $('.daily-page .day'))
+    while (!$('.cal-month')!.textContent!.startsWith('September 2026')) {
+      button('Previous month').click()
+      await new Promise((r) => setTimeout(r, 0))
+    }
+    expect(button('Previous month').disabled).toBe(true)
+    expect(day(/^29 September/)!.disabled).toBe(true)
+    day(/^30 September, not played/)!.click()
+    await waitFor(() => $('.day-card')!.textContent!.includes('Past days count as a normal game.'))
+    button('Play').click()
+    await waitFor(() => $('.board[role="grid"]'))
+    button('Back to menu').click()
+    await waitFor(() => $('.home .ongoing'))
+    expect($('.ongoing-level')!.textContent).toMatch(/^Daily 30 Sept? · /)
   })
 })
