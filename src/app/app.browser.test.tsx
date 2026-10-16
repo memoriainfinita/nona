@@ -330,6 +330,11 @@ describe('readable hints', () => {
     // Hints only, without notes on the board, until one removes candidates from several cells.
     let targets: { cell: number; digits: number[] }[] = []
     for (let n = 0; n < 200 && !targets.length; n++) {
+      // Solved before a grouped elimination came up: another Hard, and keep looking.
+      if ($('.victory')) {
+        button('Play another Hard').click()
+        await waitFor(() => !$('.victory') && $('.board'))
+      }
       button('Hint').click()
       await waitFor(ready)
       primary().click()
