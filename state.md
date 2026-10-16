@@ -106,11 +106,10 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   puente, `seed` null y `custom` en el historial. Tests: 165 (Node y Firefox), typecheck y build en verde.
   size-limit: JS inicial 93,55 kB (tope 97), WASM 168,25 kB (tope 183). Revisado con capturas de Playwright
   Firefox (móvil oscuro, escritorio claro). Probado por el usuario en la web publicada (2026-10-01): pegar y jugar funciona
-- Test intermitente: "a grouped elimination" (readable hints). Causa vista el 2026-10-16 (captura del
-  fallo, Chromium): el puzzle hard al azar se resolvió solo con pistas antes de salir una eliminación
-  agrupada; con la victoria en pantalla no hay tarjeta de pista y el `waitFor(ready)` agota el tiempo.
-  Falló 2 de 5 ejecuciones aisladas y otra vez en una tanda completa, siempre con la victoria en pantalla.
-  Sin arreglar
+- Test "a grouped elimination" (readable hints), antes intermitente: el puzzle hard al azar a veces se
+  resolvía solo con pistas antes de salir una eliminación agrupada, y con la victoria en pantalla no hay
+  tarjeta de pista (visto en capturas del fallo, 2026-10-16; también falló en la CI del PR #1). Arreglado
+  en el test: si llega la victoria, empieza otro Hard y sigue buscando. 8 de 8 ejecuciones aisladas en verde
 - Fase 8, instalable y sin conexión (2026-10-02), en `design.md` y `plan.md`: `vite-plugin-pwa` 1.3.0,
   iconos de `scripts/icons.mjs`, `theme-color` según el tema. Service worker con 20 archivos (1,58 MB).
   Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
