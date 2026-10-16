@@ -1,4 +1,6 @@
-import { useCallback, useRef, useState } from 'react'
+import { Pencil, Plus } from 'lucide-react'
+import { type CSSProperties, useCallback, useRef, useState } from 'react'
+import { accentVariants, isHex } from '../../game/accent'
 import type { Settings as SettingsT } from '../../game/settings'
 import type { Backup } from '../../storage/backup'
 import { clearHistory } from '../../storage/db'
@@ -8,7 +10,7 @@ import { Dialog, PageHeader } from '../ui'
 
 type Option<K extends keyof SettingsT> = { value: SettingsT[K]; label: string }
 
-const ACCENTS: { value: SettingsT['accent']; label: string; dark: string; light: string }[] = [
+const ACCENTS: { value: Exclude<SettingsT['accent'], 'custom'>; label: string; dark: string; light: string }[] = [
   { value: 'indigo', label: 'Indigo', dark: '#8C95F6', light: '#4B55C4' },
   { value: 'amber', label: 'Amber', dark: '#E6A63B', light: '#8A5A00' },
   { value: 'pink', label: 'Rose', dark: '#EC7FA9', light: '#AD3A6C' },
@@ -62,10 +64,80 @@ function Toggle({ k, label, help, settings, update }: { k: keyof SettingsT; labe
   )
 }
 
+/** The panel of one theme in the custom accent preview: a button, a selected cell and a hint cell. */
+function AccentPreview({ theme, accent, picked }: { theme: 'dark' | 'light'; accent: string; picked: string }) {
+  return (
+    <div className={`accent-preview ${theme}`} style={{ '--p-accent': accent } as CSSProperties}>
+      <span className="section-title">{theme.toUpperCase()}</span>
+      <span className="accent-preview-btn">Play</span>
+      <div className="accent-preview-cells" aria-hidden="true">
+        <span>5</span>
+        <span className="sel">7</span>
+        <span className="hint" />
+      </div>
+      <span className="accent-preview-hex">
+        {accent.toUpperCase()}
+        {accent !== picked.toLowerCase() && ' · adjusted'}
+      </span>
+    </div>
+  )
+}
+
+/** Custom accent (design.md, Ajustes): any colour, shown as each theme will use it. */
+function CustomAccentDialog({ initial, sheet, onCancel, onSave }: { initial: string; sheet: boolean; onCancel: () => void; onSave: (hex: string) => void }) {
+  const [hex, setHex] = useState(initial.toLowerCase())
+  const [typed, setTyped] = useState(initial.toUpperCase())
+  const variants = accentVariants(hex)
+  const pick = (value: string) => {
+    setHex(value.toLowerCase())
+    setTyped(value.toUpperCase())
+  }
+  return (
+    <Dialog
+      title="Custom accent"
+      sheet={sheet}
+      onCancel={onCancel}
+      actions={[
+        { label: 'Cancel', kind: 'ghost', onClick: onCancel },
+        { label: 'Save', kind: 'primary', onClick: () => onSave(hex) },
+      ]}
+    >
+      <div className="accent-pick">
+        <label className="accent-well" style={{ background: hex }}>
+          <input type="color" value={hex} aria-label="Pick a colour" onChange={(e) => pick(e.target.value)} />
+        </label>
+        <div className="accent-pick-text">
+          <input
+            className="accent-hex"
+            value={typed}
+            aria-label="Hex colour"
+            spellCheck={false}
+            maxLength={7}
+            onChange={(e) => {
+              const v = e.target.value.trim()
+              setTyped(v)
+              const full = v.startsWith('#') ? v : `#${v}`
+              if (isHex(full)) setHex(full.toLowerCase())
+            }}
+          />
+          <span className="muted small">Tap the colour to change it</span>
+        </div>
+      </div>
+      <span className="section-title">PREVIEW</span>
+      <div className="accent-previews">
+        <AccentPreview theme="dark" accent={variants.dark} picked={hex} />
+        <AccentPreview theme="light" accent={variants.light} picked={hex} />
+      </div>
+      <p className="small">The colour is made lighter or darker where needed so text stays readable in each theme.</p>
+    </Dialog>
+  )
+}
+
 type Pending =
   | { kind: 'import'; name: string; backup: Backup }
   | { kind: 'invalid' }
   | { kind: 'clear' }
+  | { kind: 'accent' }
   | null
 
 export function Settings({ layout, dark }: { layout: Layout; dark: boolean }) {
@@ -107,6 +179,12 @@ export function Settings({ layout, dark }: { layout: Layout; dark: boolean }) {
     setPending(null)
     await store.reload()
   }
+
+  const custom = settings.customAccent ? accentVariants(settings.customAccent) : null
+  const customShown = custom ? (dark ? custom.dark : custom.light) : null
+  // The picker opens on the saved colour, else on the accent in use.
+  const preset = ACCENTS.find((a) => a.value === settings.accent) ?? ACCENTS[0]
+  const accentStart = settings.customAccent ?? (dark ? preset.dark : preset.light)
 
   const summary =
     pending?.kind === 'import' ? { games: pending.backup.games.length, history: pending.backup.history.length } : null
@@ -169,6 +247,18 @@ export function Settings({ layout, dark }: { layout: Layout; dark: boolean }) {
                 onClick={() => updateSettings({ accent: a.value })}
               />
             ))}
+            <button
+              type="button"
+              role="radio"
+              aria-checked={settings.accent === 'custom'}
+              aria-label="Custom"
+              title="Custom"
+              className={`accent-swatch custom${settings.accent === 'custom' ? ' on' : ''}${customShown ? '' : ' empty'}`}
+              style={customShown ? { background: customShown } : undefined}
+              onClick={() => setPending({ kind: 'accent' })}
+            >
+              {customShown ? <Pencil size={16} /> : <Plus size={18} />}
+            </button>
           </div>
         </div>
         <Segment
@@ -243,6 +333,17 @@ export function Settings({ layout, dark }: { layout: Layout; dark: boolean }) {
           </div>
           <p>Merge keeps everything from both. Replace deletes the data on this device first.</p>
         </Dialog>
+      )}
+      {pending?.kind === 'accent' && (
+        <CustomAccentDialog
+          initial={accentStart}
+          sheet={layout.sheet}
+          onCancel={close}
+          onSave={(hex) => {
+            updateSettings({ accent: 'custom', customAccent: hex })
+            setPending(null)
+          }}
+        />
       )}
       {pending?.kind === 'invalid' && (
         <Dialog title="Can’t import this file" sheet={layout.sheet} onCancel={close} actions={[{ label: 'OK', kind: 'primary', onClick: close }]}>

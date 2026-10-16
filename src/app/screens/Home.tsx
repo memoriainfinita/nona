@@ -1,4 +1,4 @@
-import { ChartNoAxesColumn, Check, ChevronRight, SlidersHorizontal, Trash2 } from 'lucide-react'
+import { CalendarDays, ChartNoAxesColumn, ChevronRight, SlidersHorizontal, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { type DailyPuzzle, type Level, LEVELS, loadDaily } from '../../bank/bank'
 import { emptyCells, type Game } from '../../game/game'
@@ -52,14 +52,14 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
         <div key={g.id} className="ongoing">
           <button type="button" className="ongoing-main" onClick={() => store.setActiveId(g.id)}>
             <span className="ongoing-text">
-              <span className="ongoing-level">{playLabel(g)}</span>
+              <span className="ongoing-level">{playLabel(g, today)}</span>
               <span className="muted small">
                 {formatTime(g.elapsedMs)} · {emptyCells(g)} cells left
               </span>
             </span>
             <ChevronRight size={20} className="accent-text" />
           </button>
-          <button type="button" className="discard" aria-label={`Discard ${playLabel(g)} game`} onClick={() => discard(g.id)}>
+          <button type="button" className="discard" aria-label={`Discard ${playLabel(g, today)} game`} onClick={() => discard(g.id)}>
             <Trash2 size={18} strokeWidth={1.75} />
           </button>
         </div>
@@ -75,7 +75,10 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
         <span className="daily-title">Solved in {formatTime(solvedToday.timeMs)}</span>
         <span className="muted small">{LEVEL_NAMES[solvedToday.level]} · a new puzzle tomorrow</span>
       </div>
-      <Check size={28} className="accent-text" />
+      <button type="button" className="btn outline past-days" onClick={() => navigate('/daily')}>
+        <CalendarDays size={18} className="accent-text" />
+        Past days
+      </button>
     </section>
   ) : (
     <section className="daily">
@@ -83,6 +86,9 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
         <span className="section-title accent-text">DAILY · {formatDailyDate(today, wide)}</span>
         <span className="daily-title">{daily ? `Today's puzzle is ${dailyLevel}` : 'Today’s puzzle'}</span>
       </div>
+      <button type="button" className="icon-btn accent" aria-label="Past days" onClick={() => navigate('/daily')}>
+        <CalendarDays size={22} />
+      </button>
       <button type="button" className="btn primary" onClick={() => void store.startDaily()}>
         Play
       </button>
@@ -137,7 +143,7 @@ export function Home({ layout, dark }: { layout: Layout; dark: boolean }) {
           {newGame}
         </>
       )}
-      {discarded && <Toast text={`${playLabel(discarded)} game discarded`} action="Undo" onAction={undoDiscard} />}
+      {discarded && <Toast text={`${playLabel(discarded, today)} game discarded`} action="Undo" onAction={undoDiscard} />}
     </main>
   )
 }

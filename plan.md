@@ -137,3 +137,15 @@ Diseño en `design.md`, Web.
 - size-limit tras el cambio
 
 **Terminado:** Chrome sin errores de instalabilidad; en Firefox y Chrome, sin red, la app abre, empieza una partida y da una pista; una versión nueva espera con la app abierta y entra al cerrarla.
+
+## Fase 9: calendario del día y acento personalizado
+
+Diseño en `design.md`, Calendario del día y Ajustes.
+
+- `src/game/calendar.ts`: rejilla del mes y estado de cada día desde el historial, las partidas y
+  la lista del día
+- Pantalla `#/daily`; `startDaily` con fecha; acceso desde la tarjeta del día
+- `src/game/accent.ts`: versión de cada tema por contraste
+- Ajuste `customAccent` (también en la copia de seguridad, opcional) y su diálogo
+
+**Terminado:** tests de la lógica y de interacción para los dos; capturas en móvil, tablet y escritorio.

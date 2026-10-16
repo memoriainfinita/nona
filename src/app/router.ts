@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 
-export type Route = '/play' | '/enter' | '/stats' | '/settings'
-const ROUTES: readonly Route[] = ['/play', '/enter', '/stats', '/settings']
+export type Route = '/play' | '/enter' | '/daily' | '/stats' | '/settings'
+const ROUTES: readonly Route[] = ['/play', '/enter', '/daily', '/stats', '/settings']
 
 function current(): Route {
   const path = window.location.hash.replace(/^#/, '')
   return (ROUTES as readonly string[]).includes(path) ? (path as Route) : '/play'
 }
 
-/** Hash routes: #/play, #/enter, #/stats, #/settings. No links to puzzles. */
+/** Hash routes: #/play, #/enter, #/daily, #/stats, #/settings. No links to puzzles. */
 export function useRoute(): Route {
   const [route, setRoute] = useState(current)
   useEffect(() => {

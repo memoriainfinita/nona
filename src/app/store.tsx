@@ -36,8 +36,8 @@ export interface Store {
   updateSettings: (patch: Partial<Settings>) => void
   save: (game: Game) => Promise<void>
   startGame: (level: Level) => Promise<Game>
-  /** Today's daily: the game in progress for it, or a new one. */
-  startDaily: () => Promise<Game>
+  /** The daily of a UTC date, today by default: the game in progress for it, or a new one. */
+  startDaily: (date?: string) => Promise<Game>
   /** A puzzle entered by the player, already checked: one solution. */
   startCustom: (givens: number[], solution: number[], level: Level) => Promise<Game>
   /** The puzzle of a history entry as it was played; null if its seed is not in the bank. */
@@ -136,16 +136,16 @@ export function StoreProvider({ children, dbName }: { children: ReactNode; dbNam
         const now = Date.now()
         return create(createGame({ id: newId(), level, seed: picked.entry.seed, daily: null, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
       },
-      startDaily: async () => {
+      startDaily: async (date) => {
         const now = Date.now()
-        const today = utcDate(now)
-        const existing = data.games.find((g) => g.daily === today)
+        const day = date ?? utcDate(now)
+        const existing = data.games.find((g) => g.daily === day)
         if (existing) {
           setActiveId(existing.id)
           return existing
         }
-        const picked = dailyPuzzle(await loadDaily(), today)
-        return create(createGame({ id: newId(), level: picked.entry.level, seed: picked.entry.seed, daily: today, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
+        const picked = dailyPuzzle(await loadDaily(), day)
+        return create(createGame({ id: newId(), level: picked.entry.level, seed: picked.entry.seed, daily: day, transform: picked.transform, givens: picked.givens, solution: picked.solution, now }))
       },
       startCustom: (givens, solution, level) =>
         create(createGame({ id: newId(), level, seed: null, daily: null, transform: IDENTITY, givens, solution, now: Date.now() })),

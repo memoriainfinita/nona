@@ -74,7 +74,8 @@ last_updated: 2026-10-02
 - Pausa: detiene el cronómetro y oculta el tablero
 - Autocompletar notas
 - Sudoku del día: el mismo para cualquiera ese día; su nivel lo da la lista del día y es
-  visible antes de empezar (ver Banco)
+  visible antes de empezar (ver Banco). Los días pasados se juegan desde el calendario (ver
+  Calendario del día)
 
 ## Reglas de registro
 
@@ -93,7 +94,8 @@ last_updated: 2026-10-02
   Pausa y abrir o cerrar la pista no entran
 - Deshacer un Apply de eliminación revierte las notas y los candidatos del motor
 - Sudoku del día: manda la fecha UTC. Sin terminar ese día, sigue como partida en curso
-  normal; solo cuenta como "del día" si se resuelve dentro de su fecha
+  normal; solo cuenta como "del día" si se resuelve dentro de su fecha. Un día pasado jugado
+  desde el calendario cuenta igual: partida normal para tiempos y XP
 
 ## Datos locales
 
@@ -226,6 +228,28 @@ last_updated: 2026-10-02
 - Las entradas guardan la transformación; las anteriores a eso muestran el puzzle base, con aviso
 - Actividad e historial en fecha local del dispositivo; solo el sudoku del día usa UTC
 
+## Calendario del día
+
+- Pantalla `#/daily`, "Daily puzzles": cuadrícula del mes, semana empezando en lunes, flechas de
+  mes. Desde el mes del primer sudoku del día (`DAILY_EPOCH`) hasta el de hoy; días anteriores al
+  primero y posteriores a hoy apagados. Fechas UTC, como el sudoku del día
+- Estados de cada día: resuelto en su fecha (círculo relleno de acento), resuelto más tarde
+  (anillo de acento), en curso (punto debajo), hoy sin jugar (anillo discontinuo), sin jugar
+- Resuelto más tarde: se reconoce por la semilla del puzzle del día (única en el banco), en
+  cualquier entrada del historial completada desde esa fecha, también un Play again. Sin campo
+  nuevo en el historial; sirve para las entradas anteriores al calendario. Si hay varias, la
+  primera; si hay una en su fecha, esa
+- Tocar un día lo selecciona y muestra su tarjeta: fecha, nivel y una acción. Sin jugar: Play
+  (en días pasados, "Past days count as a normal game."). En curso: Continue, con tiempo y celdas
+  que faltan. Resuelto: tiempo y View, que abre la entrada del historial (tablero resuelto y
+  Play again)
+- Acceso: en la tarjeta del sudoku del día del menú, icono de calendario junto a Play; con el
+  del día resuelto, botón "Past days" en lugar de la marca
+- Partidas en curso de otro día: "Daily 12 Oct · Hard" en el menú
+- Escritorio: calendario a la izquierda y tarjeta del día a la derecha; la barra lateral sigue
+  en Play
+- Maquetas en la página "Calendario y acento" del lienzo
+
 ## Ajustes
 
 | Ajuste | Valores | Por defecto |
@@ -242,7 +266,7 @@ last_updated: 2026-10-02
 | Botón de autocompletar notas | sí / no | sí |
 | Pausa automática al cambiar de pestaña o bloquear el móvil | sí / no | sí |
 | Tema | claro / oscuro / sistema | sistema |
-| Acento | índigo / ámbar / rosa / violeta / azul / turquesa / verde | índigo |
+| Acento | índigo / ámbar / rosa / violeta / azul / turquesa / verde / personalizado | índigo |
 | Tamaño de números y notas | S / M / L | M |
 | Vibración en móvil al colocar o al cometer un error | sí / no | sí |
 
@@ -253,6 +277,14 @@ last_updated: 2026-10-02
 - Índigo: color de marca y acento por defecto. Oscuro `#8C95F6`, claro `#4B55C4`; ≥6:1 en los dos
 - Ámbar deja de ser el color de marca porque ya lo usa sadhana; queda como acento elegible
 - Coral descartado como acento: se confunde con el rojo de los errores
+- Acento personalizado: octava muestra, "Custom" (con un + hasta guardar uno, luego el color
+  con un lápiz). Abre un diálogo con el selector de color del sistema y el hex editable, y una
+  vista previa en oscuro y en claro (botón, celda seleccionada, celda de pista) con el hex de
+  cada tema y "adjusted" si cambió. Save lo aplica; Cancel no cambia nada
+- Del color elegido sale una versión por tema: mismo tono y saturación, solo cambia la
+  luminosidad, de 1% en 1%, hasta ≥6:1 sobre el fondo oscuro `#121413` y ≥5:1 sobre blanco.
+  Se guarda el color elegido (`customAccent`), no las versiones. Nada impide un color parecido
+  al rojo de los errores
 
 ## Interfaz
 
@@ -274,7 +306,7 @@ last_updated: 2026-10-02
 - Primera pista: la tarjeta muestra la carga del motor en su sitio, solo esa vez
 - Partidas en curso: botón para descartar cada una, sin confirmación, con aviso "Undo"
 - Sudoku del día resuelto: la tarjeta muestra el tiempo y "a new puzzle tomorrow"; no se
-  vuelve a jugar
+  vuelve a jugar como del día (Play again desde el historial o View en el calendario)
 - Importar: resumen del archivo; Merge (por defecto, conserva todo), Replace (borra antes
   lo del dispositivo) o Cancel. Archivo no válido: aviso, nada cambia
 - Borrar historial: borra partidas e historial (y con él los mejores tiempos); conserva los ajustes;

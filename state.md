@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-10-03
+last_updated: 2026-10-16
 ---
 
 # nona — state
@@ -106,9 +106,10 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   puente, `seed` null y `custom` en el historial. Tests: 165 (Node y Firefox), typecheck y build en verde.
   size-limit: JS inicial 93,55 kB (tope 97), WASM 168,25 kB (tope 183). Revisado con capturas de Playwright
   Firefox (móvil oscuro, escritorio claro). Probado por el usuario en la web publicada (2026-10-01): pegar y jugar funciona
-- Test intermitente: "a grouped elimination" (readable hints) falló una vez en la tanda completa del
-  2026-10-01 y pasó en las 4 ejecuciones siguientes. Usa un puzzle hard al azar; causa sin ver, el error
-  no se guardó
+- Test intermitente: "a grouped elimination" (readable hints). Causa vista el 2026-10-16 (captura del
+  fallo, Chromium): el puzzle hard al azar se resolvió solo con pistas antes de salir una eliminación
+  agrupada; con la victoria en pantalla no hay tarjeta de pista y el `waitFor(ready)` agota el tiempo.
+  Falló 2 de 5 ejecuciones. Sin arreglar
 - Fase 8, instalable y sin conexión (2026-10-02), en `design.md` y `plan.md`: `vite-plugin-pwa` 1.3.0,
   iconos de `scripts/icons.mjs`, `theme-color` según el tema. Service worker con 20 archivos (1,58 MB).
   Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
@@ -116,6 +117,15 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   espera con la app abierta y entra al cerrarla y abrirla. Tests: 166. size-limit: JS inicial
   93,63 kB (tope 97), WASM 168,25 kB (tope 183). Publicada; en la web publicada, Firefox y Chrome sin
   red abren, juegan y dan pista. Instalada por el usuario en su móvil (2026-10-03): funciona
+- Fase 9, calendario del día y acento personalizado (2026-10-16), en `design.md` y `plan.md`. Maquetas
+  en la página "Calendario y acento" del lienzo, aprobadas por el usuario. Calendario: `#/daily`
+  (`src/app/screens/Daily.tsx`, cargada aparte), lógica en `src/game/calendar.ts`; un día resuelto
+  tarde se reconoce por la semilla. Acento: `src/game/accent.ts`, ajuste `customAccent` (opcional en la
+  copia, `BACKUP_VERSION` sigue en 1). Tests: 181 (130 Node y 51 navegador), typecheck y build en verde.
+  size-limit: JS inicial 95,37 kB (tope 97), WASM 169,03 kB (tope 183). Revisado con capturas de
+  Playwright Chromium (móvil oscuro, tablet oscuro, escritorio claro). Sin publicar ni probar por el usuario
+- En este entorno en la nube no se puede descargar Firefox para Playwright (host bloqueado): los tests de
+  navegador de la fase 9 se pasaron en Chromium con una config local; la CI los pasa en Firefox
 
 ### Motor: lo que sigue vigente
 
