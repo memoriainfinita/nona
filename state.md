@@ -109,7 +109,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
 - Test intermitente: "a grouped elimination" (readable hints). Causa vista el 2026-10-16 (captura del
   fallo, Chromium): el puzzle hard al azar se resolvió solo con pistas antes de salir una eliminación
   agrupada; con la victoria en pantalla no hay tarjeta de pista y el `waitFor(ready)` agota el tiempo.
-  Falló 2 de 5 ejecuciones. Sin arreglar
+  Falló 2 de 5 ejecuciones aisladas y otra vez en una tanda completa, siempre con la victoria en pantalla.
+  Sin arreglar
 - Fase 8, instalable y sin conexión (2026-10-02), en `design.md` y `plan.md`: `vite-plugin-pwa` 1.3.0,
   iconos de `scripts/icons.mjs`, `theme-color` según el tema. Service worker con 20 archivos (1,58 MB).
   Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
@@ -124,6 +125,9 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   copia, `BACKUP_VERSION` sigue en 1). Tests: 181 (130 Node y 51 navegador), typecheck y build en verde.
   size-limit: JS inicial 95,37 kB (tope 97), WASM 169,03 kB (tope 183). Revisado con capturas de
   Playwright Chromium (móvil oscuro, tablet oscuro, escritorio claro). Sin publicar ni probar por el usuario
+- Número fijado (2026-10-16), a petición del usuario: tocarlo otra vez alterna número y nota, sin tercer
+  estado; lo sueltan la goma y Esc. En `design.md`. Test de interacción actualizado. Sin probar por el
+  usuario
 - En este entorno en la nube no se puede descargar Firefox para Playwright (host bloqueado): los tests de
   navegador de la fase 9 se pasaron en Chromium con una config local; la CI los pasa en Firefox
 

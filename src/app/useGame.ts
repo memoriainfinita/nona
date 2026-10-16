@@ -257,12 +257,10 @@ export function useGame(initial: Game): [GameView, GameActions] {
       if (paused || victory) return
       if (inputFirst) {
         // Number first: the key fixes the digit; every cell tapped then receives it. Tapping the
-        // fixed digit again turns notes on; a third tap unpins it and turns notes off.
+        // fixed digit again switches between numbers and notes. Erase and Esc release it.
         setEraseMode(false)
         if (pinnedRef.current !== digit) return setPinned(digit)
-        if (!notesMode) return setNotesMode(true)
-        setPinned(null)
-        setNotesMode(false)
+        setNotesMode((m) => !m)
         return
       }
       if (selectedRef.current !== null) writeDigit(selectedRef.current, digit)
@@ -370,6 +368,12 @@ export function useGame(initial: Game): [GameView, GameActions] {
     if (hint) {
       if (key === 'Enter') return e.preventDefault(), actions.hintNext()
       if (key === 'Escape') return e.preventDefault(), actions.closeHint()
+    }
+    if (key === 'Escape' && inputFirst && pinnedRef.current) {
+      e.preventDefault()
+      setPinned(null)
+      setNotesMode(false)
+      return
     }
     // A focused cell would take Enter as a tap: on the board, digits go in with 1-9.
     if (key === 'Enter' && target?.closest('.board')) return e.preventDefault()
