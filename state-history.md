@@ -4,6 +4,20 @@ Lo que salió de `state.md`. Se escribe solo si explica por qué las cosas son c
 
 Más reciente arriba.
 
+### 2026-10-16 — Número fijado: fuera el tercer toque
+
+**Qué cambió:** tocar el número fijado alternaba número, nota y, en un tercer toque, lo soltaba. Ahora
+solo alterna número y nota; lo sueltan la goma y Esc.
+**Por qué:** el usuario no le veía uso al tercer estado y estorbaba para pasar de número a nota. Soltar
+el número ya se podía con la goma.
+
+### 2026-10-16 — Test "a grouped elimination": causa del fallo intermitente
+
+**Qué pasaba:** fallaba a veces (2 de 5 en local, y en la CI del PR #1) esperando la tarjeta de pista.
+**Causa:** las capturas del fallo mostraban la victoria. El puzzle hard al azar se resolvía solo con
+pistas antes de salir una eliminación agrupada, y sin partida no hay tarjeta de pista.
+**Arreglo:** en el test, si llega la victoria, empieza otro Hard y sigue buscando. 8 de 8 en verde.
+
 ### 2026-10-02 — Con modo sin conexión
 
 **Qué cambió:** `design.md` decía "Sin modo offline". La app pasa a ser instalable (PWA) y a funcionar

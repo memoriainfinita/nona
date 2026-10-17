@@ -1,6 +1,6 @@
 ---
 created: 2026-09-29
-last_updated: 2026-10-16
+last_updated: 2026-10-17
 ---
 
 # nona — state
@@ -106,10 +106,6 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   puente, `seed` null y `custom` en el historial. Tests: 165 (Node y Firefox), typecheck y build en verde.
   size-limit: JS inicial 93,55 kB (tope 97), WASM 168,25 kB (tope 183). Revisado con capturas de Playwright
   Firefox (móvil oscuro, escritorio claro). Probado por el usuario en la web publicada (2026-10-01): pegar y jugar funciona
-- Test "a grouped elimination" (readable hints), antes intermitente: el puzzle hard al azar a veces se
-  resolvía solo con pistas antes de salir una eliminación agrupada, y con la victoria en pantalla no hay
-  tarjeta de pista (visto en capturas del fallo, 2026-10-16; también falló en la CI del PR #1). Arreglado
-  en el test: si llega la victoria, empieza otro Hard y sigue buscando. 8 de 8 ejecuciones aisladas en verde
 - Fase 8, instalable y sin conexión (2026-10-02), en `design.md` y `plan.md`: `vite-plugin-pwa` 1.3.0,
   iconos de `scripts/icons.mjs`, `theme-color` según el tema. Service worker con 20 archivos (1,58 MB).
   Comprobado con Playwright sobre `pnpm preview`: Chrome sin errores de instalabilidad (perfil normal);
@@ -125,9 +121,8 @@ App de sudoku. Punto de partida: "Zen Sudoku Master", generada con Google AI Stu
   size-limit: JS inicial 95,37 kB (tope 97), WASM 169,03 kB (tope 183). Revisado con capturas de
   Playwright Chromium (móvil oscuro, tablet oscuro, escritorio claro). Publicada el 2026-10-16 (PR #1, CI de
   `main` y despliegue en verde). Probada por el usuario en la web publicada (2026-10-17): todo funciona
-- Número fijado (2026-10-16), a petición del usuario: tocarlo otra vez alterna número y nota, sin tercer
-  estado; lo sueltan la goma y Esc. En `design.md`. Test de interacción actualizado. Publicado con la fase 9;
-  probado por el usuario (2026-10-17): funciona
+- Número fijado: tocarlo otra vez alterna número y nota; lo sueltan la goma y Esc (`design.md`). Probado
+  por el usuario (2026-10-17). Motivo del cambio en `state-history.md`
 - En este entorno en la nube no se puede descargar Firefox para Playwright (host bloqueado): los tests de
   navegador de la fase 9 se pasaron en Chromium con una config local; la CI los pasa en Firefox
 
