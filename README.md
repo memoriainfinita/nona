@@ -5,7 +5,7 @@
 
 Sudoku with hints that show you how to solve it, not just the answer.
 
-**Live:** https://memoriainfinita.github.io/nona/
+**Live:** https://memoriainfinita.github.io/nona/ · **Guide:** [how to play](docs/guide/README.md)
 
 ![nona on a phone, dark theme: a Hard game with notes, and the hint card on its second step, "Naked Single", with the cell highlighted](docs/nona-demo.png)
 
