@@ -207,6 +207,7 @@ Mediciones del 2026-09-29 y 30 en `state-history.md` (entrada del 2026-10-01).
 ## Preferences
 
 - pnpm, no npm
+- App sencilla de uso propio: las ideas se valoran por si son útiles y sencillas para jugar, no por diferenciación ni competencia
 
 ## TODO
 
